@@ -1,5 +1,37 @@
 <template>
   <nav id="navbar" class="flex-center">
+    <div id="menu-navbar">
+      <v-menu
+        v-model="menuToggle" content-class="menu-toggle"
+        :close-on-content-click="false" transition="slide-x-transition"
+        height="100vh"
+
+      >
+        <div class="divcol center relative">
+          <v-icon 
+          color="#fff" large 
+          style="position:absolute;top: 0px; right: 0px; border-radius: 50%; border: 3px solid var(--primary);"
+          @click="menuToggle = false"
+          >
+            mdi-close
+          </v-icon>
+          <img src="@/assets/sources/logos/white-logo.svg" @click="$router.push('/'), menuToggle = false" alt="Logo" class="logo mt-14" style="cursor: pointer; width: 200px;">
+
+          <div class="divcol center mt-8 pt-6" style="gap: 40px;">
+            <a
+              v-for="(item, i) in dataNavbar" :key="i"
+              class="text-a-menu"
+              @click="$router.push(item.link), menuToggle = false">
+              {{item.name}}
+            </a>
+          </div>
+
+          <v-btn class="btn mt-10" @click="dialogConnect = true">Connect Wallet</v-btn>
+
+        </div>
+      </v-menu>
+    </div>
+
     <div>
       <img src="@/assets/sources/logos/white-logo.svg" alt="Logo">
     </div>
@@ -26,7 +58,7 @@
       <v-btn class="btn" @click="dialogConnect = true">Connect Wallet</v-btn>
     </div>
 
-    <v-btn class="btn show-mobile" style="width: 50px!important; height: 50px!important;">
+    <v-btn class="btn show-mobile" style="width: 50px!important; height: 50px!important;" @click="menuToggle = true">
       <v-icon style="font-size: 25px;">mdi-menu</v-icon>
     </v-btn>
 
@@ -37,7 +69,7 @@
 
           <h5>Conecta tu Wallet</h5>
 
-          <div class="divrow center mt-8 mb-8" style="gap: 15px;">
+          <div class="divrow center wrap mt-8 mb-8" style="gap: 15px;">
             <v-sheet class="sheet-dialog">
               <img src="@/assets/sources/icons/near-wallet-icon.svg" alt="Near" style="max-width: 25px;">
               <span>
@@ -72,7 +104,7 @@
           <v-btn class="btn mt-8 mb-8" @click="obtenWallet = true">Obtén tu Wallet</v-btn>
 
           <template v-if="obtenWallet == true">
-            <div class="divrow center mt-8 mb-8" style="gap: 15px;">
+            <div class="divrow center wrap mt-8 mb-8" style="gap: 15px;">
               <v-sheet class="sheet-dialog">
                 <v-icon class="icon">mdi-link</v-icon>
                 <img src="@/assets/sources/icons/near-icon.svg" alt="Near" style="max-width: 25px;">
@@ -130,6 +162,7 @@ import { ref } from 'vue';
 export default {
   data(){
     return{
+      menuToggle: false,
       selectedLang: 'ENG',
       dialogConnect: false,
       obtenWallet: false,
@@ -193,6 +226,10 @@ export default {
       background-image: linear-gradient(135deg, #8A5FA4 30%, #62C3D7 80%)!important;
       width: 60%;
 
+      @include media(max, 1400px){
+        width: 80%;
+      }
+
       .div-card{
         background-image: linear-gradient(45deg, #8a347d 30%, #4f80ac 80%)!important;
         display: flex;
@@ -203,6 +240,8 @@ export default {
         color: #fff;
         border-radius: 10px;
         position: relative;
+        max-height: 80%;
+        overflow-y: scroll;
 
         .sheet-dialog{
           background-color: rgba(0,0,0,0.5);
@@ -233,4 +272,23 @@ export default {
       }
     }
   }
+
+.menu-toggle{
+  height: 100vh!important;
+  min-height: 100%;
+  width: 100vw;
+  max-width: 100%;
+  padding-inline: 30px;
+  padding-block: 30px;
+  background-image: linear-gradient(45deg, #8A5FA4 30%, #62C3D7 80%);
+  top: 0!important;
+  left: 0;
+  z-index: 100;
+
+  .text-a-menu{
+    --fs: 20px!important;
+    --fw: 500;
+    color: #fff;
+  }
+}
 </style>

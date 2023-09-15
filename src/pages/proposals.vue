@@ -17,7 +17,7 @@
 			</section>
 
 			<section class="section2-proposals center">
-				<div class="container-radios divrow acenter">
+				<div class="container-radios divrow acenter col-mobile">
 					<h5 class="mb-0 mr-8">Proposals</h5>
 					<v-radio-group
 						v-model="radio_buttons"
@@ -38,38 +38,42 @@
 			<hr style="width: 100%; border-bottom: 1px solid rgba(255,255,255,0.4); height: 1px;">
 			
 			<v-row style="width: 100%;" class="radio-side-container">
-				<v-col xl="3" lg="3" md="3" sm="12" cols="12">
-					<span>
-						Choose a filter
-					</span>
-					<v-radio-group
-						v-model="radio_buttons2"
-						hide-details
-						class="mb-6"
-					>
-						<v-radio label="All" class="radios mr-4" :value="1"></v-radio>
-						<v-radio label="Active" class="radios mr-4"	:value="2"></v-radio>
-						<v-radio label="Approved" class="radios mr-4"	:value="3"></v-radio>
-						<v-radio label="Popular" class="radios mr-4"	:value="4"></v-radio>
-						<v-radio label="Failed" class="radios mr-4"	:value="5"></v-radio>
-					</v-radio-group>
-					<label for="proposer">Filter by proposer</label>
-					<v-text-field
-					id="proposer"
-					class="input mt-6 mb-6"
-					variant="solo"
-					placeholder="andresdom.near"
-					append-inner-icon="mdi-magnify"
-					></v-text-field>
+				<v-col xl="3" lg="3" md="3" sm="12" cols="12" class="divrow-mobile">
+					<div>
+						<span>
+							Choose a filter
+						</span>
+						<v-radio-group
+							v-model="radio_buttons2"
+							hide-details
+							class="mb-6"
+						>
+							<v-radio label="All" class="radios mr-4" :value="1"></v-radio>
+							<v-radio label="Active" class="radios mr-4"	:value="2"></v-radio>
+							<v-radio label="Approved" class="radios mr-4"	:value="3"></v-radio>
+							<v-radio label="Popular" class="radios mr-4"	:value="4"></v-radio>
+							<v-radio label="Failed" class="radios mr-4"	:value="5"></v-radio>
+						</v-radio-group>
+					</div>
+					<div>
+						<label for="proposer">Filter by proposer</label>
+						<v-text-field
+						id="proposer"
+						class="input mt-6 mb-6"
+						variant="solo"
+						placeholder="andresdom.near"
+						append-inner-icon="mdi-magnify"
+						></v-text-field>
 
-					<label for="categoria">Filter by Categoria</label>
-					<v-text-field
-					id="categoria"
-					class="input mt-6 mb-6"
-					variant="solo"
-					placeholder="Lorem Ipsum"
-					append-inner-icon="mdi-magnify"
-					></v-text-field>
+						<label for="categoria">Filter by Categoria</label>
+						<v-text-field
+						id="categoria"
+						class="input mt-6 mb-6"
+						variant="solo"
+						placeholder="Lorem Ipsum"
+						append-inner-icon="mdi-magnify"
+						></v-text-field>
+					</div>
 				</v-col>
 				<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12">
 					<v-card v-for="(item, index) in cardsProposals" :key="index" class="card-proposals" @click="$router.push('proposals-details')">
@@ -80,7 +84,7 @@
 							</span>
 						</div>
 						<div class="container-data-card">
-							<div class="jspace" style="width: 100%; height: max-content;">
+							<div class="jspace mobile-col" style="width: 100%; height: max-content;">
 								<div class="divcol">
 									<span class="tstart" style="color: #939393;">Proposals type: {{ item.title_desc }}</span>
 									<div class="divrow mt-1">
@@ -88,7 +92,7 @@
 									</div>
 								</div>	
 
-								<div class="divcol jend aend">
+								<div class="divcol jend aend mobile-left">
 									<v-icon style="color: #8A5FA4; font-size: 45px;">mdi-dots-horizontal</v-icon>
 									<span style="color: #8A5FA4;">{{ item.date }}</span>
 								</div>
@@ -103,8 +107,8 @@
 									<span class="tstart" style="color: #000;">BGeam</span>
 								</div>
 
-								<div class="mr-10">
-									<img src="@/assets/sources/images/approved.svg" alt="Approved" style="width: 80px;">
+								<div class="mr-10 no-margin">
+									<img src="@/assets/sources/images/approved.svg" alt="Approved" class="aprroved-failed-img">
 								</div>
 							</div>
 

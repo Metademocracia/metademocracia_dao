@@ -240,3 +240,16 @@
   flex-wrap: wrap;
   & > * {flex-basis: var(--fb) !important}
 }
+
+
+
+//////////////////////// tooltip apexhcart ////////////////////////
+/// 
+
+.custom-tooltip-content {
+  background-color: #952788;
+  border: 0px solid #ccc;
+  padding-inline: 30px;
+  padding-block: 2px;
+  border-radius: 15px;
+}

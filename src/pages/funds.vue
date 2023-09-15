@@ -34,7 +34,7 @@
 				</div>
 			</section>
 
-			<v-divider :thickness="1" class="border-opacity-50 mt-8 mb-8" style="width: 100%; color: rgba(#fff, 0.4);"></v-divider>
+			<v-divider :thickness="1" class="delete-mobile border-opacity-50 mt-8 mb-8" style="width: 100%; color: rgba(#fff, 0.4);"></v-divider>
 
 			<section class="section3-funds center">
 					<v-row style="width: 100%;">
@@ -65,137 +65,137 @@
 							<v-window v-model="windowStep" touchless>
 								<v-window-item class="window-sparkline" :value="0">
 									<div class="wrapper-chart">
-										<div class="jspace acenter mb-8" style="width: 100%;">
+										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
 											<h5>
 												Activity
 											</h5>
 
 											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													7D
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1W
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1M
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1Y
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													ALL
 												</v-btn>
 											</v-btn-toggle>
 										</div>
 										<div class="apexchart-container">
-											<apexchart type="area" height="450" :options="chartOptions" :series="series"></apexchart>
+											<apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
 										</div>
 									</div>
 								</v-window-item>
 								<v-window-item class="window-sparkline" :value="1">
 									<div class="wrapper-chart">
-										<div class="jspace acenter mb-8" style="width: 100%;">
+										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
 											<h5>
 												Activity
 											</h5>
 
 											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													7D
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1W
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1M
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1Y
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													ALL
 												</v-btn>
 											</v-btn-toggle>
 										</div>
 										<div class="apexchart-container">
-											<apexchart type="area" height="450" :options="chartOptions" :series="series"></apexchart>
+											<apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
 										</div>
 									</div>
 								</v-window-item>
 								<v-window-item class="window-sparkline" :value="2">
 									<div class="wrapper-chart">
-										<div class="jspace acenter mb-8" style="width: 100%;">
+										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
 											<h5>
 												Activity
 											</h5>
 
 											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													7D
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1W
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1M
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1Y
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													ALL
 												</v-btn>
 											</v-btn-toggle>
 										</div>
 										<div class="apexchart-container">
-											<apexchart type="area" height="450" :options="chartOptions" :series="series"></apexchart>
+											<apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
 										</div>
 									</div>
 								</v-window-item>
 								<v-window-item class="window-sparkline" :value="3">
 									<div class="wrapper-chart">
-										<div class="jspace acenter mb-8" style="width: 100%;">
+										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
 											<h5>
 												Activity
 											</h5>
 
 											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													7D
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1W
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1M
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													1Y
 												</v-btn>
 
-												<v-btn style="background-color: transparent; border-radius: 5px!important;">
+												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													ALL
 												</v-btn>
 											</v-btn-toggle>
 										</div>
 										<div class="apexchart-container">
-											<apexchart type="area" height="450" :options="chartOptions" :series="series"></apexchart>
+											<apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
 										</div>
 									</div>
 								</v-window-item>
@@ -204,33 +204,37 @@
 					</v-row>
 			</section>
 
-			<v-divider :thickness="1" class="border-opacity-50 mt-8 mb-8" style="width: 100%; color: rgba(#fff, 0.4);"></v-divider>
+			<v-divider :thickness="1" class="delete-mobile border-opacity-50 mt-8 mb-8" style="width: 100%; color: rgba(#fff, 0.4);"></v-divider>
 
-			<section class="section4-funds center">
+			<section class="section4-funds center mt-3">
 				<v-row style="width: 100%;" class="radio-side-container">
-					<v-col xl="3" lg="3" md="3" sm="12" cols="12">
-						<span>
-							Choose a filter
-						</span>
-						<v-radio-group
-							v-model="radio_buttons"
-							hide-details
-							class="mb-6"
-						>
-							<v-radio label="All" class="radios mr-4" :value="1"></v-radio>
-							<v-radio label="Recivied" class="radios mr-4"	:value="2"></v-radio>
-							<v-radio label="Sent" class="radios mr-4"	:value="3"></v-radio>
-						</v-radio-group>
-						<label for="proposer">Filter by wallet</label>
-						<v-text-field
-						id="proposer"
-						class="input mt-6 mb-6"
-						variant="solo"
-						placeholder="andresdom.near"
-						append-inner-icon="mdi-magnify"
-						></v-text-field>
+					<v-col xl="3" lg="3" md="3" sm="12" cols="12" class="divrow-mobile">
+						<div>
+							<span>
+								Choose a filter
+							</span>
+							<v-radio-group
+								v-model="radio_buttons"
+								hide-details
+								class="mb-6"
+							>
+								<v-radio label="All" class="radios mr-4" :value="1"></v-radio>
+								<v-radio label="Recivied" class="radios mr-4"	:value="2"></v-radio>
+								<v-radio label="Sent" class="radios mr-4"	:value="3"></v-radio>
+							</v-radio-group>
+						</div>
+						<div>
+							<label for="proposer">Filter by wallet</label>
+							<v-text-field
+							id="proposer"
+							class="input mt-6 mb-6"
+							variant="solo"
+							placeholder="andresdom.near"
+							append-inner-icon="mdi-magnify"
+							></v-text-field>
+						</div>
 					</v-col>
-					<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12" class="divcol pl-14">
+					<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12" class="divcol pl-14 no-padding">
 						<v-select
 							v-model="selected"
 							:items="['Less Recent', 'Last Recent']"
@@ -319,8 +323,17 @@ export default {
         }
       ],
       chartOptions: {
+        tooltip: {
+          theme: 'custom-tooltip',
+          custom: function({ series, seriesIndex, dataPointIndex, w }) {
+            const value = series[seriesIndex][dataPointIndex];
+
+            return '<div class="custom-tooltip-content">' +
+              '<span>' + '$' + value + '</span>' +
+              '</div>';
+          }
+        },
         chart: {
-          height: 450,
           type: 'area',
           toolbar: {
             show:false,
@@ -340,6 +353,9 @@ export default {
             style: {
               colors: '#fff', 
             },
+          },
+          tooltip: {
+            enabled: false,
           },
         },
 
@@ -382,6 +398,12 @@ export default {
 		openToggleCouncil() {
 			this.openCouncil = !this.openCouncil
 		},
+  },
+
+	computed: {
+    chartHeight() {
+      return window.innerWidth < 690 ? '250px' : '450px';
+    },
   },
 }
 </script>

@@ -25,7 +25,7 @@
 							</span>
 						</div>
 						<div class="container-data-card">
-							<div class="jspace" style="width: 100%; height: max-content;">
+							<div class="jspace mobile-col" style="width: 100%; height: max-content;">
 								<div class="divcol">
 									<span class="tstart" style="color: #939393;">Proposals type: {{ item.title_desc }}</span>
 									<div class="divrow mt-1">
@@ -33,7 +33,7 @@
 									</div>
 								</div>	
 
-								<div class="divcol jend aend">
+								<div class="divcol jend aend mobile-left">
 									<v-icon style="color: #8A5FA4; font-size: 45px;">mdi-dots-horizontal</v-icon>
 									<span style="color: #8A5FA4;">{{ item.date }}</span>
 								</div>
@@ -48,8 +48,8 @@
 									<span class="tstart" style="color: #000;">BGeam</span>
 								</div>
 
-								<div class="mr-10">
-									<img src="@/assets/sources/images/approved.svg" alt="Approved" style="width: 80px;">
+								<div class="mr-10 no-margin">
+									<img src="@/assets/sources/images/approved.svg" alt="Approved" class="aprroved-failed-img">
 								</div>
 							</div>
 
@@ -83,7 +83,7 @@
 								</v-col>
 							</v-row>
 						</div>
-					</v-card>
+				</v-card>
 			</section>
 
 			<section class="section3-proposals-details center divcol">

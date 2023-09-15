@@ -3,23 +3,23 @@
     <section>
       <v-carousel color="#DB107C" :show-arrows="false">
         <v-carousel-item>
-          <img src="@/assets/sources/images/banner-3.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+          <img src="@/assets/sources/images/banner-3.svg" alt="Banner" class="banner-img">
         </v-carousel-item>
 
         <v-carousel-item>
-          <img src="@/assets/sources/images/banner-2.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+          <img src="@/assets/sources/images/banner-2.svg" alt="Banner" class="banner-img">
         </v-carousel-item>
 
         <v-carousel-item>
-          <img src="@/assets/sources/images/banner-1.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+          <img src="@/assets/sources/images/banner-1.svg" alt="Banner" class="banner-img">
         </v-carousel-item>
       </v-carousel>
     </section>
 
     <section class="section2-home">
       <div class="member-container">
-        <div class="divrow center" style="gap: 20px;">
-          <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;">
+        <div class="divrow center mobile-div-member" style="gap: 20px;">
+          <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;" class="member-img">
           <span>
             Members <br> <span style="font-size: 1.5rem;">{{ members }}</span>
           </span>
@@ -53,35 +53,35 @@
     <v-row style="max-width: 1660px; width: 100%;">
       <v-col xl="8" lg="8" md="8" cols="12">
         <div class="wrapper-chart">
-          <div class="jspace acenter mb-8" style="width: 100%;">
+          <div class="jspace acenter mobile-col mb-8" style="width: 100%;">
             <h5>
               DAO Funds
             </h5>
 
             <v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-              <v-btn style="background-color: transparent; border-radius: 5px!important;">
+              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
                 7D
               </v-btn>
 
-              <v-btn style="background-color: transparent; border-radius: 5px!important;">
+              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
                 1W
               </v-btn>
 
-              <v-btn style="background-color: transparent; border-radius: 5px!important;">
+              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
                 1M
               </v-btn>
 
-              <v-btn style="background-color: transparent; border-radius: 5px!important;">
+              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
                 1Y
               </v-btn>
 
-              <v-btn style="background-color: transparent; border-radius: 5px!important;">
+              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
                 ALL
               </v-btn>
             </v-btn-toggle>
           </div>
           <div class="apexchart-container">
-            <apexchart type="area" height="450" :options="chartOptions" :series="series"></apexchart>
+            <apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
           </div>
         </div>
       </v-col>
@@ -177,8 +177,17 @@ export default {
         }
       ],
       chartOptions: {
+        tooltip: {
+          theme: 'custom-tooltip',
+          custom: function({ series, seriesIndex, dataPointIndex, w }) {
+            const value = series[seriesIndex][dataPointIndex];
+
+            return '<div class="custom-tooltip-content">' +
+              '<span>' + '$' + value + '</span>' +
+              '</div>';
+          }
+        },
         chart: {
-          height: 450,
           type: 'area',
           toolbar: {
             show:false,
@@ -198,6 +207,9 @@ export default {
             style: {
               colors: '#fff', 
             },
+          },
+          tooltip: {
+            enabled: false,
           },
         },
 
@@ -227,6 +239,16 @@ export default {
       ],
 
       chartOptions2: {
+        tooltip: {
+          theme: 'custom-tooltip',
+          custom: function({ series, seriesIndex, dataPointIndex, w }) {
+            const value = series[seriesIndex][dataPointIndex];
+
+            return '<div class="custom-tooltip-content">' +
+              '<span>' + '$' + value + '</span>' +
+              '</div>';
+          }
+        },
         chart: {
           zoom: {
             enabled: false
@@ -245,6 +267,9 @@ export default {
         },
         colors: ['#fff'],
         xaxis: {
+          tooltip: {
+            enabled: false,
+          },
           labels: {
             show: false
           },
@@ -271,8 +296,15 @@ export default {
         }
       }
     }
-  }
+  },
+
+  computed: {
+    chartHeight() {
+      return window.innerWidth < 690 ? '250px' : '450px';
+    },
+  },
 }
+
 
 function anything() {
   toast.success({
