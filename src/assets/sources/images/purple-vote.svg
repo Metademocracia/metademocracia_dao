@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="79" height="80.64" viewBox="0 0 79 80.64">
+  <defs>
+    <filter id="Trazado_10766" x="0" y="0" width="79" height="80.64" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#231f20" flood-opacity="0.302"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Grupo_8690" data-name="Grupo 8690" transform="translate(-269.001 -1716.034)">
+    <g id="Componente_32_1" data-name="Componente 32 – 1" transform="translate(278.001 1722.034)">
+      <g transform="matrix(1, 0, 0, 1, -9, -6)" filter="url(#Trazado_10766)" style="mix-blend-mode: multiply;isolation: isolate">
+        <path id="Trazado_10766-2" data-name="Trazado 10766" d="M5,0H56a5,5,0,0,1,5,5V57.64a5,5,0,0,1-5,5H5a5,5,0,0,1-5-5V5A5,5,0,0,1,5,0Z" transform="translate(9 6)" fill="#8a5fa4"/>
+      </g>
+    </g>
+    <path id="how_to_vote_FILL0_wght400_GRAD0_opsz24" d="M122.667-833.074a2.568,2.568,0,0,1-1.883-.783A2.568,2.568,0,0,1,120-835.74v-6.067l3.667-4.167,1.9,1.9-2.667,3h18.2l-2.6-2.933,1.9-1.9,3.6,4.1v6.067a2.568,2.568,0,0,1-.783,1.883,2.568,2.568,0,0,1-1.883.783Zm0-2.667h18.667v-2.667H122.667Zm7.5-7.5-4.7-4.7a2.5,2.5,0,0,1-.75-1.883,2.619,2.619,0,0,1,.783-1.883l6.533-6.533a2.7,2.7,0,0,1,1.9-.8,2.47,2.47,0,0,1,1.9.733l4.7,4.7a2.661,2.661,0,0,1,.8,1.867,2.429,2.429,0,0,1-.733,1.867l-6.667,6.667a2.5,2.5,0,0,1-1.883.75A2.619,2.619,0,0,1,130.167-843.24Zm8.5-8.467-4.7-4.7-6.6,6.6,4.7,4.7Zm-16,15.967v0Z" transform="translate(176.001 2599.075)" fill="#fff"/>
+  </g>
+</svg>

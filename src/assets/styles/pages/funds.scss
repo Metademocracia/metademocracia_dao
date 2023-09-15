@@ -1,0 +1,250 @@
+@use "@/assets/styles/main.scss" as *;
+//---------------------------------------------------------------------------------------------//
+//========================================= Funds ==============================================//
+//---------------------------------------------------------------------------------------------//
+
+#funds{
+  @extend .parent;
+  @extend .margin-global;
+  padding-bottom: 0px!important;
+  padding-top: 30px;
+  gap: 30px;
+
+	.delete-mobile{
+		@include media(max, 960px){
+			display: none;
+		}
+	}
+
+  *{
+    color: #fff;
+    font-family: var(--font1)!important;
+  }
+
+  .font300{
+    font-weight: 300!important;
+  }
+
+  .v-carousel{
+    max-height: 250px;
+
+    @include media(max, 820px){max-height: 130px!important;}
+
+    .v-carousel__controls{
+      background: transparent;
+    }
+  }
+
+	.section2-funds{
+		margin-inline: calc(50% - 50vw) !important;
+    height: max-content;
+    width: 100vw;
+    background-color: rgba(0,0,0,0.1);
+
+    .container-titles{
+			max-width: 1660px;
+			padding-inline: var(--margin-global);
+			width: 100%;
+			padding-block: 30px;
+			display: flex;
+			justify-content: space-between;
+
+			h5{
+
+			}
+		}
+	}
+
+	.section3-funds{
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+
+		.card-header-funds{
+			background-color: rgba(#755ba5,1);
+			width: 100%;
+			height: 80px;
+			padding: 20px;
+			display: flex;
+			gap: 10px;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.first-element {
+			border: 3px solid rgba(#DB107C, 0.3) !important;
+		}
+		.second-element {
+			border: 3px solid rgba(#DB107C, 0.3) !important;
+		}	
+		.third-element {
+			border: 3px solid rgba(#DB107C, 0.3) !important;
+		}		
+		.fourth-element {
+			border: 3px solid rgba(#DB107C, 0.3) !important;
+		}			
+	}
+
+	.window-sparkline{
+		width: 100%;
+		max-width: 1660px;
+
+		.wrapper-chart{
+			background-image: linear-gradient(45deg, #7b48ad 30%, #5577c1 80%);
+			padding-inline: 30px;
+			padding-block: 20px;
+			border-radius: 10px;
+			height: 100%;
+			width: 100%;
+			max-width: 1660px;
+	
+			.apexchart-container{
+				width: 100%;
+				background-color: #583793;
+				padding-inline: 30px;
+				padding-block: 20px;
+				border-radius: 10px;
+			}
+		}
+	}
+
+	.v-btn--active{
+    background-color: #4d4599!important;
+  }
+
+	.section4-funds{
+		width: 100%;
+
+		.radio-side-container{
+			.radios{
+				margin-left: -10px;
+				*{
+					color: #DB107C!important; 
+				}
+		
+				label{
+					color: #fff!important;
+					opacity: 1!important;
+					font-size: 13px;
+				}
+			}
+		
+			.mdi-radiobox-blank{
+					background-color: transparent;
+					border: 0px solid red;
+					border-radius: 50%;
+					width: 15px !important;
+					height: 15px !important;
+					margin-top: 2px;
+					margin-right: 2px;
+			}
+			.mdi-radiobox-marked{
+				border: 1px solid #DB107C;
+				background-color: #DB107C;
+				border-radius: 50%;
+				position: relative;
+				width: 20px !important;
+				height: 20px !important;
+				margin-top: 0px;
+				margin-right: 0px;
+			}
+			.mdi-radiobox-marked::before{
+				background-color: #DB107C;
+				border-radius: 50%;
+				width: 20px !important;
+				height: 20px !important;
+				content: " ";
+			}
+	
+			.input{
+				height: 45px!important;
+				max-height: 45px!important;
+				min-height: 1px!important;
+	
+				.v-field{
+					height: 45px!important;
+					max-height: 45px!important;
+					min-height: 1px!important;
+					border-radius: 25px;
+				}
+	
+				input{
+					color: #000!important;
+					font-size: 12px;
+					height: 45px!important;
+					max-height: 45px!important;
+					min-height: 1px!important;
+					margin-top: -5px;
+				}
+	
+				.v-field__input{
+					padding-left: 15px;
+					padding-block: 5px;
+					height: 45px!important;
+					max-height: 45px!important;
+					min-height: 1px!important;
+				}
+	
+				i{
+					color: $primary;
+				}
+			}
+		}
+
+		.select{
+			align-self: flex-end;
+			max-width: max-content;
+			max-height: 45px;
+			margin-bottom: 30px;
+
+			.v-field__input{
+				padding-left: 0px;
+			}
+	
+			i{
+				color: $primary;
+			}
+		}
+
+		.card-desc-votes{
+			background-color: rgba(#8564AB,1);
+			width: 100%;
+			height: 100%;
+			border-radius: 5px;
+			min-height: 45px;
+			max-height: 45px;
+			position: relative;
+			padding: 10px 20px 10px 65px;
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			box-shadow: 0px 0px 3px 2px rgba(0,0,0,0.1)!important;
+
+			.div-img{
+				height: 45px;
+				width: 45px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-radius: 5px;
+				position: absolute;
+				left: 0;
+				top: 0;
+
+				.v-icon{
+					color: #fff;
+					font-size: 22px;
+				}
+			}
+
+			.purple-absolute{
+				background-color: #48266e;
+			}
+
+			.red-absolute{
+				background-color: #720753;
+			}
+		}
+	}
+}

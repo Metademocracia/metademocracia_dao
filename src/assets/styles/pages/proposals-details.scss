@@ -1,0 +1,226 @@
+@use "@/assets/styles/main.scss" as *;
+//---------------------------------------------------------------------------------------------//
+//========================================= Proposals Details ==============================================//
+//---------------------------------------------------------------------------------------------//
+
+#proposals-details{
+  @extend .parent;
+  @extend .margin-global;
+  padding-bottom: 0px!important;
+  padding-top: 30px;
+  gap: 30px;
+
+	.delete-mobile{
+		@include media(max, 960px){
+			display: none;
+		}
+	}
+
+  *{
+    color: #fff;
+    font-family: var(--font1)!important;
+  }
+
+  .font300{
+    font-weight: 300!important;
+  }
+
+  .v-carousel{
+    max-height: 250px;
+
+    @include media(max, 820px){max-height: 130px!important;}
+
+    .v-carousel__controls{
+      background: transparent;
+    }
+  }
+
+	.section2-proposals-details{
+		.card-proposals{
+			width: 100%;
+			height: max-content;
+			border-radius: 10px!important;
+			position: relative;
+			box-shadow: 0x 0px 3px 3px rgba(0,0,0,0.1)!important;
+			padding: 25px 20px 40px 45px;
+			overflow: visible!important;
+			margin-bottom: 30px;
+			display: grid;
+			place-items: center;
+			@include media(max, 560px){
+				padding: 0px 0px 0px 40px;
+			}
+	
+			.side-bar{
+				background-color: #8A5FA4;
+				position: absolute;
+				height: 100%;
+				width: 40px;
+				left: 0;
+				top: 0;
+				border-radius: 10px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				padding: 10px 5px 10px 5px;
+				gap: 360px;
+				box-shadow: 3px 3px 3px 1px rgba(0,0,0,0.1);
+				span{
+					display: block!important;
+					transform: rotate(270deg);
+					width: max-content;
+					height: max-content;
+					transform: translateX(-40px), rotate(270deg);
+				}
+			}
+	
+			.container-data-card{
+				width: 90%;
+				height: 100%;
+				background-color: #FAFAFA;
+				border-radius: 10px;
+				position: relative;
+				box-shadow: 0x 0px 3px 3px rgba(0,0,0,0.1)!important;
+				padding: 25px 20px 25px 20px;
+				border: 1px solid rgba(0,0,0,0.1);
+				display: flex;
+				flex-direction: column;
+				@include media(max, 560px){
+					width: 100%;
+					border-radius: 0px 10px 10px 0px;
+				}
+	
+				.icon{
+					transform: rotate(135deg);
+					color: #61C2D5;
+					font-size: 20px;
+				}
+			}
+		}
+	}
+
+	.section3-proposals-details{
+		width: 100%;
+
+		.div-likes-line{
+			width: 100%;
+			height: 45px;
+			min-height: 45px;
+			position: relative;
+			display: flex;
+			flex-direction: row;
+			
+			.circle{
+				border-radius: 50%;
+				width: 20px;
+				height: 20px;
+				background-color: rgb(123, 216, 123);
+			}
+
+			.transversal-line{
+				width: 100%;
+				height: 4px;
+				background-color: rgb(123, 216, 123);
+			}
+
+			.div-absolute-likes{
+				position: absolute;
+				width: 100%;
+				height: 30px;
+				background-color: transparent;
+				padding-inline: 20px;
+				display: flex;
+				flex-direction: row;
+			}
+		}
+
+		.container-dao-members-council{
+			width: 90%;
+			@include media(max, 960px){
+				width: 100%;
+			}
+
+			.container-panel-expansion{
+				background-color: rgba(0,0,0,0.3);
+				width: 100%;
+				height: 100%;
+				border-radius: 5px;
+				padding-inline: 20px;
+				padding-block: 10px;
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+				gap: 20px;
+				min-height: 45px;
+				max-height: 45px;
+				cursor: pointer;
+
+				.v-progress-linear{
+					left: 0%!important;
+    			transform: none!important;
+				}
+
+				.rotate-180 {
+					transform: rotate(180deg);
+					transition: transform 0.3s ease;
+				}
+
+				.rotate-0 {
+					transform: rotate(0deg);
+					transition: transform 0.3s ease;
+				}
+			}
+
+			.card-desc-votes{
+				background-color: rgba(#8564AB,1);
+				width: 100%;
+				height: 100%;
+				border-radius: 5px;
+				min-height: 45px;
+				max-height: 45px;
+				position: relative;
+				padding: 10px 20px 10px 65px;
+				margin-bottom: 20px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				box-shadow: 0px 0px 3px 2px rgba(0,0,0,0.1)!important;
+
+				.div-img{
+					height: 45px;
+					width: 45px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					border-radius: 5px;
+					position: absolute;
+					left: 0;
+					top: 0;
+
+					.v-icon{
+						color: #fff;
+						font-size: 18px;
+					}
+				}
+
+				.purple-absolute{
+					background-color: #48266e;
+				}
+
+				.green-absolute{
+					background-color: #33545e;
+					.v-icon{
+						color: #61d58c;
+					}
+				}
+
+				.red-absolute{
+					background-color: #720753;
+					.v-icon{
+						color: #db107c;
+					}
+				}
+			}
+		}
+	}
+}

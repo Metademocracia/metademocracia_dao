@@ -1,0 +1,221 @@
+@use "@/assets/styles/main.scss" as *;
+//---------------------------------------------------------------------------------------------//
+//========================================= Proposals ==============================================//
+//---------------------------------------------------------------------------------------------//
+
+#proposals{
+  @extend .parent;
+  @extend .margin-global;
+  padding-bottom: 0px!important;
+  padding-top: 30px;
+  gap: 30px;
+
+  *{
+    color: #fff;
+    font-family: var(--font1)!important;
+  }
+
+  .font300{
+    font-weight: 300!important;
+  }
+
+  .v-carousel{
+    max-height: 250px;
+
+    @include media(max, 820px){max-height: 130px!important;}
+
+    .v-carousel__controls{
+      background: transparent;
+    }
+  }
+
+  .section2-proposals{
+    margin-inline: calc(50% - 50vw) !important;
+    height: max-content;
+    width: 100vw;
+    background-color: rgba(0,0,0,0.1);
+
+    .container-radios{
+			max-width: 1660px;
+			padding-inline: var(--margin-global);
+			width: 100%;
+			padding-block: 30px;
+
+			.radios{
+				*{
+					color: #DB107C!important; 
+				}
+
+				label{
+					color: #fff!important;
+					opacity: 1!important;
+				}
+			}
+
+			.mdi-radiobox-blank{
+					background-color: transparent;
+					border: 0px solid red;
+					border-radius: 50%;
+					width: 20px !important;
+					height: 20px !important;
+					margin-top: 2px;
+					margin-right: 2px;
+			}
+			.mdi-radiobox-marked{
+				border: 1px solid #DB107C;
+				background-color: #DB107C;
+				border-radius: 50%;
+				position: relative;
+				width: 20px !important;
+				height: 20px !important;
+				margin-top: 2px;
+				margin-right: 2px;
+			}
+			.mdi-radiobox-marked::before{
+				background-color: #DB107C;
+				border-radius: 50%;
+				width: 10px !important;
+				height:10px !important;
+				content: " ";
+			}
+    }
+  }
+
+	.radio-side-container{
+		.radios{
+			margin-left: -10px;
+			*{
+				color: #DB107C!important; 
+			}
+	
+			label{
+				color: #fff!important;
+				opacity: 1!important;
+				font-size: 13px;
+			}
+		}
+	
+		.mdi-radiobox-blank{
+				background-color: transparent;
+				border: 0px solid red;
+				border-radius: 50%;
+				width: 15px !important;
+				height: 15px !important;
+				margin-top: 2px;
+				margin-right: 2px;
+		}
+		.mdi-radiobox-marked{
+			border: 1px solid #DB107C;
+			background-color: #DB107C;
+			border-radius: 50%;
+			position: relative;
+			width: 20px !important;
+			height: 20px !important;
+			margin-top: 0px;
+			margin-right: 0px;
+		}
+		.mdi-radiobox-marked::before{
+			background-color: #DB107C;
+			border-radius: 50%;
+			width: 20px !important;
+			height: 20px !important;
+			content: " ";
+		}
+
+		.input{
+			height: 45px!important;
+			max-height: 45px!important;
+			min-height: 1px!important;
+
+			.v-field{
+				height: 45px!important;
+				max-height: 45px!important;
+				min-height: 1px!important;
+				border-radius: 25px;
+			}
+
+			input{
+				color: #000!important;
+				font-size: 12px;
+				height: 45px!important;
+				max-height: 45px!important;
+				min-height: 1px!important;
+				margin-top: -5px;
+			}
+
+			.v-field__input{
+				padding-left: 15px;
+				padding-block: 5px;
+				height: 45px!important;
+				max-height: 45px!important;
+				min-height: 1px!important;
+			}
+
+			i{
+				color: $primary;
+			}
+		}
+	}
+
+	.card-proposals{
+		width: 95%;
+		height: max-content;
+		border-radius: 10px!important;
+		position: relative;
+		box-shadow: 0x 0px 3px 3px rgba(0,0,0,0.1)!important;
+		padding: 25px 20px 40px 45px;
+		overflow: visible!important;
+		margin-bottom: 30px;
+		@include media(max, 560px){
+			padding: 0px 0px 0px 40px;
+		}
+
+		.side-bar{
+			background-color: #8A5FA4;
+			position: absolute;
+			height: 100%;
+			width: 40px;
+			left: 0;
+			top: 0;
+			border-radius: 10px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding: 10px 5px 10px 5px;
+			gap: 360px;
+			box-shadow: 3px 3px 3px 1px rgba(0,0,0,0.1);
+			span{
+				display: block!important;
+				transform: rotate(270deg);
+				width: max-content;
+				height: max-content;
+				transform: translateX(-40px), rotate(270deg);
+			}
+		}
+
+		.container-data-card{
+			width: 90%;
+			height: 100%;
+			background-color: #FAFAFA;
+			border-radius: 10px;
+			position: relative;
+			box-shadow: 0x 0px 3px 3px rgba(0,0,0,0.1)!important;
+			padding: 25px 20px 25px 20px;
+			border: 1px solid rgba(0,0,0,0.1);
+			display: flex;
+			flex-direction: column;
+			@include media(max, 560px){
+				width: 100%;
+				border-radius: 0px 10px 10px 0px;
+			}
+
+			.icon{
+				transform: rotate(135deg);
+				color: #61C2D5;
+				font-size: 20px;
+			}
+		}
+	}
+}
+
+
