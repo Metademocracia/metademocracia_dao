@@ -1,7 +1,7 @@
 <template>
   <div id="home" class="center divcol" style="gap: 30px;">
-    <section>
-      <v-carousel color="#DB107C" :show-arrows="false">
+    <section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">
+      <v-carousel cycle color="#DB107C" :show-arrows="false">
         <v-carousel-item>
           <img src="@/assets/sources/images/banner-3.svg" alt="Banner" class="banner-img">
         </v-carousel-item>
@@ -21,7 +21,7 @@
         <div class="divrow center mobile-div-member" style="gap: 20px;">
           <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;" class="member-img">
           <span>
-            Members <br> <span style="font-size: 1.5rem;">{{ members }}</span>
+            Miembros <br> <span style="font-size: 1.5rem;">{{ members }}</span>
           </span>
         </div>
 
@@ -55,7 +55,7 @@
         <div class="wrapper-chart">
           <div class="jspace acenter mobile-col mb-8" style="width: 100%;">
             <h5>
-              DAO Funds
+              Fondos DAO
             </h5>
 
             <v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
@@ -91,7 +91,7 @@
           <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
               <span>
-                DAO Funds
+                Fundos DAO
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
@@ -104,7 +104,7 @@
           <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
               <span>
-                Bounties
+                Recompensas
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
@@ -130,7 +130,7 @@
           <v-card class="double-card-charts">
             <div class="jspace" style="width: 100%;">
               <span>
-                Active Proposals
+                Propuestas Activas
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
@@ -140,7 +140,7 @@
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
             <div class="jspace" style="width: 100%;">
               <span>
-                Proposals in Total
+                Propuestas Totales
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>

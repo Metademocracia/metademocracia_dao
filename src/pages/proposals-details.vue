@@ -1,40 +1,56 @@
 <template>
 	<div id="proposals-details" class="divcol center">
-		<section>
-				<v-carousel color="#DB107C" :show-arrows="false">
+		<section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">
+				<v-carousel cycle color="#DB107C" :show-arrows="false">
 					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-3.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+					<img src="@/assets/sources/images/banner-3.svg" alt="Banner" class="banner-img">
 					</v-carousel-item>
 
 					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-2.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+					<img src="@/assets/sources/images/banner-2.svg" alt="Banner" class="banner-img">
 					</v-carousel-item>
 
 					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-1.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+					<img src="@/assets/sources/images/banner-1.svg" alt="Banner" class="banner-img">
 					</v-carousel-item>
 				</v-carousel>
 			</section>
 
 			<section class="section2-proposals-details center">
-				<v-card v-for="(item, index) in cardsProposals" :key="index" class="card-proposals" @click="$router.push('proposals-details')">
+				<v-card v-for="(item, index) in cardsProposals" :key="index" class="card-proposals">
 						<div class="side-bar">
 							<v-icon>mdi-tray-arrow-up</v-icon>
 							<span class="font300">
-								Proposals ID: {{ item.proposals_id }}
+								Propuesta ID: {{ item.proposals_id }}
 							</span>
 						</div>
 						<div class="container-data-card">
 							<div class="jspace mobile-col" style="width: 100%; height: max-content;">
 								<div class="divcol">
-									<span class="tstart" style="color: #939393;">Proposals type: {{ item.title_desc }}</span>
+									<span class="tstart" style="color: #939393;">Tipo de Propuesta: {{ item.title_desc }}</span>
 									<div class="divrow mt-1">
 										<h5 style="color: #000;">{{ item.title }}</h5> <v-icon class="ml-2 icon">mdi-link</v-icon>
 									</div>
 								</div>	
 
 								<div class="divcol jend aend mobile-left">
-									<v-icon style="color: #8A5FA4; font-size: 45px;">mdi-dots-horizontal</v-icon>
+									<v-menu location="start">
+										<template v-slot:activator="{ props }">
+											<v-icon v-bind="props" style="color: #8A5FA4; font-size: 45px;">mdi-dots-horizontal</v-icon>
+										</template>
+
+										<v-list>
+											<v-list-item style="max-height: 30px; min-height: 30px;">
+												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-content-copy</v-icon> Copiar Link</v-list-item-title>
+											</v-list-item>
+											<v-list-item style="max-height: 30px; min-height: 30px;">
+												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-twitter</v-icon> Compartir en Twitter</v-list-item-title>
+											</v-list-item>
+											<v-list-item style="max-height: 30px; min-height: 30px;">
+												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-send</v-icon> Compartir en Telegram</v-list-item-title>
+											</v-list-item>
+										</v-list>
+									</v-menu>
 									<span style="color: #8A5FA4;">{{ item.date }}</span>
 								</div>
 							</div>
@@ -43,7 +59,7 @@
 
 							<div class="jspace" style="width: 100%; height: max-content;">
 								<div class="divcol">
-									<span class="tstart" style="color: #939393;">Proposer</span>
+									<span class="tstart" style="color: #939393;">Proponente</span>
 									<span class="tstart" style="color: #000;">{{ item.near_id }}</span>
 									<span class="tstart" style="color: #000;">BGeam</span>
 								</div>
@@ -54,7 +70,7 @@
 							</div>
 
 							<div class="divcol" style="width: 100%; height: max-content;">
-								<span class="tstart" style="color: #939393;">Description</span>
+								<span class="tstart" style="color: #939393;">Descripción</span>
 								<p class="tstart" style="color: #000;">
 									{{ item.desc }}
 								</p>
@@ -64,21 +80,21 @@
 							</div>
 
 							<v-row>
-								<v-col xl="2" lg="2" md="6" cols="6" class="divcol jstart">
-									<span class="tstart" style="color: #939393;">Amount</span>
+								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
+									<span class="tstart" style="color: #939393; font-size: 12px;">Cantidad</span>
 									<div class="divrow jstart acenter" style="color: #000; gap: 8px;">
 										{{ item.amount }} <img src="@/assets/sources/icons/near-icon.svg" alt="Near Icon" style="width: 20px;"> {{ item.currency }}
 									</div>
 								</v-col>
-								<v-col xl="2" lg="2" md="6" cols="6" class="divcol jstart">
-									<span class="tstart" style="color: #939393;">Available Claims</span>
+								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
+									<span class="tstart" style="color: #939393; font-size: 12px;">Reclamaciones disponibles</span>
 									<span class="tstart" style="color: #000;">{{ item.claims }}</span>
 								</v-col>
-								<v-col xl="2" lg="2" md="6" cols="6" class="divcol jstart">
-									<span class="tstart" style="color: #939393;">Time to Complete</span>
+								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
+									<span class="tstart" style="color: #939393; font-size: 12px;">Tiempo para completar</span>
 									<span class="tstart" style="color: #000;">{{ item.time_complete }}</span>
 								</v-col>
-								<v-col cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
+								<v-col xl="3" lg="3" md="6" cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
 									<img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"> {{ item.likes }} <img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"> {{ item.dislikes }}
 								</v-col>
 							</v-row>
@@ -89,7 +105,7 @@
 			<section class="section3-proposals-details center divcol">
 				<div style="width: 100%;" class="delete-mobile">
 					<h5 class="tstart">
-						Votes
+						Votos
 					</h5>
 					<div class="div-likes-line center">
 						<div class="circle"></div>
@@ -100,8 +116,8 @@
 						</div>
 					</div>
 					<div class="jspace" style="width: 100%;">
-						<span style="color: #e2e2e2;">Creating proposal</span>
-						<span style="color: #e2e2e2;">Completed</span>
+						<span style="color: #e2e2e2;">Creando propuesta</span>
+						<span style="color: #e2e2e2;">Completada</span>
 					</div>
 				</div>
 
@@ -109,14 +125,14 @@
 					<v-row>
 						<v-col xl="2" lg="2" md="2" cols="12" class="center jstart">
 							<h6 class="mb-0 tstart" style="width: 100%;">
-								Non DAO Members
+								No miembros de DAO
 							</h6>
 						</v-col>
 
 						<v-col xl="10" lg="10" md="10" cols="12">
 							<div class="container-panel-expansion" @click="openToggle()">
 								<span style="color: #e2e2e2; min-width: max-content;">
-									{{ voices_left }} / {{ voices_goal }} voices
+									{{ voices_left }} / {{ voices_goal }} voces
 								</span>
 
 								<v-divider vertical :thickness="1" class="border-opacity-100" color="#fff"></v-divider>
@@ -146,14 +162,14 @@
 					<v-row>
 						<v-col xl="1" lg="1" md="1" cols="12" class="center jstart">
 							<h6 class="mb-0 tstart" style="width: 100%;">
-								Council
+								Concejo
 							</h6>
 						</v-col>
 
 						<v-col xl="11" lg="11" md="11" cols="12">
 							<div class="container-panel-expansion" @click="openToggleCouncil()">
 								<span style="color: #e2e2e2; min-width: max-content;">
-									{{ council_left }} / {{ council_goal }} voices
+									{{ council_left }} / {{ council_goal }} voces
 								</span>
 
 								<v-divider vertical :thickness="1" class="border-opacity-100" color="#fff"></v-divider>
@@ -205,18 +221,18 @@ export default {
 				{
 					proposals_id: 1234,
 					title_desc: 'AddBounty',
-					title: 'Create a Bounty',
-					date: 'Approved at: 31 August 2023',
+					title: 'Crear una recompensa',
+					date: 'Aprobado el: 31 de Agosto de 2023',
 					near_id: 'andresdom.near',
 					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
 					link: 'gov.near.org',
 					amount: 777,
 					currency: 'NEAR',
 					claims: 222,
-					time_complete: '3 Months',
+					time_complete: '3 Meses',
 					likes: 117,
 					dislikes: 15,
-				},					
+				},
 			],
 
 			dataLikes: [

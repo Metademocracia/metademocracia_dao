@@ -31,6 +31,12 @@
   .v-carousel{
     max-height: 250px;
 
+		.banner-img{
+      max-height: 350px; 
+      width: 100%!important;
+      max-width: 100vw!important;
+    }
+
     @include media(max, 820px){max-height: 130px!important;}
 
     .v-carousel__controls{
@@ -312,5 +318,22 @@
 				background-color: #720753;
 			}
 		}
+	}
+
+	.v-pagination__prev{
+		background-color: #552d7b;
+		border-radius: 10px 0px 0px 10px;
+		margin-right: 0px;
+	}
+
+	.v-pagination__next{
+		background-color: #552d7b;
+		border-radius: 0px 10px 10px 0px;
+		margin-left: 0px;
+	}
+
+	.v-pagination__item {
+		background-color: #552d7b;
+		margin-inline: 0px;
 	}
 }

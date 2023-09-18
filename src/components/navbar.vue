@@ -26,18 +26,18 @@
             </a>
           </div>
 
-          <v-btn class="btn mt-10" @click="dialogConnect = true">Connect Wallet</v-btn>
+          <v-btn class="btn mt-10" @click="dialogConnect = true">Conectar Wallet</v-btn>
 
         </div>
       </v-menu>
     </div>
 
-    <div>
+    <div class="absolute-img">
       <img src="@/assets/sources/logos/white-logo.svg" alt="Logo">
     </div>
 
     
-    <div class="center divrow delete-mobile" style="gap: 15px;">
+    <div class="center divrow delete-mobile" style="gap: 15px; margin-left: 140px">
       <span v-for="(item, index) in dataNavbar" :key="index" style="color: #fff; cursor: pointer;" @click="$router.push(item.link)">
         <v-icon color="white mr-1">{{ item.icon }}</v-icon> {{ item.name }}
       </span>
@@ -55,7 +55,7 @@
         hide-details
         style="color: white;"
       ></v-select>
-      <v-btn class="btn" @click="dialogConnect = true">Connect Wallet</v-btn>
+      <v-btn class="btn" @click="dialogConnect = true">Conectar Wallet</v-btn>
     </div>
 
     <v-btn class="btn show-mobile" style="width: 50px!important; height: 50px!important;" @click="menuToggle = true">
@@ -163,13 +163,13 @@ export default {
   data(){
     return{
       menuToggle: false,
-      selectedLang: 'ENG',
+      selectedLang: 'ES',
       dialogConnect: false,
       obtenWallet: false,
       dataNavbar: [
        { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
-       { icon: 'mdi-file-edit-outline', name: 'Proposals', link: 'proposals' },
-       { icon: 'mdi-circle-multiple-outline', name: 'Funds', link: 'funds' }
+       { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
+       { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' }
       ]
     }
   },
@@ -189,6 +189,11 @@ export default {
   padding-inline: var(--margin-global);
   background: transparent;
   padding-block: 20px;
+  position: relative;
+
+  .absolute-img{
+    position: absolute;
+  }
 
   .delete-mobile{
     @include media(max, 960px){

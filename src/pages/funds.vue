@@ -1,17 +1,17 @@
 <template>
     <div id="funds" class="divcol center">
-			<section>
-				<v-carousel color="#DB107C" :show-arrows="false">
+			<section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">
+				<v-carousel cycle color="#DB107C" :show-arrows="false">
 					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-3.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+					<img src="@/assets/sources/images/banner-3.svg" alt="Banner" class="banner-img">
 					</v-carousel-item>
 
 					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-2.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+					<img src="@/assets/sources/images/banner-2.svg" alt="Banner" class="banner-img">
 					</v-carousel-item>
 
 					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-1.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+					<img src="@/assets/sources/images/banner-1.svg" alt="Banner" class="banner-img">
 					</v-carousel-item>
 				</v-carousel>
 			</section>
@@ -21,12 +21,12 @@
 					<h5 class="mb-0 mr-8">Tokens</h5>
 					<div class="divrow center" style="gap: 15px;">
 						<div class="divcol jstart" style="gap: 5px;">
-							<span class="tstart" style="color: #61C2D5; font-size: 12px; margin-bottom: 0px;">DAO Account Name</span>
+							<span class="tstart" style="color: #61C2D5; font-size: 12px; margin-bottom: 0px;">Nombre de cuenta DAO</span>
 							<span class="tstart">{{ dao_account_name }}</span>
 						</div>
 						<v-divider vertical :thickness="1" class="border-opacity-50" style="color: rgba(#fff, 0.7);"></v-divider>
 						<div class="divcol jstart" style="gap: 5px;">
-							<span class="tstart" style="color: #61C2D5; font-size: 12px; margin-bottom: 0px;">Total Value Locked</span>
+							<span class="tstart" style="color: #61C2D5; font-size: 12px; margin-bottom: 0px;">Valor total bloqueado</span>
 							<span class="tstart">{{ total_value }} USD</span>
 						</div>
 					</div>
@@ -67,7 +67,7 @@
 									<div class="wrapper-chart">
 										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
 											<h5>
-												Activity
+												Actividad
 											</h5>
 
 											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
@@ -101,7 +101,7 @@
 									<div class="wrapper-chart">
 										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
 											<h5>
-												Activity
+												Actividad
 											</h5>
 
 											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
@@ -135,7 +135,7 @@
 									<div class="wrapper-chart">
 										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
 											<h5>
-												Activity
+												Actividad
 											</h5>
 
 											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
@@ -169,7 +169,7 @@
 									<div class="wrapper-chart">
 										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
 											<h5>
-												Activity
+												Actividad
 											</h5>
 
 											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
@@ -211,20 +211,20 @@
 					<v-col xl="3" lg="3" md="3" sm="12" cols="12" class="divrow-mobile">
 						<div>
 							<span>
-								Choose a filter
+								Elige un Filtro
 							</span>
 							<v-radio-group
 								v-model="radio_buttons"
 								hide-details
 								class="mb-6"
 							>
-								<v-radio label="All" class="radios mr-4" :value="1"></v-radio>
-								<v-radio label="Recivied" class="radios mr-4"	:value="2"></v-radio>
-								<v-radio label="Sent" class="radios mr-4"	:value="3"></v-radio>
+								<v-radio label="Todos" class="radios mr-4" :value="1"></v-radio>
+								<v-radio label="Recibidos" class="radios mr-4"	:value="2"></v-radio>
+								<v-radio label="Enviados" class="radios mr-4"	:value="3"></v-radio>
 							</v-radio-group>
 						</div>
 						<div>
-							<label for="proposer">Filter by wallet</label>
+							<label for="proposer">Filtrar por Wallet</label>
 							<v-text-field
 							id="proposer"
 							class="input mt-6 mb-6"
@@ -237,7 +237,7 @@
 					<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12" class="divcol pl-14 no-padding">
 						<v-select
 							v-model="selected"
-							:items="['Less Recent', 'Last Recent']"
+							:items="['Menos Recientes', 'Más Recientes']"
 							variant="solo"
 							flat
 							menu-icon="mdi-chevron-down"
@@ -247,7 +247,7 @@
 							style="color: white;"
 						></v-select>
 
-						<div v-for="(item, index) in dataTransactions" :key="index" class="card-desc-votes">
+						<div v-for="(item, index) in displayedCards" :key="index" class="card-desc-votes">
 							<div class="div-img" :class="{'purple-absolute' : item.icon == 'mdi-tray-arrow-down', 'red-absolute' : item.icon == 'mdi-tray-arrow-up'}">
 								<v-icon>{{ item.icon }}</v-icon>
 							</div>
@@ -255,6 +255,13 @@
 							<span>{{ item.name }}</span>
 							<span v-if="item.date">{{ item.date }} <v-icon color="#fff" style="transform: rotate(135deg); margin-top: -5px;">mdi-link</v-icon></span>
 						</div>
+
+						<v-pagination
+							v-model="currentPage"
+							:length="totalPages"
+							:total-visible="5"
+							size="small"
+						></v-pagination>
 					</v-col>
 				</v-row>
 			</section>
@@ -275,7 +282,10 @@ export default {
   },
 	data() {
 		return{
-			selected: 'Less Recent',
+			currentPage: 1,
+      cardsPerPage: 10, 
+			page: 1,
+			selected: 'Menos Recientes',
 			radio_buttons: 1,
 			toggle: 0,
 			windowStep: 0,
@@ -386,6 +396,24 @@ export default {
 				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
 				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
 				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 31.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 41.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 31.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 41.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
 			]
 		}
 	},
@@ -403,6 +431,14 @@ export default {
 	computed: {
     chartHeight() {
       return window.innerWidth < 690 ? '250px' : '450px';
+    },
+		totalPages() {
+      return Math.ceil(this.dataTransactions.length / this.cardsPerPage);
+    },
+    displayedCards() {
+      const startIndex = (this.currentPage - 1) * this.cardsPerPage;
+      const endIndex = startIndex + this.cardsPerPage;
+      return this.dataTransactions.slice(startIndex, endIndex);
     },
   },
 }

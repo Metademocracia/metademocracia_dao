@@ -1,36 +1,36 @@
 <template>
     <div id="proposals" class="center divcol">
-			<section>
-				<v-carousel color="#DB107C" :show-arrows="false">
+			<section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">
+				<v-carousel cycle color="#DB107C" :show-arrows="false">
 					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-3.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+					<img src="@/assets/sources/images/banner-3.svg" alt="Banner" class="banner-img">
 					</v-carousel-item>
 
 					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-2.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+					<img src="@/assets/sources/images/banner-2.svg" alt="Banner" class="banner-img">
 					</v-carousel-item>
 
 					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-1.svg" alt="Banner" style="max-height: 250px; max-width: 100vw!important;">
+					<img src="@/assets/sources/images/banner-1.svg" alt="Banner" class="banner-img">
 					</v-carousel-item>
 				</v-carousel>
 			</section>
 
 			<section class="section2-proposals center">
 				<div class="container-radios divrow acenter col-mobile">
-					<h5 class="mb-0 mr-8">Proposals</h5>
+					<h5 class="mb-0 mr-8">Propuestas</h5>
 					<v-radio-group
 						v-model="radio_buttons"
 						inline
 						hide-details
 					>
-						<v-radio label="All" class="radios mr-4" :value="1"></v-radio>
-						<v-radio label="Fuctions Calls" class="radios mr-4"	:value="2"></v-radio>
-						<v-radio label="Governance" class="radios mr-4"	:value="3"></v-radio>
-						<v-radio label="Transfers" class="radios mr-4"	:value="4"></v-radio>
-						<v-radio label="Bounties" class="radios mr-4"	:value="5"></v-radio>
-						<v-radio label="Members" class="radios mr-4"	:value="6"></v-radio>
-						<v-radio label="Polls" class="radios mr-4" :value="7"></v-radio>
+						<v-radio label="Todos" class="radios mr-4" :value="1"></v-radio>
+						<v-radio label="Llamadas a Funciones" class="radios mr-4"	:value="2"></v-radio>
+						<v-radio label="Gobernancia" class="radios mr-4"	:value="3"></v-radio>
+						<v-radio label="Transferencias" class="radios mr-4"	:value="4"></v-radio>
+						<v-radio label="Recompensas" class="radios mr-4"	:value="5"></v-radio>
+						<v-radio label="Miembros" class="radios mr-4"	:value="6"></v-radio>
+						<v-radio label="Centro" class="radios mr-4" :value="7"></v-radio>
 					</v-radio-group>
 				</div>
 			</section>
@@ -41,22 +41,22 @@
 				<v-col xl="3" lg="3" md="3" sm="12" cols="12" class="divrow-mobile">
 					<div>
 						<span>
-							Choose a filter
+							Elige un filtro
 						</span>
 						<v-radio-group
 							v-model="radio_buttons2"
 							hide-details
 							class="mb-6"
 						>
-							<v-radio label="All" class="radios mr-4" :value="1"></v-radio>
-							<v-radio label="Active" class="radios mr-4"	:value="2"></v-radio>
-							<v-radio label="Approved" class="radios mr-4"	:value="3"></v-radio>
-							<v-radio label="Popular" class="radios mr-4"	:value="4"></v-radio>
-							<v-radio label="Failed" class="radios mr-4"	:value="5"></v-radio>
+							<v-radio label="Todos" class="radios mr-4" :value="1"></v-radio>
+							<v-radio label="Activas" class="radios mr-4"	:value="2"></v-radio>
+							<v-radio label="Aprobadas" class="radios mr-4"	:value="3"></v-radio>
+							<v-radio label="Populares" class="radios mr-4"	:value="4"></v-radio>
+							<v-radio label="Fallidas" class="radios mr-4"	:value="5"></v-radio>
 						</v-radio-group>
 					</div>
 					<div>
-						<label for="proposer">Filter by proposer</label>
+						<label for="proposer">Filtrar por proponente</label>
 						<v-text-field
 						id="proposer"
 						class="input mt-6 mb-6"
@@ -65,7 +65,7 @@
 						append-inner-icon="mdi-magnify"
 						></v-text-field>
 
-						<label for="categoria">Filter by Categoria</label>
+						<label for="categoria">Filtrar por categoría</label>
 						<v-text-field
 						id="categoria"
 						class="input mt-6 mb-6"
@@ -76,24 +76,40 @@
 					</div>
 				</v-col>
 				<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12">
-					<v-card v-for="(item, index) in cardsProposals" :key="index" class="card-proposals" @click="$router.push('proposals-details')">
+					<v-card v-for="(item, index) in displayedCards" :key="index" class="card-proposals" @click="$router.push('proposals-details')">
 						<div class="side-bar">
 							<v-icon>mdi-tray-arrow-up</v-icon>
 							<span class="font300">
-								Proposals ID: {{ item.proposals_id }}
+								Propuesta ID: {{ item.proposals_id }}
 							</span>
 						</div>
 						<div class="container-data-card">
 							<div class="jspace mobile-col" style="width: 100%; height: max-content;">
 								<div class="divcol">
-									<span class="tstart" style="color: #939393;">Proposals type: {{ item.title_desc }}</span>
+									<span class="tstart" style="color: #939393;">Tipo de Propuesta: {{ item.title_desc }}</span>
 									<div class="divrow mt-1">
 										<h5 style="color: #000;">{{ item.title }}</h5> <v-icon class="ml-2 icon">mdi-link</v-icon>
 									</div>
 								</div>	
 
 								<div class="divcol jend aend mobile-left">
-									<v-icon style="color: #8A5FA4; font-size: 45px;">mdi-dots-horizontal</v-icon>
+									<v-menu location="start">
+										<template v-slot:activator="{ props }">
+											<v-icon v-bind="props" style="color: #8A5FA4; font-size: 45px;">mdi-dots-horizontal</v-icon>
+										</template>
+
+										<v-list>
+											<v-list-item style="max-height: 30px; min-height: 30px;">
+												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-content-copy</v-icon> Copiar Link</v-list-item-title>
+											</v-list-item>
+											<v-list-item style="max-height: 30px; min-height: 30px;">
+												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-twitter</v-icon> Compartir en Twitter</v-list-item-title>
+											</v-list-item>
+											<v-list-item style="max-height: 30px; min-height: 30px;">
+												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-send</v-icon> Compartir en Telegram</v-list-item-title>
+											</v-list-item>
+										</v-list>
+									</v-menu>
 									<span style="color: #8A5FA4;">{{ item.date }}</span>
 								</div>
 							</div>
@@ -102,7 +118,7 @@
 
 							<div class="jspace" style="width: 100%; height: max-content;">
 								<div class="divcol">
-									<span class="tstart" style="color: #939393;">Proposer</span>
+									<span class="tstart" style="color: #939393;">Proponente</span>
 									<span class="tstart" style="color: #000;">{{ item.near_id }}</span>
 									<span class="tstart" style="color: #000;">BGeam</span>
 								</div>
@@ -113,7 +129,7 @@
 							</div>
 
 							<div class="divcol" style="width: 100%; height: max-content;">
-								<span class="tstart" style="color: #939393;">Description</span>
+								<span class="tstart" style="color: #939393;">Descripción</span>
 								<p class="tstart" style="color: #000;">
 									{{ item.desc }}
 								</p>
@@ -123,26 +139,33 @@
 							</div>
 
 							<v-row>
-								<v-col xl="2" lg="2" md="6" cols="6" class="divcol jstart">
-									<span class="tstart" style="color: #939393;">Amount</span>
+								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
+									<span class="tstart" style="color: #939393; font-size: 12px;">Cantidad</span>
 									<div class="divrow jstart acenter" style="color: #000; gap: 8px;">
 										{{ item.amount }} <img src="@/assets/sources/icons/near-icon.svg" alt="Near Icon" style="width: 20px;"> {{ item.currency }}
 									</div>
 								</v-col>
-								<v-col xl="2" lg="2" md="6" cols="6" class="divcol jstart">
-									<span class="tstart" style="color: #939393;">Available Claims</span>
+								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
+									<span class="tstart" style="color: #939393; font-size: 12px;">Reclamaciones disponibles</span>
 									<span class="tstart" style="color: #000;">{{ item.claims }}</span>
 								</v-col>
-								<v-col xl="2" lg="2" md="6" cols="6" class="divcol jstart">
-									<span class="tstart" style="color: #939393;">Time to Complete</span>
+								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
+									<span class="tstart" style="color: #939393; font-size: 12px;">Tiempo para completar</span>
 									<span class="tstart" style="color: #000;">{{ item.time_complete }}</span>
 								</v-col>
-								<v-col cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
+								<v-col xl="3" lg="3" md="6" cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
 									<img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"> {{ item.likes }} <img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"> {{ item.dislikes }}
 								</v-col>
 							</v-row>
 						</div>
 					</v-card>
+
+					<v-pagination
+						v-model="currentPage"
+      			:length="totalPages"
+						:total-visible="5"
+						size="small"
+					></v-pagination>
 				</v-col>
 			</v-row>
     </div>
@@ -154,6 +177,10 @@ import '@/assets/styles/pages/proposals.scss'
 export default {
   data(){
     return{
+			currentPage: 1,
+      cardsPerPage: 3, 
+
+			page: 1,
 			radio_buttons: 1,
 			radio_buttons2: 2,
 
@@ -161,50 +188,134 @@ export default {
 				{
 					proposals_id: 1234,
 					title_desc: 'AddBounty',
-					title: 'Create a Bounty',
-					date: 'Approved at: 31 August 2023',
+					title: 'Crear una recompensa',
+					date: 'Aprobado el: 31 de Agosto de 2023',
 					near_id: 'andresdom.near',
 					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
 					link: 'gov.near.org',
 					amount: 777,
 					currency: 'NEAR',
 					claims: 222,
-					time_complete: '3 Months',
+					time_complete: '3 Meses',
 					likes: 117,
 					dislikes: 15,
 				},
 				{
 					proposals_id: 1235,
-					title_desc: 'Transfer',
-					title: 'Transfer',
-					date: 'Approved at: 31 August 2023',
+					title_desc: 'Transferencias',
+					title: 'Transferencias',
+					date: 'Aprobado el: 31 de Agosto de 2023',
 					near_id: 'andresdom.near',
 					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
 					link: 'gov.near.org',
 					amount: 777,
 					currency: 'NEAR',
 					claims: 222,
-					time_complete: '3 Months',
+					time_complete: '3 Meses',
 					likes: 117,
 					dislikes: 15,
 				},
 				{
-					proposals_id: 1236,
+					proposals_id: 1234,
 					title_desc: 'AddBounty',
-					title: 'Create a Bounty',
-					date: 'Approved at: 31 August 2023',
+					title: 'Crear una recompensa',
+					date: 'Aprobado el: 31 de Agosto de 2023',
 					near_id: 'andresdom.near',
 					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
 					link: 'gov.near.org',
 					amount: 777,
 					currency: 'NEAR',
 					claims: 222,
-					time_complete: '3 Months',
+					time_complete: '3 Meses',
+					likes: 117,
+					dislikes: 15,
+				},
+				{
+					proposals_id: 1235,
+					title_desc: 'Transferencias',
+					title: 'Transferencias',
+					date: 'Aprobado el: 31 de Agosto de 2023',
+					near_id: 'andresdom.near',
+					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
+					link: 'gov.near.org',
+					amount: 777,
+					currency: 'NEAR',
+					claims: 222,
+					time_complete: '3 Meses',
+					likes: 117,
+					dislikes: 15,
+				},{
+					proposals_id: 1234,
+					title_desc: 'AddBounty',
+					title: 'Crear una recompensa',
+					date: 'Aprobado el: 31 de Agosto de 2023',
+					near_id: 'andresdom.near',
+					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
+					link: 'gov.near.org',
+					amount: 777,
+					currency: 'NEAR',
+					claims: 222,
+					time_complete: '3 Meses',
+					likes: 117,
+					dislikes: 15,
+				},
+				{
+					proposals_id: 1235,
+					title_desc: 'Transferencias',
+					title: 'Transferencias',
+					date: 'Aprobado el: 31 de Agosto de 2023',
+					near_id: 'andresdom.near',
+					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
+					link: 'gov.near.org',
+					amount: 777,
+					currency: 'NEAR',
+					claims: 222,
+					time_complete: '3 Meses',
+					likes: 117,
+					dislikes: 15,
+				},{
+					proposals_id: 1234,
+					title_desc: 'AddBounty',
+					title: 'Crear una recompensa',
+					date: 'Aprobado el: 31 de Agosto de 2023',
+					near_id: 'andresdom.near',
+					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
+					link: 'gov.near.org',
+					amount: 777,
+					currency: 'NEAR',
+					claims: 222,
+					time_complete: '3 Meses',
+					likes: 117,
+					dislikes: 15,
+				},
+				{
+					proposals_id: 1235,
+					title_desc: 'Transferencias',
+					title: 'Transferencias',
+					date: 'Aprobado el: 31 de Agosto de 2023',
+					near_id: 'andresdom.near',
+					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
+					link: 'gov.near.org',
+					amount: 777,
+					currency: 'NEAR',
+					claims: 222,
+					time_complete: '3 Meses',
 					likes: 117,
 					dislikes: 15,
 				},
 			]
     }
-  }
+  },
+
+	computed: {
+    totalPages() {
+      return Math.ceil(this.cardsProposals.length / this.cardsPerPage);
+    },
+    displayedCards() {
+      const startIndex = (this.currentPage - 1) * this.cardsPerPage;
+      const endIndex = startIndex + this.cardsPerPage;
+      return this.cardsProposals.slice(startIndex, endIndex);
+    },
+  },
 }
 </script>
