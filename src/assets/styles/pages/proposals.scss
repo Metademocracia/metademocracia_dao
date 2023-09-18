@@ -67,6 +67,10 @@
 			width: 100%;
 			padding-block: 30px;
 
+			@include media(max, 960px){
+				justify-content: space-between;
+			}
+
 			.radios{
 				*{
 					color: #DB107C!important; 
@@ -75,6 +79,10 @@
 				label{
 					color: #fff!important;
 					opacity: 1!important;
+
+					@include media(max, 960px){
+						font-size: 12px!important;
+					}
 				}
 			}
 
@@ -137,34 +145,6 @@
 				font-size: 13px;
 			}
 		}
-	
-		.mdi-radiobox-blank{
-				background-color: transparent;
-				border: 0px solid red;
-				border-radius: 50%;
-				width: 15px !important;
-				height: 15px !important;
-				margin-top: 2px;
-				margin-right: 2px;
-		}
-		.mdi-radiobox-marked{
-			border: 1px solid #DB107C;
-			background-color: #DB107C;
-			border-radius: 50%;
-			position: relative;
-			width: 20px !important;
-			height: 20px !important;
-			margin-top: 0px;
-			margin-right: 0px;
-		}
-		.mdi-radiobox-marked::before{
-			background-color: #DB107C;
-			border-radius: 50%;
-			width: 20px !important;
-			height: 20px !important;
-			content: " ";
-		}
-
 		.input{
 			height: 45px!important;
 			max-height: 45px!important;
@@ -318,3 +298,58 @@
 }
 
 
+.mdi-radiobox-blank{
+	background-color: transparent;
+	border: 0px solid red;
+	border-radius: 50%;
+	width: 15px !important;
+	height: 15px !important;
+	margin-top: 2px;
+	margin-right: 2px;
+}
+.mdi-radiobox-marked{
+border: 1px solid #DB107C;
+background-color: #DB107C;
+border-radius: 50%;
+position: relative;
+width: 20px !important;
+height: 20px !important;
+margin-top: 0px;
+margin-right: 0px;
+}
+.mdi-radiobox-marked::before{
+background-color: #DB107C;
+border-radius: 50%;
+width: 20px !important;
+height: 20px !important;
+content: " ";
+}
+
+
+.radios label{
+	color: #000!important;
+	opacity: 1!important;
+	min-width: max-content;
+
+	@include media(max, 960px){
+		font-size: 12px!important;
+	}
+}
+
+
+
+//////////////////// Global Classes //////////////////////////
+
+
+.delete-mobile{
+	@include media(max, 960px){
+		display: none;
+	}
+}
+
+.show-mobile{
+	display: none;
+	@include media(max, 960px){
+		display: block;
+	}
+}

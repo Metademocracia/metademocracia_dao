@@ -38,7 +38,7 @@
 
     
     <div class="center divrow delete-mobile" style="gap: 15px; margin-left: 140px">
-      <span v-for="(item, index) in dataNavbar" :key="index" style="color: #fff; cursor: pointer;" @click="$router.push(item.link)">
+      <span v-for="(item, index) in dataNavbar" :key="index" style="color: #fff; cursor: pointer; font-weight: 700!important;" @click="$router.push(item.link)">
         <v-icon color="white mr-1">{{ item.icon }}</v-icon> {{ item.name }}
       </span>
     </div>
@@ -228,6 +228,7 @@ export default {
 
     .card-dialog{
       padding: 25px;
+      padding-block: 20px!important;
       background-image: linear-gradient(135deg, #8A5FA4 30%, #62C3D7 80%)!important;
       width: 60%;
 
@@ -242,6 +243,7 @@ export default {
         align-items: center;
         flex-direction: column;
         padding: 20px;
+        padding-block: 30px;
         color: #fff;
         border-radius: 10px;
         position: relative;
@@ -292,7 +294,8 @@ export default {
 
   .text-a-menu{
     --fs: 20px!important;
-    --fw: 500;
+    --fw: 700;
+    font-weight: 700!important;
     color: #fff;
   }
 }

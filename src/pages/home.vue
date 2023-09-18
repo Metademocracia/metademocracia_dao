@@ -20,7 +20,7 @@
       <div class="member-container">
         <div class="divrow center mobile-div-member" style="gap: 20px;">
           <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;" class="member-img">
-          <span>
+          <span style="font-weight: 700!important;">
             Miembros <br> <span style="font-size: 1.5rem;">{{ members }}</span>
           </span>
         </div>
@@ -33,7 +33,7 @@
            flat
            class="input-search"
           ></v-text-field>
-          <v-btn class="btn-donar">Donar</v-btn>
+          <v-btn class="btn-donar" style="font-weight: 700!important;">Donar</v-btn>
         </div>
 
         <div class="divrow center" style="gap: 20px;">
@@ -45,7 +45,7 @@
 
       <hr class="mt-8 mb-8" style="width: 100%; border-bottom: 1px solid #fff;">
 
-      <span class="tcenter font300 mb-8">
+      <span class="tcenter mb-8">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc volutpat ligula orci, ac imperdiet tortor cursus vitae. Nunc fringilla lacus vel tempus ultrices. Nulla facilisi. Donec rutrum posuere sollicitudin. Donec et quam sit amet mauris gravida volutpat. Sed volutpat dignissim nibh vitae interdum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed congue 
       </span>
     </section>
@@ -54,7 +54,7 @@
       <v-col xl="8" lg="8" md="8" cols="12">
         <div class="wrapper-chart">
           <div class="jspace acenter mobile-col mb-8" style="width: 100%;">
-            <h5>
+            <h5 style="font-weight: 700!important;">
               Fondos DAO
             </h5>
 
@@ -90,8 +90,8 @@
         <div class="container-multiple-charts">
           <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
-              <span>
-                Fundos DAO
+              <span style="font-weight: 700!important;">
+                Fondos DAO
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
@@ -103,7 +103,7 @@
 
           <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
-              <span>
+              <span style="font-weight: 700!important;">
                 Recompensas
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
@@ -116,7 +116,7 @@
 
           <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
-              <span>
+              <span style="font-weight: 700!important;">
                 NFTs
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
@@ -129,7 +129,7 @@
 
           <v-card class="double-card-charts">
             <div class="jspace" style="width: 100%;">
-              <span>
+              <span style="font-weight: 700!important;">
                 Propuestas Activas
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
@@ -139,7 +139,7 @@
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
             <div class="jspace" style="width: 100%;">
-              <span>
+              <span style="font-weight: 700!important;">
                 Propuestas Totales
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
@@ -311,7 +311,7 @@ function anything() {
     component: ToastTitle,
     props: {
       title: "Do anything",
-      desc: "powered by detextre4"
+      desc: "powered by CR7"
     }
   })
 }

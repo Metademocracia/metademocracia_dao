@@ -16,7 +16,7 @@
       </div>
 
       <div class="divrow center" style="gap: 15px;">
-        <a v-for="(item,index) in dataFooter" :href="item.link" :key="index" style="color: #fff;">{{ item.name }}</a>
+        <a v-for="(item,index) in dataFooter" :href="item.link" :key="index" style="color: #fff; font-weight: 700;">{{ item.name }}</a>
       </div>
     </div>
 

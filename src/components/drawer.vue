@@ -21,7 +21,7 @@
       <div class="flex-acenter my-3 text-white" style="gap: 10px">
         <v-avatar image="@/assets/sources/images/avatar.png" alt="avatar" />
 
-        <h6 class="mb-0">¡Hola detextre4!</h6>
+        <h6 class="mb-0">¡Hola!</h6>
       </div>
 
       <v-list-item

@@ -17,12 +17,13 @@
 			</section>
 
 			<section class="section2-proposals center">
-				<div class="container-radios divrow acenter col-mobile">
+				<div class="container-radios divrow acenter">
 					<h5 class="mb-0 mr-8">Propuestas</h5>
 					<v-radio-group
 						v-model="radio_buttons"
 						inline
 						hide-details
+						class="delete-mobile"
 					>
 						<v-radio label="Todos" class="radios mr-4" :value="1"></v-radio>
 						<v-radio label="Llamadas a Funciones" class="radios mr-4"	:value="2"></v-radio>
@@ -32,6 +33,31 @@
 						<v-radio label="Miembros" class="radios mr-4"	:value="6"></v-radio>
 						<v-radio label="Centro" class="radios mr-4" :value="7"></v-radio>
 					</v-radio-group>
+
+					<div class="divrow center" style="gap: 10px; min-width: max-content!important;">
+						<h6 class="mb-0">{{ itemSelected }}</h6>
+						<v-menu location="start">
+							<template v-slot:activator="{ props }">
+								<v-icon v-bind="props" size="x-large" class="show-mobile" style="margin-top: -5px;">mdi-filter-variant</v-icon>
+							</template>
+							<v-list>
+								<v-list-item>
+									<v-radio-group
+										v-model="itemSelected"
+										hide-details
+									>
+										<v-radio label="Todos" class="radios mr-4" :value="'Todos'"></v-radio>
+										<v-radio label="Llamadas a Funciones" class="radios mr-4"	:value="'Llamadas a Funciones'"></v-radio>
+										<v-radio label="Gobernancia" class="radios mr-4"	:value="'Gobernancia'"></v-radio>
+										<v-radio label="Transferencias" class="radios mr-4"	:value="'Transferencias'"></v-radio>
+										<v-radio label="Recompensas" class="radios mr-4"	:value="'Recompensas'"></v-radio>
+										<v-radio label="Miembros" class="radios mr-4"	:value="'Miembros'"></v-radio>
+										<v-radio label="Centro" class="radios mr-4" :value="'Centro'"></v-radio>
+									</v-radio-group>
+								</v-list-item>
+							</v-list>
+						</v-menu>
+					</div>
 				</div>
 			</section>
 
@@ -39,7 +65,7 @@
 			
 			<v-row style="width: 100%;" class="radio-side-container">
 				<v-col xl="3" lg="3" md="3" sm="12" cols="12" class="divrow-mobile">
-					<div>
+					<div class="delete-mobile">
 						<span>
 							Elige un filtro
 						</span>
@@ -73,6 +99,29 @@
 						placeholder="Lorem Ipsum"
 						append-inner-icon="mdi-magnify"
 						></v-text-field>
+					</div>
+
+					<div class="show-mobile divrow" style="gap: 8px; display: flex;">
+						<h6 class="mb-0 mr-0" style="max-width: max-content;">{{ filterSelected }}</h6>
+						<v-menu location="start">
+							<template v-slot:activator="{ props }">
+								<v-icon v-bind="props" size="x-large" class="show-mobile" style="margin-top: -5px;">mdi-filter-variant</v-icon>
+							</template>
+							<v-list>
+								<v-list-item>
+									<v-radio-group
+										v-model="filterSelected"
+										hide-details
+									>
+										<v-radio label="Todos" class="radios mr-4" :value="'Todos'"></v-radio>
+										<v-radio label="Activas" class="radios mr-4"	:value="'Activas'"></v-radio>
+										<v-radio label="Aprobadas" class="radios mr-4"	:value="'Aprobadas'"></v-radio>
+										<v-radio label="Populares" class="radios mr-4"	:value="'Populares'"></v-radio>
+										<v-radio label="Fallidas" class="radios mr-4"	:value="'Fallidas'"></v-radio>
+									</v-radio-group>
+								</v-list-item>
+							</v-list>
+						</v-menu>
 					</div>
 				</v-col>
 				<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12">
@@ -181,8 +230,11 @@ export default {
       cardsPerPage: 3, 
 
 			page: 1,
-			radio_buttons: 1,
+			radio_buttons: null,
 			radio_buttons2: 2,
+
+			itemSelected: '',
+			filterSelected: '',
 
 			cardsProposals:[
 				{
