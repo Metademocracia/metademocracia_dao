@@ -53,7 +53,7 @@ export default defineConfig((userConfig) => {
       ],
     },
     server: {
-      port: 3002,
+      port: 3000,
     },
   }
 })

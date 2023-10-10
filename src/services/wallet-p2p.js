@@ -1,4 +1,4 @@
-const _routeWallet = "http://localhost:8000/wallet-p2p";
+const _routeWallet = env.ROUTER_WALLET
 
 
 function login (contract) {

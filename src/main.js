@@ -1,8 +1,8 @@
 // styles
-import '@/assets/styles/Main.scss'
+import '@/assets/styles/main.scss'
 
 // Components
-import App from './app.vue'
+import App from './App.vue'
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
 import { DefaultApolloClient } from '@vue/apollo-composable'
 
