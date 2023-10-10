@@ -1,4 +1,4 @@
-const _routeWallet = env.ROUTER_WALLET
+const _routeWallet = process.env.ROUTER_WALLET
 
 
 function login (contract) {
