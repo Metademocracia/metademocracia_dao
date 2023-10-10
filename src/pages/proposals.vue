@@ -62,7 +62,7 @@
 			</section>
 
 			<hr style="width: 100%; border-bottom: 1px solid rgba(255,255,255,0.4); height: 1px;">
-			
+
 			<v-row style="width: 100%;" class="radio-side-container">
 				<v-col xl="3" lg="3" md="3" sm="12" cols="12" class="divrow-mobile">
 					<div class="delete-mobile">
@@ -124,6 +124,8 @@
 						</v-menu>
 					</div>
 				</v-col>
+
+
 				<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12">
 					<v-card v-for="(item, index) in displayedCards" :key="index" class="card-proposals" @click="$router.push('proposals-details')">
 						<div class="side-bar">
@@ -139,7 +141,7 @@
 									<div class="divrow mt-1">
 										<h5 style="color: #000;">{{ item.title }}</h5> <v-icon class="ml-2 icon">mdi-link</v-icon>
 									</div>
-								</div>	
+								</div>
 
 								<div class="divcol jend aend mobile-left">
 									<v-menu location="start">
@@ -169,11 +171,11 @@
 								<div class="divcol">
 									<span class="tstart" style="color: #939393;">Proponente</span>
 									<span class="tstart" style="color: #000;">{{ item.near_id }}</span>
-									<span class="tstart" style="color: #000;">BGeam</span>
+									<!--<span class="tstart" style="color: #000;">BGeam</span>-->
 								</div>
 
 								<div class="mr-10 no-margin">
-									<img src="@/assets/sources/images/approved.svg" alt="Approved" class="aprroved-failed-img">
+									<img v-if="item.date" src="@/assets/sources/images/approved.svg" alt="Approved" class="aprroved-failed-img">
 								</div>
 							</div>
 
@@ -195,15 +197,16 @@
 									</div>
 								</v-col>
 								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
-									<span class="tstart" style="color: #939393; font-size: 12px;">Reclamaciones disponibles</span>
-									<span class="tstart" style="color: #000;">{{ item.claims }}</span>
+									<!--<span class="tstart" style="color: #939393; font-size: 12px;">Reclamaciones disponibles</span>
+									<span class="tstart" style="color: #000;">{{ item.claims }}</span>-->
 								</v-col>
 								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
 									<span class="tstart" style="color: #939393; font-size: 12px;">Tiempo para completar</span>
 									<span class="tstart" style="color: #000;">{{ item.time_complete }}</span>
 								</v-col>
 								<v-col xl="3" lg="3" md="6" cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
-									<img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"> {{ item.likes }} <img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"> {{ item.dislikes }}
+									<img @click.stop="upvote(item.proposals_id)" src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"> {{ item.likes }}
+                  <img @click.stop="downvote(item.proposals_id)" src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"> {{ item.dislikes }}
 								</v-col>
 							</v-row>
 						</div>
@@ -221,13 +224,43 @@
 </template>
 
 <script>
-import '@/assets/styles/pages/proposals.scss'
+import '@/assets/styles/pages/proposals.scss';
+import { initOnLoad } from 'apexcharts';
+import gql from 'graphql-tag';
+import { useQuery } from '@vue/apollo-composable';
+import WalletP2p from '../services/wallet-p2p';
+import { ref } from 'vue';
+
+const QUERY = gql`
+  query Proposals {
+    proposals(orderBy: creation_date, orderDirection: desc) {
+      approval_date
+      creation_date
+      description
+      downvote
+      id
+      kind
+      link
+      proposal_type
+      proposer
+      status
+      submission_time
+      title
+      upvote
+      user_creation
+    }
+  }
+`;
 
 export default {
-  data(){
+  setup(){
+    const { result, loading,  error } = useQuery(QUERY);
     return{
+      result,
+      loading,
+      error,
 			currentPage: 1,
-      cardsPerPage: 3, 
+      cardsPerPage: 3,
 
 			page: 1,
 			radio_buttons: null,
@@ -236,10 +269,10 @@ export default {
 			itemSelected: '',
 			filterSelected: '',
 
-			cardsProposals:[
+			cardsProposals: ref([/*
 				{
 					proposals_id: 1234,
-					title_desc: 'AddBounty',
+					title_desc: 'AddBounty2',
 					title: 'Crear una recompensa',
 					date: 'Aprobado el: 31 de Agosto de 2023',
 					near_id: 'andresdom.near',
@@ -266,107 +299,109 @@ export default {
 					time_complete: '3 Meses',
 					likes: 117,
 					dislikes: 15,
-				},
-				{
-					proposals_id: 1234,
-					title_desc: 'AddBounty',
-					title: 'Crear una recompensa',
-					date: 'Aprobado el: 31 de Agosto de 2023',
-					near_id: 'andresdom.near',
-					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
-					link: 'gov.near.org',
-					amount: 777,
-					currency: 'NEAR',
-					claims: 222,
-					time_complete: '3 Meses',
-					likes: 117,
-					dislikes: 15,
-				},
-				{
-					proposals_id: 1235,
-					title_desc: 'Transferencias',
-					title: 'Transferencias',
-					date: 'Aprobado el: 31 de Agosto de 2023',
-					near_id: 'andresdom.near',
-					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
-					link: 'gov.near.org',
-					amount: 777,
-					currency: 'NEAR',
-					claims: 222,
-					time_complete: '3 Meses',
-					likes: 117,
-					dislikes: 15,
-				},{
-					proposals_id: 1234,
-					title_desc: 'AddBounty',
-					title: 'Crear una recompensa',
-					date: 'Aprobado el: 31 de Agosto de 2023',
-					near_id: 'andresdom.near',
-					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
-					link: 'gov.near.org',
-					amount: 777,
-					currency: 'NEAR',
-					claims: 222,
-					time_complete: '3 Meses',
-					likes: 117,
-					dislikes: 15,
-				},
-				{
-					proposals_id: 1235,
-					title_desc: 'Transferencias',
-					title: 'Transferencias',
-					date: 'Aprobado el: 31 de Agosto de 2023',
-					near_id: 'andresdom.near',
-					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
-					link: 'gov.near.org',
-					amount: 777,
-					currency: 'NEAR',
-					claims: 222,
-					time_complete: '3 Meses',
-					likes: 117,
-					dislikes: 15,
-				},{
-					proposals_id: 1234,
-					title_desc: 'AddBounty',
-					title: 'Crear una recompensa',
-					date: 'Aprobado el: 31 de Agosto de 2023',
-					near_id: 'andresdom.near',
-					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
-					link: 'gov.near.org',
-					amount: 777,
-					currency: 'NEAR',
-					claims: 222,
-					time_complete: '3 Meses',
-					likes: 117,
-					dislikes: 15,
-				},
-				{
-					proposals_id: 1235,
-					title_desc: 'Transferencias',
-					title: 'Transferencias',
-					date: 'Aprobado el: 31 de Agosto de 2023',
-					near_id: 'andresdom.near',
-					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
-					link: 'gov.near.org',
-					amount: 777,
-					currency: 'NEAR',
-					claims: 222,
-					time_complete: '3 Meses',
-					likes: 117,
-					dislikes: 15,
-				},
-			]
+				},*/
+			])
     }
+  },
+
+  mounted() {
+    // this.initProposal();
   },
 
 	computed: {
     totalPages() {
-      return Math.ceil(this.cardsProposals.length / this.cardsPerPage);
+      if(this.result) {
+        const cardsProposals = this.result.proposals;
+        return Math.ceil(cardsProposals.length / this.cardsPerPage);
+      } else {
+        return Math.ceil(0 / this.cardsPerPage)
+      }
     },
     displayedCards() {
-      const startIndex = (this.currentPage - 1) * this.cardsPerPage;
-      const endIndex = startIndex + this.cardsPerPage;
-      return this.cardsProposals.slice(startIndex, endIndex);
+      if(this.result) {
+        console.log("result: ", this.result);
+        const cardsProposals = this.result.proposals.map((item) => {
+          console.log("item.approval_date: ", item.approval_date);
+          return {
+            proposals_id: item.id,
+            title_desc: item.proposal_type,
+            title: item.title,
+            date: item.approval_date, //  'Aprobado el: 31 de Agosto de 2023',
+            near_id: item.proposer,
+            desc: item.description,
+            link: item.link,
+            amount: 0,
+            currency: '',
+            time_complete: '7 Días',
+            likes: 0,
+            dislikes: 0,
+          }
+        });
+        const startIndex = (this.currentPage - 1) * this.cardsPerPage;
+        const endIndex = startIndex + this.cardsPerPage;
+        return cardsProposals.slice(startIndex, endIndex);
+      } else {
+        return [];
+      }
+    },
+  },
+
+  methods: {
+    upvote(id) {
+      console.log(id);
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "update_proposal",
+        args: {
+          id: Number(id),
+          action: "VoteApprove"
+        },
+        gas: "300000000000000"
+      };
+
+      WalletP2p.call(json);
+    },
+    downvote(id) {
+      console.log(id);
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "update_proposal",
+        args: {
+          id: Number(id),
+          action: "VoteReject"
+        },
+        gas: "300000000000000"
+      };
+
+      WalletP2p.call(json);
+    },
+    async initProposal() {
+      const { result, loading,  error } = useQuery(QUERY);
+      const value = await result;
+
+      console.log("loading: ", await loading);
+      console.log("error: ", await error);
+      console.log("result: ", await value._value.proposals);
+
+      this.cardsProposals = value._value.proposals.map((item) => {
+        return {
+					proposals_id: item.id,
+					title_desc: item.proposal_type,
+					title: item.title,
+					date: item.approval_date, //  'Aprobado el: 31 de Agosto de 2023',
+					near_id: item.proposer,
+					desc: item.description,
+					link: item.link,
+					amount: 0,
+					currency: '',
+					time_complete: '7 Días',
+					likes: 0,
+					dislikes: 0,
+				}
+      });
+
+
+      console.log("aqui paso");
     },
   },
 }

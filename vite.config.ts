@@ -16,7 +16,7 @@ export default defineConfig((userConfig) => {
   return {
     base: baseUrl,
     plugins: [
-      vue({ 
+      vue({
         template: { transformAssetUrls }
       }),
       // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
@@ -30,6 +30,9 @@ export default defineConfig((userConfig) => {
         BASE_URL: baseUrl,
         API_URL: env.VITE_API_URL,
         RECAPTCHA_SITE_KEY: env.VITE_RECAPTCHA_SITE_KEY,
+        DOMAIN_WEB: env.DOMAIN_WEB,
+        NETWORK: env.NETWORK,
+        CONTRACT_NFT: env.CONTRACT_NFT,
       },
       __VUE_I18N_FULL_INSTALL__: true,
       __VUE_I18N_LEGACY_API__: false,
@@ -50,7 +53,7 @@ export default defineConfig((userConfig) => {
       ],
     },
     server: {
-      port: 3000,
+      port: 3002,
     },
   }
 })

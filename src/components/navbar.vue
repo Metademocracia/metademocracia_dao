@@ -8,8 +8,8 @@
 
       >
         <div class="divcol center relative">
-          <v-icon 
-          color="#fff" large 
+          <v-icon
+          color="#fff" large
           style="position:absolute;top: 0px; right: 0px; border-radius: 50%; border: 3px solid var(--primary);"
           @click="menuToggle = false"
           >
@@ -36,7 +36,7 @@
       <img src="@/assets/sources/logos/white-logo.svg" alt="Logo">
     </div>
 
-    
+
     <div class="center divrow delete-mobile" style="gap: 15px; margin-left: 140px">
       <span v-for="(item, index) in dataNavbar" :key="index" style="color: #fff; cursor: pointer; font-weight: 700!important;" @click="$router.push(item.link)">
         <v-icon color="white mr-1">{{ item.icon }}</v-icon> {{ item.name }}
@@ -55,7 +55,8 @@
         hide-details
         style="color: white;"
       ></v-select>
-      <v-btn class="btn" @click="dialogConnect = true">Conectar Wallet</v-btn>
+      <v-btn class="btn" @click="login('near')">{{ titleBtnLogin }}</v-btn>
+      <!--<v-btn class="btn" @click="dialogConnect = true">Conectar Wallet</v-btn>-->
     </div>
 
     <v-btn class="btn show-mobile" style="width: 50px!important; height: 50px!important;" @click="menuToggle = true">
@@ -67,17 +68,17 @@
         <div class="div-card">
           <v-icon @click="dialogConnect = false, obtenWallet = false" style="cursor: pointer;position: absolute; top: 10px; right: 10px;">mdi-close</v-icon>
 
-          <h5>Conecta tu Wallet</h5>
+          <h5>Cerrar sessión</h5>
 
-          <div class="divrow center wrap mt-8 mb-8" style="gap: 15px;">
-            <v-sheet class="sheet-dialog">
+          <!--<div class="divrow center wrap mt-8 mb-8" style="gap: 15px;">
+            <v-sheet class="sheet-dialog" @click="login('near')">
               <img src="@/assets/sources/icons/near-wallet-icon.svg" alt="Near" style="max-width: 25px;">
               <span>
                 NEAR Wallet
               </span>
             </v-sheet>
 
-            <v-sheet class="sheet-dialog">
+            <v-sheet class="sheet-dialog" @click="login('near')">
               <img src="@/assets/sources/icons/my-near-wallet-icon.svg" alt="My Near" style="max-width: 25px;">
               <span>
                 MyNear Wallet
@@ -91,7 +92,7 @@
               </span>
             </v-sheet>
 
-            <v-sheet class="sheet-dialog">
+            <v-sheet class="sheet-dialog" @click="login('near')">
               <img src="@/assets/sources/icons/meteor-wallet-icon.svg" alt="Meteor" style="max-width: 25px;">
               <span>
                 Meteor Wallet
@@ -99,11 +100,11 @@
             </v-sheet>
           </div>
 
-          <hr style="width: 80%; background-color: rgba(255,255,255, 0.6); height: 2px;">
+          <hr style="width: 80%; background-color: rgba(255,255,255, 0.6); height: 2px;">-->
 
-          <v-btn class="btn mt-8 mb-8" @click="obtenWallet = true">Obtén tu Wallet</v-btn>
+          <v-btn class="btn mt-8 mb-8" @click="logout">Logout</v-btn>
 
-          <template v-if="obtenWallet == true">
+          <!--<template v-if="obtenWallet == true">
             <div class="divrow center wrap mt-8 mb-8" style="gap: 15px;">
               <v-sheet class="sheet-dialog">
                 <v-icon class="icon">mdi-link</v-icon>
@@ -149,7 +150,7 @@
                 </span>
               </v-sheet>
             </div>
-          </template>
+          </template>-->
         </div>
       </v-card>
     </v-dialog>
@@ -157,22 +158,76 @@
 </template>
 
 <script>
+
+import { useWindowScroll } from '@vueuse/core';
 import { ref } from 'vue';
+import WalletP2p from '../services/wallet-p2p';
+
 
 export default {
-  data(){
+  setup(){
     return{
       menuToggle: false,
       selectedLang: 'ES',
-      dialogConnect: false,
+      dialogConnect: ref(false),
       obtenWallet: false,
       dataNavbar: [
        { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
        { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
        { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' }
-      ]
+      ],
+      titleBtnLogin: ref("Conectar Wallet"),
     }
   },
+  computed: {
+
+  },
+  mounted() {
+    this.verifySession();
+  },
+  methods: {
+    verifySession(){
+      let wallet = localStorage.getItem("session");
+
+      if(wallet) {
+        this.initSession(wallet)
+        return
+      }
+
+      const valores = window.location.search;
+      const urlParams = new URLSearchParams(valores);
+      var token = urlParams.get('token');
+
+      console.log("valores: ", token)
+
+      if(!token) return
+
+      wallet = JSON.parse(window.atob(token)).wallet
+      localStorage.setItem("session", wallet)
+      this.initSession(wallet)
+    },
+
+    initSession(wallet) {
+      const wallet_final = wallet.length > 20 ? wallet.substring(0,6)+"..."+wallet.substring((wallet.length - process.env.NETWORK.length - 7), wallet.length) : wallet;
+      this.titleBtnLogin = wallet_final;
+    },
+
+    login() {
+      if(localStorage.getItem("session")) {
+        this.dialogConnect = true
+
+        return
+      }
+      WalletP2p.login(process.env.CONTRACT_NFT);
+
+    },
+
+    logout() {
+      localStorage.removeItem("session")
+      this.titleBtnLogin = "Conectar Wallet";
+      this.dialogConnect = false;
+    }
+  }
 }
 
 </script>
