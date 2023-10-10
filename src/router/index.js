@@ -60,6 +60,19 @@ const routes = [
     ],
   },
 
+  {
+    path: '/create-proposals',
+    component: () => import('@/layouts/default-layout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Create Proposal',
+        component: () => import('@/pages/create-proposals.vue'), 
+        meta: { head: `Create Proposal - ${DEFAULT_TITLE}` }
+      },
+    ],
+  },
+
 
   // ? No Authenticated routes
   {
