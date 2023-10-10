@@ -23,7 +23,7 @@
         </div>
 
         <v-row class="mt-6">
-          <v-col cols="12" class="col-select">  
+          <v-col cols="12" class="col-select">
             <label for="tipo_propuesta">Tipo de Propuesta</label>
             <v-select
               v-model="tipo_propuesta"
@@ -38,186 +38,186 @@
               hide-details
             ></v-select>
           </v-col>
-          <v-col xl="6" lg="6" md="6" cols="12">  
+          <v-col xl="6" lg="6" md="6" cols="12">
             <label for="titulo_propuesta">Titulo de Propuesta</label>
             <v-text-field
-            id="titulo_propuesta" class="input" variant="outlined" 
+            id="titulo_propuesta" class="input" variant="outlined"
             elevation="1" placeholder="Titulo de Propuesta"
             ></v-text-field>
           </v-col>
-          <v-col xl="6" lg="6" md="6" cols="12">  
+          <v-col xl="6" lg="6" md="6" cols="12">
             <label for="proponente">Proponente</label>
             <v-text-field
-            id="proponente" class="input" variant="outlined" 
+            id="proponente" class="input" variant="outlined"
             elevation="1" placeholder="andresdom.near"
             ></v-text-field>
           </v-col>
-          <v-col xl="6" lg="6" md="6" cols="12">  
+          <v-col xl="6" lg="6" md="6" cols="12">
             <label for="descripcion">Descripción</label>
             <v-text-field
-            id="descripcion" class="input" variant="outlined" 
+            id="descripcion" class="input" variant="outlined"
             elevation="1" placeholder="Descripción"
             ></v-text-field>
           </v-col>
-          <v-col xl="6" lg="6" md="6" cols="12">  
+          <v-col xl="6" lg="6" md="6" cols="12">
             <label for="link">Link</label>
             <v-text-field
-            id="link" class="input" variant="outlined" 
+            id="link" class="input" variant="outlined"
             elevation="1" placeholder="Descripción"
             ></v-text-field>
           </v-col>
-          <v-col v-if="tipo_propuesta === 'Cambiar política'" xl="6" lg="6" md="6" cols="12">  
+          <v-col v-if="tipo_propuesta === 'Cambiar política'" xl="6" lg="6" md="6" cols="12">
             <label for="política">Política</label>
             <v-text-field
-            id="política" class="input" variant="outlined" 
+            id="política" class="input" variant="outlined"
             elevation="1" placeholder="Política"
             ></v-text-field>
           </v-col>
 
           <template v-if="tipo_propuesta === 'Agregar miembro del grupo'">
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="group_id">ID de Grupo</label>
               <v-text-field
-              id="group_id" class="input" variant="outlined" 
+              id="group_id" class="input" variant="outlined"
               elevation="1" placeholder="#123456"
               ></v-text-field>
             </v-col>
 
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="member_id">ID de Miembro</label>
               <v-text-field
-              id="member_id" class="input" variant="outlined" 
+              id="member_id" class="input" variant="outlined"
               elevation="1" placeholder="#123456"
               ></v-text-field>
             </v-col>
           </template>
 
           <template v-if="tipo_propuesta === 'Eliminar miembro del grupo'">
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="group_id">ID de Grupo</label>
               <v-text-field
-              id="group_id" class="input" variant="outlined" 
+              id="group_id" class="input" variant="outlined"
               elevation="1" placeholder="#123456"
               ></v-text-field>
             </v-col>
 
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="member_id">ID de Miembro</label>
               <v-text-field
-              id="member_id" class="input" variant="outlined" 
+              id="member_id" class="input" variant="outlined"
               elevation="1" placeholder="#123456"
               ></v-text-field>
             </v-col>
           </template>
 
           <template v-if="tipo_propuesta === 'Llamada de función'">
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="receiver_id">ID de Receptor</label>
               <v-text-field
-              id="receiver_id" class="input" variant="outlined" 
+              id="receiver_id" class="input" variant="outlined"
               elevation="1" placeholder="#123456"
               ></v-text-field>
             </v-col>
 
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="actions">Accion</label>
               <v-text-field
-              id="actions" class="input" variant="outlined" 
+              id="actions" class="input" variant="outlined"
               elevation="1" placeholder="actions"
               ></v-text-field>
             </v-col>
           </template>
 
           <template v-if="tipo_propuesta === 'Transferencia'">
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="token_id">ID de Token</label>
               <v-text-field
-              id="token_id" class="input" variant="outlined" 
+              id="token_id" class="input" variant="outlined"
               elevation="1" placeholder="#123456"
               ></v-text-field>
             </v-col>
 
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="receiver_id">ID de Receptor</label>
               <v-text-field
-              id="receiver_id" class="input" variant="outlined" 
+              id="receiver_id" class="input" variant="outlined"
               elevation="1" placeholder="#123456"
               ></v-text-field>
             </v-col>
 
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="amount">Cantidad</label>
               <v-text-field
-              id="amount" class="input" variant="outlined" 
+              id="amount" class="input" variant="outlined"
               elevation="1" placeholder="0.00"
               ></v-text-field>
             </v-col>
 
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="msg">Mensaje</label>
               <v-text-field
-              id="msg" class="input" variant="outlined" 
+              id="msg" class="input" variant="outlined"
               elevation="1" placeholder="Texto de ejemplo"
               ></v-text-field>
             </v-col>
           </template>
 
           <template v-if="tipo_propuesta === 'Cambiar política agregar o actualizar rol'">
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="rol_name">Nombre de Rol</label>
               <v-text-field
-              id="rol_name" class="input" variant="outlined" 
+              id="rol_name" class="input" variant="outlined"
               elevation="1" placeholder="Nombre de Rol"
               ></v-text-field>
             </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="rol">Rol</label>
               <v-text-field
-              id="rol" class="input" variant="outlined" 
+              id="rol" class="input" variant="outlined"
               elevation="1" placeholder="Rol"
               ></v-text-field>
             </v-col>
           </template>
 
           <template v-if="tipo_propuesta === 'Cambiar política eliminar rol'">
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="rol_name">Nombre de Rol</label>
               <v-text-field
-              id="rol_name" class="input" variant="outlined" 
+              id="rol_name" class="input" variant="outlined"
               elevation="1" placeholder="Nombre de Rol"
               ></v-text-field>
             </v-col>
           </template>
 
           <template v-if="tipo_propuesta === 'Cambiar política actualizar política de votación'">
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="proposal_kind">Tipo de Propuesta</label>
               <v-text-field
-              id="proposal_kind" class="input" variant="outlined" 
+              id="proposal_kind" class="input" variant="outlined"
               elevation="1" placeholder="Tipo de Propuesta"
               ></v-text-field>
             </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="vote_policy">Política de voto</label>
               <v-text-field
-              id="vote_policy" class="input" variant="outlined" 
+              id="vote_policy" class="input" variant="outlined"
               elevation="1" placeholder="Tipo de Propuesta"
               ></v-text-field>
             </v-col>
           </template>
 
           <template v-if="tipo_propuesta === 'Cambiar los parámetros de actualización de políticas'">
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="proposal_kind">Tipo de Propuesta</label>
               <v-text-field
-              id="proposal_kind" class="input" variant="outlined" 
+              id="proposal_kind" class="input" variant="outlined"
               elevation="1" placeholder="Tipo de Propuesta"
               ></v-text-field>
             </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">  
+            <v-col xl="6" lg="6" md="6" cols="12">
               <label for="parameters">Parámetros</label>
               <v-text-field
-              id="parameters" class="input" variant="outlined" 
+              id="parameters" class="input" variant="outlined"
               elevation="1" placeholder="Parámetros"
               ></v-text-field>
             </v-col>
@@ -241,11 +241,11 @@ export default{
   data(){
     return{
       itemsTipoPropuesta:[
-        'Cambiar política', 
-        'Agregar miembro del grupo', 
-        'Eliminar miembro del grupo', 
-        'Llamada de función', 
-        'Transferencia', 
+        'Cambiar política',
+        'Agregar miembro del grupo',
+        'Eliminar miembro del grupo',
+        'Llamada de función',
+        'Transferencia',
         'Cambiar política agregar o actualizar rol',
         'Cambiar política eliminar rol',
         'Cambiar política actualizar política de votación',

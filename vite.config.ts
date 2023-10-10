@@ -33,6 +33,7 @@ export default defineConfig((userConfig) => {
         DOMAIN_WEB: env.DOMAIN_WEB,
         NETWORK: env.NETWORK,
         CONTRACT_NFT: env.CONTRACT_NFT,
+        ROUTER_WALLET: env.ROUTER_WALLET,
       },
       __VUE_I18N_FULL_INSTALL__: true,
       __VUE_I18N_LEGACY_API__: false,
@@ -53,7 +54,7 @@ export default defineConfig((userConfig) => {
       ],
     },
     server: {
-      port: 3000,
+      port: 3002,
     },
   }
 })
