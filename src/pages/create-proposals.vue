@@ -150,7 +150,7 @@
                   rounded
                   menu-icon="mdi-chevron-down"
                   class="select-create"
-                  bg-color="#fff"
+                  bg-color="red"
                   return-object
                   hide-details
                 ></v-select>
