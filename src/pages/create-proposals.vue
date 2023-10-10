@@ -30,11 +30,14 @@
               id="tipo_propuesta"
               variant="outlined"
               :items="itemsTipoPropuesta"
+              item-title="desc"
+              item-value="id"
               density="compact"
               rounded
               menu-icon="mdi-chevron-down"
               class="select-create"
               bg-color="#fff"
+              return-object
               hide-details
             ></v-select>
           </v-col>
@@ -49,7 +52,7 @@
             <label for="proponente">Proponente</label>
             <v-text-field
             id="proponente" class="input" variant="outlined"
-            elevation="1" placeholder="andresdom.near"
+            elevation="1" :placeholder="'ejemplo.'+network"
             ></v-text-field>
           </v-col>
           <v-col xl="6" lg="6" md="6" cols="12">
@@ -66,7 +69,7 @@
             elevation="1" placeholder="Descripción"
             ></v-text-field>
           </v-col>
-          <v-col v-if="tipo_propuesta === 'Cambiar política'" xl="6" lg="6" md="6" cols="12">
+          <v-col v-if="tipo_propuesta.desc === 'Cambiar política'" xl="6" lg="6" md="6" cols="12">
             <label for="política">Política</label>
             <v-text-field
             id="política" class="input" variant="outlined"
@@ -74,7 +77,7 @@
             ></v-text-field>
           </v-col>
 
-          <template v-if="tipo_propuesta === 'Agregar miembro del grupo'">
+          <template v-if="tipo_propuesta.desc === 'Agregar miembro del grupo'">
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="group_id">ID de Grupo</label>
               <v-text-field
@@ -92,7 +95,7 @@
             </v-col>
           </template>
 
-          <template v-if="tipo_propuesta === 'Eliminar miembro del grupo'">
+          <template v-if="tipo_propuesta.desc === 'Eliminar miembro del grupo'">
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="group_id">ID de Grupo</label>
               <v-text-field
@@ -110,7 +113,7 @@
             </v-col>
           </template>
 
-          <template v-if="tipo_propuesta === 'Llamada de función'">
+          <template v-if="tipo_propuesta.desc === 'Llamada de función'">
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="receiver_id">ID de Receptor</label>
               <v-text-field
@@ -128,41 +131,58 @@
             </v-col>
           </template>
 
-          <template v-if="tipo_propuesta === 'Transferencia'">
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="token_id">ID de Token</label>
-              <v-text-field
-              id="token_id" class="input" variant="outlined"
-              elevation="1" placeholder="#123456"
-              ></v-text-field>
-            </v-col>
+          <template v-if="tipo_propuesta.id === 'Transfer'">
+            <v-form ref="Transfer" v-model="Transfer">
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="token_id">ID de Token</label>
+                <!--<v-text-field
+                id="token_id" class="input" variant="outlined"
+                elevation="1" placeholder="#123456"
+                ></v-text-field>-->
+                <v-select
+                  v-model="token_id"
+                  id="token_id"
+                  variant="outlined"
+                  :items="itemsTokenId"
+                  item-title="desc"
+                  item-value="id"
+                  density="compact"
+                  rounded
+                  menu-icon="mdi-chevron-down"
+                  class="select-create"
+                  bg-color="#fff"
+                  return-object
+                  hide-details
+                ></v-select>
+              </v-col>
 
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="receiver_id">ID de Receptor</label>
-              <v-text-field
-              id="receiver_id" class="input" variant="outlined"
-              elevation="1" placeholder="#123456"
-              ></v-text-field>
-            </v-col>
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="receiver_id">ID de Receptor</label>
+                <v-text-field
+                id="receiver_id" class="input" variant="outlined"
+                elevation="1" :placeholder="'ejemplo.'+network"
+                ></v-text-field>
+              </v-col>
 
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="amount">Cantidad</label>
-              <v-text-field
-              id="amount" class="input" variant="outlined"
-              elevation="1" placeholder="0.00"
-              ></v-text-field>
-            </v-col>
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="amount">Cantidad</label>
+                <v-text-field
+                id="amount" class="input" variant="outlined"
+                elevation="1" placeholder="0.00"
+                ></v-text-field>
+              </v-col>
 
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="msg">Mensaje</label>
-              <v-text-field
-              id="msg" class="input" variant="outlined"
-              elevation="1" placeholder="Texto de ejemplo"
-              ></v-text-field>
-            </v-col>
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="msg">Mensaje</label>
+                <v-text-field
+                id="msg" class="input" variant="outlined"
+                elevation="1" placeholder="Opcional"
+                ></v-text-field>
+              </v-col>
+            </v-form>
           </template>
 
-          <template v-if="tipo_propuesta === 'Cambiar política agregar o actualizar rol'">
+          <template v-if="tipo_propuesta.desc === 'Cambiar política agregar o actualizar rol'">
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="rol_name">Nombre de Rol</label>
               <v-text-field
@@ -179,7 +199,7 @@
             </v-col>
           </template>
 
-          <template v-if="tipo_propuesta === 'Cambiar política eliminar rol'">
+          <template v-if="tipo_propuesta.desc === 'Cambiar política eliminar rol'">
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="rol_name">Nombre de Rol</label>
               <v-text-field
@@ -189,7 +209,7 @@
             </v-col>
           </template>
 
-          <template v-if="tipo_propuesta === 'Cambiar política actualizar política de votación'">
+          <template v-if="tipo_propuesta.desc === 'Cambiar política actualizar política de votación'">
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="proposal_kind">Tipo de Propuesta</label>
               <v-text-field
@@ -206,7 +226,7 @@
             </v-col>
           </template>
 
-          <template v-if="tipo_propuesta === 'Cambiar los parámetros de actualización de políticas'">
+          <template v-if="tipo_propuesta.desc === 'Cambiar los parámetros de actualización de políticas'">
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="proposal_kind">Tipo de Propuesta</label>
               <v-text-field
@@ -236,25 +256,41 @@
 
 <script>
 import '@/assets/styles/pages/create-proposals.scss'
+import { ref } from 'vue';
 
 export default{
-  data(){
+  setup(){
     return{
+      Transfer: false,
+      network: process.env.NETWORK,
       itemsTipoPropuesta:[
-        'Cambiar política',
-        'Agregar miembro del grupo',
-        'Eliminar miembro del grupo',
-        'Llamada de función',
-        'Transferencia',
-        'Cambiar política agregar o actualizar rol',
-        'Cambiar política eliminar rol',
-        'Cambiar política actualizar política de votación',
-        'Cambiar los parámetros de actualización de políticas'
+        // {id: '', desc: 'Cambiar política'},
+        // {id: '', desc: 'Agregar miembro del grupo'},
+        // {id: '', desc: 'Eliminar miembro del grupo'},
+        // {id: '', desc: 'Llamada de función'},
+        {id: 'Transfer', desc: 'Transferencia'},
+        // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
+        // {id: '', desc: 'Cambiar política eliminar rol'},
+        // {id: '', desc: 'Cambiar política actualizar política de votación'},
+        // {id: '', desc: 'Cambiar los parámetros de actualización de políticas'}
       ],
-
-      tipo_propuesta: '',
+      tipo_propuesta: ref({id: '', desc: ''}),
+      itemsTokenId: [
+        {id: null, desc: "Near"},
+        {id: "usdc", desc: "USDC"},
+      ],
+      token_id: ref({id: '', desc: ''}),
     }
-  }
+  },
+  methods: {
+    itemProps (item) {
+      this.$refs.formStep1
+      return {
+        title: item.desc,
+        subtitle: item.id,
+      }
+    },
+  },
 }
 
 </script>
