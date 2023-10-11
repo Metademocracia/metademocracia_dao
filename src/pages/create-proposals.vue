@@ -271,7 +271,7 @@ import WalletP2p from '../services/wallet-p2p';
 
 export default{
   setup(){
-    const regular_expression_email = process.env.NETWORK == "testnet" ? /^[a-z.-]+\.testnet+$/i : /^[a-z.-]+\.mainnet+$/i;
+    const regular_expression_email = process.env.NETWORK == "testnet" ? /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.testnet+$/i : /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.mainnet+$/i;
     return{
       Transfer: ref(false),
       session: ref(null),
