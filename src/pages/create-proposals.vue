@@ -313,7 +313,9 @@ export default{
       console.log("form default validate: ", this.$refs.formdefault.validate())
       const { valid } = await this.$refs.formdefault.validate()
 
-      if (valid) alert('Form is valid')
+      if (!valid) {
+        alert('Form is not valid')
+      }
 
       // console.log(this.token_id.id)
       // console.log("amount: ", this.token_id.id ? document.getElementById("amount").value : (BigInt(document.getElementById("amount").value) * BigInt("1000000000000000000000000")).toString())
