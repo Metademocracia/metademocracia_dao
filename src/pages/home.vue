@@ -21,7 +21,7 @@
         <div class="divrow center mobile-div-member" style="gap: 20px;">
           <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;" class="member-img">
           <span style="font-weight: 700!important;">
-            Miembros <br> <span style="font-size: 1.5rem;">{{ members }}</span>
+            Miembros <br> <span style="font-size: 1.5rem;"> <span v-if="result">{{ result.serie.supply }}</span> </span>
           </span>
         </div>
 
@@ -46,7 +46,7 @@
       <hr class="mt-8 mb-8" style="width: 100%; border-bottom: 1px solid #fff;">
 
       <span class="tcenter mb-8">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc volutpat ligula orci, ac imperdiet tortor cursus vitae. Nunc fringilla lacus vel tempus ultrices. Nulla facilisi. Donec rutrum posuere sollicitudin. Donec et quam sit amet mauris gravida volutpat. Sed volutpat dignissim nibh vitae interdum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed congue 
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc volutpat ligula orci, ac imperdiet tortor cursus vitae. Nunc fringilla lacus vel tempus ultrices. Nulla facilisi. Donec rutrum posuere sollicitudin. Donec et quam sit amet mauris gravida volutpat. Sed volutpat dignissim nibh vitae interdum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed congue
       </span>
     </section>
 
@@ -96,7 +96,7 @@
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
             <h5 style="margin-bottom: 0;">
-              777 USD
+              777 NEAR
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
@@ -104,12 +104,12 @@
           <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
               <span style="font-weight: 700!important;">
-                Recompensas
+                Fondos DAO
               </span>
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
             <h5 style="margin-bottom: 0;">
-              777 USD
+              777 USDC
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
@@ -135,7 +135,7 @@
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
             <h5 style="margin-bottom: 0;">
-              888
+              1
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
             <div class="jspace" style="width: 100%;">
@@ -145,7 +145,7 @@
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
             <h5 style="margin-bottom: 0;">
-              888
+              1
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
@@ -159,15 +159,27 @@
 import '@/assets/styles/pages/home.scss'
 import ToastTitle from '@/components/toast-content/toast-title.vue';
 import VueApexCharts from "vue3-apexcharts"
+import gql from 'graphql-tag';
+import { useQuery } from '@vue/apollo-composable';
 
+const QUERY = gql`
+  query MyQuery {
+    serie(id: "1") {
+      supply
+    }
+  }
+`;
 
 export default {
   components: {
     apexchart: VueApexCharts,
   },
-  data(){
+  setup(){
+    const { result, loading,  error } = useQuery(QUERY);
     return{
-      members: 77,
+      result,
+      loading,
+      error,
       toggle: 0,
 
       series: [
@@ -205,7 +217,7 @@ export default {
           categories: ["1 JUL", "2 JUL", "3 JUL", "4 JUL", "5 JUL", "6 JUL", "7 JUL "],
           labels: {
             style: {
-              colors: '#fff', 
+              colors: '#fff',
             },
           },
           tooltip: {
@@ -216,7 +228,7 @@ export default {
         yaxis: {
           labels: {
             style: {
-              colors: '#fff', 
+              colors: '#fff',
             },
           },
 
@@ -224,10 +236,10 @@ export default {
             show: true,
           },
         },
-        
+
         grid: {
           show: false,
-          
+
         },
       },
 
@@ -302,6 +314,10 @@ export default {
     chartHeight() {
       return window.innerWidth < 690 ? '250px' : '450px';
     },
+  },
+
+  mounted() {
+    console.log("supply: ", this.result);
   },
 }
 

@@ -23,52 +23,55 @@
         </div>
 
         <v-row class="mt-6">
-          <v-col cols="12" class="col-select">
-            <label for="tipo_propuesta">Tipo de Propuesta</label>
-            <v-select
-              v-model="tipo_propuesta"
-              id="tipo_propuesta"
-              variant="outlined"
-              :items="itemsTipoPropuesta"
-              item-title="desc"
-              item-value="id"
-              density="compact"
-              rounded
-              menu-icon="mdi-chevron-down"
-              class="select-create"
-              bg-color="#fff"
-              return-object
-              hide-details
-            ></v-select>
-          </v-col>
-          <v-col xl="6" lg="6" md="6" cols="12">
-            <label for="titulo_propuesta">Titulo de Propuesta</label>
-            <v-text-field
-            id="titulo_propuesta" class="input" variant="outlined"
-            elevation="1" placeholder="Titulo de Propuesta"
-            ></v-text-field>
-          </v-col>
-          <v-col xl="6" lg="6" md="6" cols="12">
-            <label for="proponente">Proponente</label>
-            <v-text-field
-            id="proponente" class="input" variant="outlined"
-            elevation="1" :placeholder="'ejemplo.'+network"
-            ></v-text-field>
-          </v-col>
-          <v-col xl="6" lg="6" md="6" cols="12">
-            <label for="descripcion">Descripción</label>
-            <v-text-field
-            id="descripcion" class="input" variant="outlined"
-            elevation="1" placeholder="Descripción"
-            ></v-text-field>
-          </v-col>
-          <v-col xl="6" lg="6" md="6" cols="12">
-            <label for="link">Link</label>
-            <v-text-field
-            id="link" class="input" variant="outlined"
-            elevation="1" placeholder="Descripción"
-            ></v-text-field>
-          </v-col>
+          <v-form ref="formdefault" class="form-align">
+            <v-col cols="12" class="col-select">
+              <label for="tipo_propuesta">Tipo de Propuesta</label>
+              <v-select
+                v-model="tipo_propuesta"
+                id="tipo_propuesta"
+                variant="outlined"
+                :items="itemsTipoPropuesta"
+                item-title="desc"
+                item-value="id"
+                density="compact"
+                rounded
+                menu-icon="mdi-chevron-down"
+                class="select-create"
+                bg-color="#fff"
+                return-object
+                hide-details
+              ></v-select>
+            </v-col>
+            <v-col xl="6" lg="6" md="6" cols="12">
+              <label for="titulo_propuesta">Titulo de Propuesta</label>
+              <v-text-field
+              v-model="titulo_propuesta" id="titulo_propuesta" class="input" variant="outlined"
+              elevation="1" placeholder="Titulo de Propuesta" :rules="requiredRules" required
+              ></v-text-field>
+            </v-col>
+            <v-col xl="6" lg="6" md="6" cols="12">
+              <label for="proponente">Proponente</label>
+              <v-text-field
+              v-model="proponente" id="proponente" class="input" variant="outlined"
+              elevation="1" :placeholder="'ejemplo.'+network" :rules="requiredRules" required
+              ></v-text-field>
+            </v-col>
+            <v-col xl="6" lg="6" md="6" cols="12">
+              <label for="descripcion">Descripción</label>
+              <v-text-field
+              id="descripcion" class="input" variant="outlined"
+              elevation="1" placeholder="Descripción"
+              ></v-text-field>
+            </v-col>
+            <v-col xl="6" lg="6" md="6" cols="12">
+              <label for="link">Link</label>
+              <v-text-field
+              id="link" class="input" variant="outlined"
+              elevation="1" placeholder="Descripción"
+              ></v-text-field>
+            </v-col>
+          </v-form>
+
           <v-col v-if="tipo_propuesta.desc === 'Cambiar política'" xl="6" lg="6" md="6" cols="12">
             <label for="política">Política</label>
             <v-text-field
@@ -270,20 +273,15 @@ import WalletP2p from '../services/wallet-p2p';
 export default{
   setup(){
     return{
-      Transfer: false,
+      Transfer: ref(false),
       session: ref(null),
-      network: process.env.NETWORK,
-      itemsTipoPropuesta:[
-        // {id: '', desc: 'Cambiar política'},
-        // {id: '', desc: 'Agregar miembro del grupo'},
-        // {id: '', desc: 'Eliminar miembro del grupo'},
-        // {id: '', desc: 'Llamada de función'},
-        // {id: 'Transfer', desc: 'Transferencia', fn: 'addTransfer'},
-        // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
-        // {id: '', desc: 'Cambiar política eliminar rol'},
-        // {id: '', desc: 'Cambiar política actualizar política de votación'},
-        // {id: '', desc: 'Cambiar los parámetros de actualización de políticas'}
+      requiredRules: [
+        v => !!v || 'Is required'
       ],
+      network: process.env.NETWORK,
+      itemsTipoPropuesta: ref([]),
+      titulo_propuesta: ref(null),
+      proponente: ref(null),
       tipo_propuesta: ref({id: '', desc: '', fn: null}),
       itemsTokenId: [
         {id: null, desc: "Near"},
@@ -307,14 +305,23 @@ export default{
       ];
   },
   methods: {
-    addProposal() {
-      console.log(this.$refs.Transfer)
-      console.log(this.$refs.Transfer)
-      console.log(this.token_id.id)
-      console.log("amount: ", this.token_id.id ? document.getElementById("amount").value : (BigInt(document.getElementById("amount").value) * BigInt("1000000000000000000000000")).toString())
-      this.tipo_propuesta.fn()
-      console.log("titulo: ", this.titulo_propuesta)
-      console.log(document.getElementById("msg").value)
+    async addProposal() {
+      console.log("form transfer: ", this.$refs.Transfer)
+      console.log("form default: ", this.$refs.formdefault)
+      console.log("form default validate: ", this.$refs.formdefault.validate())
+      // const { valid } = await this.$refs.formdefault.validate()
+
+      // if (valid) alert('Form is valid')
+
+      // console.log(this.token_id.id)
+      // console.log("amount: ", this.token_id.id ? document.getElementById("amount").value : (BigInt(document.getElementById("amount").value) * BigInt("1000000000000000000000000")).toString())
+
+      // console.log("titulo: ", this.titulo_propuesta)
+
+      if (this.tipo_propuesta.fn) {
+        this.tipo_propuesta.fn();
+      }
+
     },
     addTransfer(){
       console.log("se ejecuto funcion")
