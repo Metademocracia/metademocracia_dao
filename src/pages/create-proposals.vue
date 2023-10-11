@@ -156,7 +156,6 @@
                   class="select-create"
                   bg-color="#fff"
                   return-object
-                  hide-details
                   required
                 ></v-select>
               </v-col>

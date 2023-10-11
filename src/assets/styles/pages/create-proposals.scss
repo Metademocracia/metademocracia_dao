@@ -70,25 +70,25 @@
       }
 
 
-      .col-select{
-        .v-input{
-          border: 1px solid rgba(0,0,0,0.3);
-          border-radius: 10px;
-        }
+      // .col-select{
+      //   .v-input{
+      //     border: 1px solid rgba(0,0,0,0.3);
+      //     border-radius: 10px;
+      //   }
 
-        .select-create{
-          i{
-            color: $primary;
-          }
+      //   .select-create{
+      //     i{
+      //       color: $primary;
+      //     }
   
-          .v-select__selection-text{
-            color: #000;
-          }
-          .v-field__input{
-            color: #000;
-          }
-        }
-      }
+      //     .v-select__selection-text{
+      //       color: #000;
+      //     }
+      //     .v-field__input{
+      //       color: #000;
+      //     }
+      //   }
+      // }
 
       .input{
         max-height: 45px!important;
@@ -130,8 +130,12 @@
 
 
 .select-create{
-  border: 1px solid rgba(0,0,0,0.3);
   border-radius: 10px;
+  margin-bottom: -15px;
+  .v-field{
+    border: 1px solid rgba(0,0,0,0.3)!important;
+    border-radius: 10px!important;
+  }
 
   i{
     color: $primary!important;
