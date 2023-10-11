@@ -291,7 +291,7 @@ export default{
     }
   },
   mounted() {
-    this.session = localStorage.getItem("session");
+    this.session = WalletP2p.getAccount().address;
     this.itemsTipoPropuesta = [
         // {id: '', desc: 'Cambiar política'},
         // {id: '', desc: 'Agregar miembro del grupo'},
@@ -309,9 +309,9 @@ export default{
       console.log("form transfer: ", this.$refs.Transfer)
       console.log("form default: ", this.$refs.formdefault)
       console.log("form default validate: ", this.$refs.formdefault.validate())
-      // const { valid } = await this.$refs.formdefault.validate()
+      const { valid } = await this.$refs.formdefault.validate()
 
-      // if (valid) alert('Form is valid')
+      if (valid) alert('Form is valid')
 
       // console.log(this.token_id.id)
       // console.log("amount: ", this.token_id.id ? document.getElementById("amount").value : (BigInt(document.getElementById("amount").value) * BigInt("1000000000000000000000000")).toString())
@@ -324,8 +324,6 @@ export default{
 
     },
     addTransfer(){
-      console.log("se ejecuto funcion")
-
       const json = {
         contractId: process.env.CONTRACT_NFT,
         methodName: "set_proposal",
@@ -348,8 +346,8 @@ export default{
         gas: "300000000000000",
         attachedDeposit: "1"
       };
-      console.log(json)
-      WalletP2p.call(json);
+
+      WalletP2p.call(json, "/metademocracia/proposals");
     }
   },
 }

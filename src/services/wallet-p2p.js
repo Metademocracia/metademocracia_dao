@@ -12,7 +12,7 @@ function login (contract) {
   window.open(_routeWallet+"/execute?token="+token, "_self");
 }
 
-function call (json) {
+function call (json, ruta) {
   /*
     JSON EXAMPLE:
       {
@@ -32,15 +32,27 @@ function call (json) {
     contract: json.contractId,
     from: localStorage.getItem("session"),
     json: json,
-    success: window.location.origin + window.location.pathname,
+    success: ruta ? window.location.origin + ruta : window.location.origin + window.location.pathname,
     error: window.location.origin + window.location.pathname,
   }))
-
+  // console.log(JSON.parse(window.atob(token)));
   window.open(_routeWallet+"/execute?token="+token, "_self");
+}
+
+function getAccount() {
+  const account = {
+    address: localStorage.getItem("session"),
+    publicKey: '',
+    privateKey: '',
+  };
+  console.log("esta es la session: ", localStorage.getItem("session"))
+
+  return account
 }
 
 
 export default {
   login,
-  call
+  call,
+  getAccount
 }

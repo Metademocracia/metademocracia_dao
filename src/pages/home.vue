@@ -28,12 +28,18 @@
         <div class="center divrow container-text-field-btn">
           <img src="@/assets/sources/images/search-near.svg" alt="Search Near Logo" class="pl-3">
           <v-text-field
-           hide-details
-           variant="solo"
-           flat
-           class="input-search"
+            v-model="amount_near"
+            id="amount_near"
+            hide-details
+            variant="solo"
+            flat
+            class="input-search"
           ></v-text-field>
-          <v-btn class="btn-donar" style="font-weight: 700!important;">Donar</v-btn>
+          <v-btn
+            class="btn-donar"
+            style="font-weight: 700!important;"
+            @click="delegate()"
+          >Donar</v-btn>
         </div>
 
         <div class="divrow center" style="gap: 20px;">
@@ -81,7 +87,7 @@
             </v-btn-toggle>
           </div>
           <div class="apexchart-container">
-            <apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
+            <apexchart type="area" :height="chartHeight" :options="chartOptionsComputed" :series="seriesComputed"></apexchart>
           </div>
         </div>
       </v-col>
@@ -96,7 +102,7 @@
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
             <h5 style="margin-bottom: 0;">
-              777 NEAR
+              {{ delegationNear }} NEAR
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
@@ -161,11 +167,23 @@ import ToastTitle from '@/components/toast-content/toast-title.vue';
 import VueApexCharts from "vue3-apexcharts"
 import gql from 'graphql-tag';
 import { useQuery } from '@vue/apollo-composable';
+import WalletP2p from '../services/wallet-p2p';
+import { ref } from 'vue';
+import moment from 'moment';
 
 const QUERY = gql`
   query MyQuery {
     serie(id: "1") {
       supply
+    }
+
+    delegation(id: "near") {
+      total_amount
+    }
+
+    delegationhists {
+      amount
+      date_time
     }
   }
 `;
@@ -181,14 +199,15 @@ export default {
       loading,
       error,
       toggle: 0,
-
-      series: [
+      amount_near: ref(null),
+      delegation_near: ref(0),
+      series: ref([
         {
           name: 'series1',
           data: [100, 150, 138, 200, 248, 230, 180],
         }
-      ],
-      chartOptions: {
+      ]),
+      chartOptions: ref({
         tooltip: {
           theme: 'custom-tooltip',
           custom: function({ series, seriesIndex, dataPointIndex, w }) {
@@ -241,7 +260,7 @@ export default {
           show: false,
 
         },
-      },
+      }),
 
       chartSeries2: [
         {
@@ -314,10 +333,88 @@ export default {
     chartHeight() {
       return window.innerWidth < 690 ? '250px' : '450px';
     },
+    delegationNear() {
+      if(this.result) {
+        this.delegation_near = this.result.delegation.total_amount / 1000000000000000000000000;
+      }
+      return this.delegation_near
+    },
+
+    seriesComputed() {
+      if(this.result){
+        if(this.result.delegationhists) {
+          const data = [];
+          for(let i = 0; i < this.result.delegationhists.length; i++){
+            data.push(Number((this.result.delegationhists[i].amount / 1000000000000000000000000).toFixed(2)))
+          }
+
+          console.log("data series: ", data)
+
+          this.series.data = data;
+          /*this.series.data = this.result.delegationhists.map(item => {
+            return Number(item.amount) / 1000000000000000000000000;
+          })*/
+
+          // console.log(this.series.data);
+          // this.series.data =
+        }
+      }
+
+      return this.series;
+    },
+
+    chartOptionsComputed() {
+      if(this.result){
+        if(this.result.delegationhists) {
+          const data = [];
+          for(let i = 0; i < this.result.delegationhists.length; i++){
+            data.push(moment(this.result.delegationhists[i].date_time/1000000).format('MM Do HH:MM'))
+          }
+
+          console.log("data options: ", data)
+
+          this.chartOptions.xaxis.categories = data;
+          /*this.chartOptions.xaxis.categories = this.result.delegationhists.map(item => {
+            return moment(item.date_time/1000000).format('MM Do HH:MM');
+          })
+          console.log(this.chartOptions.xaxis.categories);*/
+        }
+      }
+
+      // this.chartOptions.xaxis.categories = ["11 JUL", "12 JUL", "13 JUL", "14 JUL", "15 JUL", "16 JUL", "17 JUL "];
+
+      return this.chartOptions;
+    }
   },
 
   mounted() {
-    console.log("supply: ", this.result);
+
+  },
+
+  methods: {
+    delegate(){
+      if(Number(this.amount_near)) {
+        console.log("amount near: ", this.amount_near)
+        const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
+        const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
+
+        const json = {
+          contractId: process.env.CONTRACT_NFT,
+          methodName: "delegate",
+          args: {
+            account_id: WalletP2p.getAccount().address,
+            amount: amount
+          },
+          gas: "300000000000000",
+          attachedDeposit: deposit
+        };
+        console.log("json: ", json)
+        // 1000000000000000000000
+        WalletP2p.call(json);
+      } else {
+        console.log("debe introducir un monto")
+      }
+    }
   },
 }
 

@@ -226,6 +226,8 @@ export default {
       localStorage.removeItem("session")
       this.titleBtnLogin = "Conectar Wallet";
       this.dialogConnect = false;
+
+      window.open(window.location.origin + window.location.pathname, "_self");
     }
   }
 }

@@ -239,7 +239,7 @@ import { ref } from 'vue';
 
 const QUERY = gql`
   query Proposals {
-    proposals(orderBy: creation_date, orderDirection: desc) {
+    proposals {
       approval_date
       creation_date
       description
@@ -247,13 +247,16 @@ const QUERY = gql`
       id
       kind
       link
-      proposal_type
       proposer
+      proposal_type
       status
       submission_time
       title
       upvote
       user_creation
+      vote(where: {user_id: "5d18671d5948cd3348ff4fe4578518ed25a77ee73d18e4ee2b21b335d1585df7"}) {
+        user_id
+      }
     }
   }
 `;
@@ -312,7 +315,7 @@ export default {
 
   mounted() {
     // this.initProposal();
-    this.session = localStorage.getItem("session");
+    this.session = WalletP2p.getAccount().address;
   },
 
 	computed: {
@@ -340,8 +343,8 @@ export default {
             amount: 0,
             currency: '',
             time_complete: '7 Días',
-            likes: 0,
-            dislikes: 0,
+            likes: item.upvote,
+            dislikes: item.downvote,
           }
         });
         const startIndex = (this.currentPage - 1) * this.cardsPerPage;
@@ -355,7 +358,6 @@ export default {
 
   methods: {
     upvote(id) {
-      console.log(id);
       const json = {
         contractId: process.env.CONTRACT_NFT,
         methodName: "update_proposal",
@@ -369,7 +371,6 @@ export default {
       WalletP2p.call(json);
     },
     downvote(id) {
-      console.log(id);
       const json = {
         contractId: process.env.CONTRACT_NFT,
         methodName: "update_proposal",
