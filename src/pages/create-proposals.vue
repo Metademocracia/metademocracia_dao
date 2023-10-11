@@ -310,9 +310,6 @@ export default{
   },
   methods: {
     async addProposal() {
-      console.log("form transfer: ", this.$refs.Transfer)
-      console.log("form default: ", this.$refs.formdefault)
-      console.log("form default validate: ", this.$refs.formdefault.validate())
       const { valid } = await this.$refs.formdefault.validate()
 
       if (valid) {
