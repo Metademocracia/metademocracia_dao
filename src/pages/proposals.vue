@@ -134,9 +134,11 @@
 					<v-card v-for="(item, index) in displayedCards" :key="index" class="card-proposals" @click="$router.push('proposals-details')">
 						<div class="side-bar">
 							<v-icon>mdi-tray-arrow-up</v-icon>
-							<span class="font300">
-								Propuesta ID: {{ item.proposals_id }}
-							</span>
+							<div class="div-span-side">
+								<span class="font300">
+									Propuesta ID: {{ item.proposals_id }}
+								</span>
+							</div>
 						</div>
 						<div class="container-data-card">
 							<div class="jspace mobile-col" style="width: 100%; height: max-content;">

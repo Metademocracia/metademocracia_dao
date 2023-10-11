@@ -64,6 +64,11 @@
         font-weight: 700;
       }
 
+      .form-align{
+        min-width: 98%; 
+        margin-inline: auto;
+      }
+
 
       .col-select{
         .v-input{
@@ -120,5 +125,22 @@
         }
       }
     }
+  }
+}
+
+
+.select-create{
+  border: 1px solid rgba(0,0,0,0.3);
+  border-radius: 10px;
+
+  i{
+    color: $primary!important;
+  }
+
+  .v-select__selection-text{
+    color: #000;
+  }
+  .v-field__input{
+    color: #000;
   }
 }

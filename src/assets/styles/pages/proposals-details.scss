@@ -73,16 +73,26 @@
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				padding: 10px 5px 10px 5px;
-				gap: 360px;
+				justify-content: space-between;
+				padding: 10px 5px 45px 5px;
 				box-shadow: 3px 3px 3px 1px rgba(0,0,0,0.1);
-				span{
-					display: block!important;
-					transform: rotate(270deg);
+				
+				.div-span-side{
+					background-color: transparent;
+					height: 40px;
 					width: max-content;
-					height: max-content;
-					transform: translateX(-40px), rotate(270deg);
+					position: relative;
+					display: grid;
+					place-items: center;
+					transform: rotate(270deg)!important;
 				}
+				// span{
+				// 	display: block!important;
+				// 	transform: rotate(270deg);
+				// 	width: max-content;
+				// 	height: max-content;
+				// 	transform: translateX(-40px), rotate(270deg);
+				// }
 			}
 	
 			.container-data-card{

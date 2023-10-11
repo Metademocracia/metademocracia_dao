@@ -132,8 +132,9 @@
           </template>
 
           <template v-if="tipo_propuesta.id === 'Transfer'">
-            <v-form ref="Transfer" v-model="Transfer">
-              <v-col xl="6" lg="6" md="6" cols="12">
+            <v-form ref="Transfer" v-model="Transfer" class="form-align">
+              <v-row>
+                <v-col xl="6" lg="6" md="6" cols="12">
                 <label for="token_id">ID de Token</label>
                 <!--<v-text-field
                 id="token_id" class="input" variant="outlined"
@@ -150,35 +151,36 @@
                   rounded
                   menu-icon="mdi-chevron-down"
                   class="select-create"
-                  bg-color="red"
+                  bg-color="#fff"
                   return-object
                   hide-details
                 ></v-select>
-              </v-col>
+                </v-col>
 
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="receiver_id">ID de Receptor</label>
-                <v-text-field
-                id="receiver_id" class="input" variant="outlined"
-                elevation="1" :placeholder="'ejemplo.'+network"
-                ></v-text-field>
-              </v-col>
+                <v-col xl="6" lg="6" md="6" cols="12">
+                  <label for="receiver_id">ID de Receptor</label>
+                  <v-text-field
+                  id="receiver_id" class="input" variant="outlined"
+                  elevation="1" :placeholder="'ejemplo.'+network"
+                  ></v-text-field>
+                </v-col>
 
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="amount">Cantidad</label>
-                <v-text-field
-                id="amount" class="input" variant="outlined"
-                elevation="1" placeholder="0.00"
-                ></v-text-field>
-              </v-col>
+                <v-col xl="6" lg="6" md="6" cols="12">
+                  <label for="amount">Cantidad</label>
+                  <v-text-field
+                  id="amount" class="input" variant="outlined"
+                  elevation="1" placeholder="0.00"
+                  ></v-text-field>
+                </v-col>
 
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="msg">Mensaje</label>
-                <v-text-field
-                id="msg" class="input" variant="outlined"
-                elevation="1" placeholder="Opcional"
-                ></v-text-field>
-              </v-col>
+                <v-col xl="6" lg="6" md="6" cols="12">
+                  <label for="msg">Mensaje</label>
+                  <v-text-field
+                  id="msg" class="input" variant="outlined"
+                  elevation="1" placeholder="Opcional"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
             </v-form>
           </template>
 
