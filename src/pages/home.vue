@@ -198,7 +198,7 @@ export default {
       result,
       loading,
       error,
-      toggle: 0,
+      toggle: ref(0),
       amount_near: ref(null),
       delegation_near: ref(0),
       series: ref([
@@ -357,6 +357,7 @@ export default {
 
           // console.log(this.series.data);
           // this.series.data =
+          return this.series;
         }
       }
 
@@ -366,6 +367,7 @@ export default {
     chartOptionsComputed() {
       if(this.result){
         if(this.result.delegationhists) {
+          let chartOptions = this.chartOptions;
           const data = [];
           for(let i = 0; i < this.result.delegationhists.length; i++){
             data.push(moment(this.result.delegationhists[i].date_time/1000000).format('MM Do HH:MM'))
@@ -373,11 +375,14 @@ export default {
 
           console.log("data options: ", data)
 
-          this.chartOptions.xaxis.categories = data;
+          chartOptions.xaxis.categories = data;
+
+          this.chartOptions = chartOptions;
           /*this.chartOptions.xaxis.categories = this.result.delegationhists.map(item => {
             return moment(item.date_time/1000000).format('MM Do HH:MM');
           })
           console.log(this.chartOptions.xaxis.categories);*/
+          return this.chartOptions;
         }
       }
 

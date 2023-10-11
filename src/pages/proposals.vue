@@ -274,7 +274,6 @@ export default {
 			page: 1,
 			radio_buttons: null,
 			radio_buttons2: 2,
-
 			itemSelected: '',
 			filterSelected: '',
 
