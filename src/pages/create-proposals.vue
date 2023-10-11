@@ -24,52 +24,54 @@
 
         <v-row class="mt-6">
           <v-form ref="formdefault" class="form-align">
-            <v-col cols="12" class="col-select">
-              <label for="tipo_propuesta">Tipo de Propuesta</label>
-              <v-select
-                v-model="tipo_propuesta"
-                id="tipo_propuesta"
-                variant="outlined"
-                :items="itemsTipoPropuesta"
-                item-title="desc"
-                item-value="id"
-                density="compact"
-                rounded
-                menu-icon="mdi-chevron-down"
-                class="select-create"
-                bg-color="#fff"
-                return-object
-                hide-details
-              ></v-select>
-            </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="titulo_propuesta">Titulo de Propuesta</label>
-              <v-text-field
-              v-model="titulo_propuesta" id="titulo_propuesta" class="input" variant="outlined"
-              elevation="1" placeholder="Titulo de Propuesta" :rules="requiredRules" required
-              ></v-text-field>
-            </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="proponente">Proponente</label>
-              <v-text-field
-              v-model="proponente" id="proponente" class="input" variant="outlined"
-              elevation="1" :placeholder="'ejemplo.'+network" :rules="requiredRules" required
-              ></v-text-field>
-            </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="descripcion">Descripción</label>
-              <v-text-field
-              id="descripcion" class="input" variant="outlined"
-              elevation="1" placeholder="Descripción"
-              ></v-text-field>
-            </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="link">Link</label>
-              <v-text-field
-              id="link" class="input" variant="outlined"
-              elevation="1" placeholder="Descripción"
-              ></v-text-field>
-            </v-col>
+            <v-row>
+              <v-col cols="12" class="col-select">
+                <label for="tipo_propuesta">Tipo de Propuesta</label>
+                <v-select
+                  v-model="tipo_propuesta"
+                  id="tipo_propuesta"
+                  variant="outlined"
+                  :items="itemsTipoPropuesta"
+                  item-title="desc"
+                  item-value="id"
+                  density="compact"
+                  rounded
+                  menu-icon="mdi-chevron-down"
+                  class="select-create"
+                  bg-color="#fff"
+                  return-object
+                  hide-details
+                ></v-select>
+              </v-col>
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="titulo_propuesta">Titulo de Propuesta</label>
+                <v-text-field
+                v-model="titulo_propuesta" id="titulo_propuesta" class="input" variant="outlined"
+                elevation="1" placeholder="Titulo de Propuesta" :rules="requiredRules" required
+                ></v-text-field>
+              </v-col>
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="proponente">Proponente</label>
+                <v-text-field
+                v-model="proponente" id="proponente" class="input" variant="outlined"
+                elevation="1" :placeholder="'ejemplo.'+network" :rules="requiredRules" required
+                ></v-text-field>
+              </v-col>
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="descripcion">Descripción</label>
+                <v-text-field
+                id="descripcion" class="input" variant="outlined"
+                elevation="1" placeholder="Descripción"
+                ></v-text-field>
+              </v-col>
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="link">Link</label>
+                <v-text-field
+                id="link" class="input" variant="outlined"
+                elevation="1" placeholder="Descripción"
+                ></v-text-field>
+              </v-col>
+            </v-row>
           </v-form>
 
           <v-col v-if="tipo_propuesta.desc === 'Cambiar política'" xl="6" lg="6" md="6" cols="12">
@@ -138,26 +140,26 @@
             <v-form ref="Transfer" v-model="Transfer" class="form-align">
               <v-row>
                 <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="token_id">ID de Token</label>
-                <!--<v-text-field
-                id="token_id" class="input" variant="outlined"
-                elevation="1" placeholder="#123456"
-                ></v-text-field>-->
-                <v-select
-                  v-model="token_id"
-                  id="token_id"
-                  variant="outlined"
-                  :items="itemsTokenId"
-                  item-title="desc"
-                  item-value="id"
-                  density="compact"
-                  rounded
-                  menu-icon="mdi-chevron-down"
-                  class="select-create"
-                  bg-color="#fff"
-                  return-object
-                  hide-details
-                ></v-select>
+                  <label for="token_id">ID de Token</label>
+                  <!--<v-text-field
+                  id="token_id" class="input" variant="outlined"
+                  elevation="1" placeholder="#123456"
+                  ></v-text-field>-->
+                  <v-select
+                    v-model="token_id"
+                    id="token_id"
+                    variant="outlined"
+                    :items="itemsTokenId"
+                    item-title="desc"
+                    item-value="id"
+                    density="compact"
+                    rounded
+                    menu-icon="mdi-chevron-down"
+                    class="select-create"
+                    bg-color="#fff"
+                    return-object
+                    hide-details
+                  ></v-select>
                 </v-col>
 
                 <v-col xl="6" lg="6" md="6" cols="12">
