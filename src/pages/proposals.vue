@@ -128,7 +128,7 @@
 
 				<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12">
 					<div class="jend">
-						<v-btn class="mb-6" @click="$router.push('create-proposals')">Crear propuesta</v-btn>
+						<v-btn v-if="session" class="mb-6" @click="$router.push('create-proposals')">Crear propuesta</v-btn>
 					</div>
 
 					<v-card v-for="(item, index) in displayedCards" :key="index" class="card-proposals" @click="$router.push('proposals-details')">
@@ -265,9 +265,9 @@ export default {
       result,
       loading,
       error,
+      session: ref(null),
 			currentPage: 1,
       cardsPerPage: 3,
-
 			page: 1,
 			radio_buttons: null,
 			radio_buttons2: 2,
@@ -312,6 +312,7 @@ export default {
 
   mounted() {
     // this.initProposal();
+    this.session = localStorage.getItem("session");
   },
 
 	computed: {

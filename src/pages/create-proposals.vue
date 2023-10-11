@@ -246,8 +246,14 @@
           </template>
         </v-row>
 
-        <div class="center mt-6">
-          <v-btn style="max-width: 200px;">
+        <div
+          v-if="session"
+          class="center mt-6"
+        >
+          <v-btn
+            style="max-width: 200px;"
+            @click="addProposal()"
+          >
             Crear Propuesta
           </v-btn>
         </div>
@@ -259,39 +265,85 @@
 <script>
 import '@/assets/styles/pages/create-proposals.scss'
 import { ref } from 'vue';
+import WalletP2p from '../services/wallet-p2p';
 
 export default{
   setup(){
     return{
       Transfer: false,
+      session: ref(null),
       network: process.env.NETWORK,
       itemsTipoPropuesta:[
         // {id: '', desc: 'Cambiar política'},
         // {id: '', desc: 'Agregar miembro del grupo'},
         // {id: '', desc: 'Eliminar miembro del grupo'},
         // {id: '', desc: 'Llamada de función'},
-        {id: 'Transfer', desc: 'Transferencia'},
+        // {id: 'Transfer', desc: 'Transferencia', fn: 'addTransfer'},
         // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
         // {id: '', desc: 'Cambiar política eliminar rol'},
         // {id: '', desc: 'Cambiar política actualizar política de votación'},
         // {id: '', desc: 'Cambiar los parámetros de actualización de políticas'}
       ],
-      tipo_propuesta: ref({id: '', desc: ''}),
+      tipo_propuesta: ref({id: '', desc: '', fn: null}),
       itemsTokenId: [
         {id: null, desc: "Near"},
         {id: "usdc", desc: "USDC"},
       ],
-      token_id: ref({id: '', desc: ''}),
+      token_id: ref({id: null, desc: ''}),
     }
   },
+  mounted() {
+    this.session = localStorage.getItem("session");
+    this.itemsTipoPropuesta = [
+        // {id: '', desc: 'Cambiar política'},
+        // {id: '', desc: 'Agregar miembro del grupo'},
+        // {id: '', desc: 'Eliminar miembro del grupo'},
+        // {id: '', desc: 'Llamada de función'},
+        {id: 'Transfer', desc: 'Transferencia', fn: this.addTransfer},
+        // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
+        // {id: '', desc: 'Cambiar política eliminar rol'},
+        // {id: '', desc: 'Cambiar política actualizar política de votación'},
+        // {id: '', desc: 'Cambiar los parámetros de actualización de políticas'}
+      ];
+  },
   methods: {
-    itemProps (item) {
-      this.$refs.formStep1
-      return {
-        title: item.desc,
-        subtitle: item.id,
-      }
+    addProposal() {
+      console.log(this.$refs.Transfer)
+      console.log(this.$refs.Transfer)
+      console.log(this.token_id.id)
+      console.log("amount: ", this.token_id.id ? document.getElementById("amount").value : (BigInt(document.getElementById("amount").value) * BigInt("1000000000000000000000000")).toString())
+      this.tipo_propuesta.fn()
+      console.log("titulo: ", this.titulo_propuesta)
+      console.log(document.getElementById("msg").value)
     },
+    addTransfer(){
+      console.log("se ejecuto funcion")
+
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "set_proposal",
+        args: {
+          data: {
+            title: document.getElementById("titulo_propuesta").value,
+            description: document.getElementById("descripcion").value,
+            proponent: document.getElementById("proponente").value,
+            kind: {
+              Transfer: {
+                token_id: this.token_id.id,
+                receiver_id: document.getElementById("receiver_id").value,
+                amount: this.token_id.id ? document.getElementById("amount").value.toString() : (BigInt(document.getElementById("amount").value) * BigInt("1000000000000000000000000")).toString(),
+                msg: document.getElementById("msg").value ? document.getElementById("msg").value.lenght() > 0 ? document.getElementById("msg").value.length() : null : null,
+              }
+            },
+            link: document.getElementById("titulo_propuesta").value,
+          }
+        },
+        gas: "300000000000000",
+        attachedDeposit: "1"
+      };
+      console.log(json)
+      WalletP2p.call(json);
+    }
   },
 }
 
