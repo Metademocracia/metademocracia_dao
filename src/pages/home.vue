@@ -21,7 +21,7 @@
         <div class="divrow center mobile-div-member" style="gap: 20px;">
           <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;" class="member-img">
           <span style="font-weight: 700!important;">
-            Miembros <br> <span style="font-size: 1.5rem;"> <span v-if="result">{{ result.serie.supply }}</span> </span>
+            Miembros <br> <span style="font-size: 1.5rem;"> <span v-if="result">{{ result?.serie?.supply }}</span> </span>
           </span>
         </div>
 
@@ -141,7 +141,7 @@
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
             <h5 style="margin-bottom: 0;">
-              {{ result.proposaldata.proposal_actives }}
+              {{ result?.proposaldata?.proposal_actives }}
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
             <div class="jspace" style="width: 100%;">
@@ -151,7 +151,7 @@
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
             <h5 style="margin-bottom: 0;">
-              {{ result.proposaldata.proposal_total }}
+              {{ result?.proposaldata?.proposal_total }}
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
@@ -346,7 +346,7 @@ export default {
     },
 
     seriesComputed() {
-      if(this.result){
+      /*if(this.result){
         if(this.result.delegationhists) {
           const data = [];
           for(let i = 0; i < this.result.delegationhists.length; i++){
@@ -355,22 +355,19 @@ export default {
 
           console.log("data series: ", data)
 
-          this.series.data = data;
-          /*this.series.data = this.result.delegationhists.map(item => {
-            return Number(item.amount) / 1000000000000000000000000;
-          })*/
+          // this.series.data = data;
 
           // console.log(this.series.data);
           // this.series.data =
           return this.series;
         }
-      }
+      }*/
 
       return this.series;
     },
 
     chartOptionsComputed() {
-      if(this.result){
+      /*if(this.result){
         if(this.result.delegationhists) {
           let chartOptions = this.chartOptions;
           const data = [];
@@ -382,14 +379,11 @@ export default {
 
           chartOptions.xaxis.categories = data;
 
-          this.chartOptions = chartOptions;
-          /*this.chartOptions.xaxis.categories = this.result.delegationhists.map(item => {
-            return moment(item.date_time/1000000).format('MM Do HH:MM');
-          })
-          console.log(this.chartOptions.xaxis.categories);*/
+          // this.chartOptions = chartOptions;
+
           return this.chartOptions;
         }
-      }
+      }*/
 
       // this.chartOptions.xaxis.categories = ["11 JUL", "12 JUL", "13 JUL", "14 JUL", "15 JUL", "16 JUL", "17 JUL "];
 
