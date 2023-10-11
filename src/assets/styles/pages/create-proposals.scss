@@ -138,9 +138,13 @@
   }
 
   .v-select__selection-text{
-    color: #000;
+    color: #000!important;
   }
   .v-field__input{
     color: #000;
   }
+}
+
+.v-messages__message{
+  color: red!important;
 }
