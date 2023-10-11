@@ -107,7 +107,7 @@
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
 
-          <v-card class="card-charts">
+          <!--<v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
               <span style="font-weight: 700!important;">
                 Fondos DAO
@@ -118,7 +118,7 @@
               777 USDC
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
-          </v-card>
+          </v-card>-->
 
           <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
@@ -141,7 +141,7 @@
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
             <h5 style="margin-bottom: 0;">
-              1
+              {{ result.proposaldata.proposal_actives }}
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
             <div class="jspace" style="width: 100%;">
@@ -151,7 +151,7 @@
               <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
             </div>
             <h5 style="margin-bottom: 0;">
-              1
+              {{ result.proposaldata.proposal_total }}
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
@@ -184,6 +184,11 @@ const QUERY = gql`
     delegationhists {
       amount
       date_time
+    }
+
+    proposaldata(id: "1") {
+      proposal_actives
+      proposal_total
     }
   }
 `;
