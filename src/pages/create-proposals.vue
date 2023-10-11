@@ -54,7 +54,7 @@
               <label for="proponente">Proponente</label>
               <v-text-field
               v-model="proponente" id="proponente" class="input" variant="outlined"
-              elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.required" required
+              elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.address" required
               ></v-text-field>
             </v-col>
             <v-col xl="6" lg="6" md="6" cols="12">
@@ -165,7 +165,7 @@
                 <label for="receiver_id">ID de Receptor</label>
                 <v-text-field
                 id="receiver_id" class="input" variant="outlined"
-                elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.required" required
+                elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.address" required
                 ></v-text-field>
               </v-col>
 
@@ -272,11 +272,16 @@ import WalletP2p from '../services/wallet-p2p';
 
 export default{
   setup(){
+    const regular_expression_email = process.env.NETWORK == "testnet" ? /^[a-z.-]+\.testnet+$/i : /^[a-z.-]+\.mainnet+$/i;
     return{
       Transfer: ref(false),
       session: ref(null),
       rules: {
         required: [v => !!v || 'Is required'],
+        address: [
+          v => !!v || 'Is required',
+          v =>  regular_expression_email.test(v) || 'Incorrect format'
+        ],
       },
       network: process.env.NETWORK,
       itemsTipoPropuesta: ref([]),
