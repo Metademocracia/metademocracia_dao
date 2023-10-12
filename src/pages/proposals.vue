@@ -157,7 +157,11 @@
 
 										<v-list>
 											<v-list-item style="max-height: 30px; min-height: 30px;">
-												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-content-copy</v-icon> Copiar Link</v-list-item-title>
+												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;">
+                          <button @click="copy(item.proposals_id)">
+                          <v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-content-copy</v-icon>
+                          Copiar Link</button>
+                        </v-list-item-title>
 											</v-list-item>
 											<v-list-item style="max-height: 30px; min-height: 30px;">
 												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-twitter</v-icon> Compartir en Twitter</v-list-item-title>
@@ -292,21 +296,6 @@ export default {
 					time_complete: '3 Meses',
 					likes: 117,
 					dislikes: 15,
-				},
-				{
-					proposals_id: 1235,
-					title_desc: 'Transferencias',
-					title: 'Transferencias',
-					date: 'Aprobado el: 31 de Agosto de 2023',
-					near_id: 'andresdom.near',
-					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
-					link: 'gov.near.org',
-					amount: 777,
-					currency: 'NEAR',
-					claims: 222,
-					time_complete: '3 Meses',
-					likes: 117,
-					dislikes: 15,
 				},*/
 			])
     }
@@ -356,6 +345,10 @@ export default {
   },
 
   methods: {
+    copy(id) {
+      const link = window.location.origin + process.env.BASE_URL + "proposals-details?id=" + id
+      navigator.clipboard.writeText(link);
+    },
     upvote(id) {
       const json = {
         contractId: process.env.CONTRACT_NFT,

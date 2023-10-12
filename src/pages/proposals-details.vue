@@ -43,7 +43,12 @@
 
 										<v-list>
 											<v-list-item style="max-height: 30px; min-height: 30px;">
-												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-content-copy</v-icon> Copiar Link</v-list-item-title>
+												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;">
+                          <button @click="copy()">
+                            <v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-content-copy</v-icon>
+                            Copiar Link
+                          </button>
+                        </v-list-item-title>
 											</v-list-item>
 											<v-list-item style="max-height: 30px; min-height: 30px;">
 												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-twitter</v-icon> Compartir en Twitter</v-list-item-title>
@@ -421,6 +426,10 @@ export default {
   },
 
 	methods: {
+    copy(id) {
+      const link = window.location.origin + window.location.pathname + window.location.search
+      navigator.clipboard.writeText(link);
+    },
     openToggle() {
 			this.openVoice = !this.openVoice
 		},
