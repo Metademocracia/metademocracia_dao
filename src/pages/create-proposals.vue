@@ -164,7 +164,7 @@
                 <label for="receiver_id">ID de Receptor</label>
                 <v-text-field
                 id="receiver_id" class="input" variant="outlined"
-                elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.address" required
+                elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.required" required
                 ></v-text-field>
               </v-col>
 
