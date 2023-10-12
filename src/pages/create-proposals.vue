@@ -54,7 +54,7 @@
               <label for="proponente">Proponente</label>
               <v-text-field
               v-model="proponente" id="proponente" class="input" variant="outlined" disabled
-              elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.address" required
+              elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.required" required
               ></v-text-field>
             </v-col>
             <v-col xl="6" lg="6" md="6" cols="12">
