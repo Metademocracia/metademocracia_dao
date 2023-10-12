@@ -101,8 +101,8 @@
 									<span class="tstart" style="color: #000;">{{ item.time_complete }}</span>
 								</v-col>
 								<v-col xl="4" lg="4" md="6" cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
-									<img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"> {{ item.likes }}
-                  <img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"> {{ item.dislikes }}
+									<button @click.stop="upvote(item.proposals_id)" :disabled="session.address ? false : true" ><img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"></button> {{ item.likes }}
+                  <button @click.stop="downvote(item.proposals_id)" :disabled="session.address ? false : true"><img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"></button> {{ item.dislikes }}
 								</v-col>
 							</v-row>
 						</div>
@@ -285,6 +285,7 @@ export default {
       result,
       loading,
       error,
+      session: ref({}),
 			openVoice: false,
 			openCouncil: false,
 			voices_left: 0,
@@ -396,9 +397,12 @@ export default {
     result(response) {
       console.log("response: ", response)
       if(response){
-
-        console.log(response)
         const data = response.proposal;
+
+        let amount = null
+        if(data.proposal_type == "Transfer") {
+          amount = Number((JSON.parse(data.kind).Transfer.amount / 1000000000000000000000000).toFixed(2));
+        }
 
         this.cardsProposals = [{
           proposals_id: data.id,
@@ -408,7 +412,7 @@ export default {
           near_id: data.proposer,
           desc: data.description,
           link: data.link,
-          amount: null,
+          amount: amount,
           currency: 'NEAR',
           time_complete: '7 Días',
           likes: data.upvote,
@@ -420,7 +424,7 @@ export default {
   },
 
   mounted() {
-
+    this.session = WalletP2p.getAccount();
   },
   computed: {
 
@@ -430,6 +434,32 @@ export default {
     copy(id) {
       const link = window.location.origin + window.location.pathname + window.location.search
       navigator.clipboard.writeText(link);
+    },
+    upvote(id) {
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "update_proposal",
+        args: {
+          id: Number(id),
+          action: "VoteApprove"
+        },
+        gas: "300000000000000"
+      };
+
+      WalletP2p.call(json);
+    },
+    downvote(id) {
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "update_proposal",
+        args: {
+          id: Number(id),
+          action: "VoteReject"
+        },
+        gas: "300000000000000"
+      };
+
+      WalletP2p.call(json);
     },
     openToggle() {
 			this.openVoice = !this.openVoice

@@ -128,7 +128,7 @@
 
 				<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12">
 					<div class="jend">
-						<v-btn v-if="session" class="mb-6" @click="$router.push('create-proposals')">Crear propuesta</v-btn>
+						<v-btn v-if="session.address" class="mb-6" @click="$router.push('create-proposals')">Crear propuesta</v-btn>
 					</div>
 
 					<v-card v-for="(item, index) in displayedCards" :key="index" class="card-proposals" @click="$router.push({path: 'proposals-details', query: {id: item.proposals_id}})">
@@ -215,8 +215,8 @@
 									<span class="tstart" style="color: #000;">{{ item.time_complete }}</span>
 								</v-col>
 								<v-col xl="3" lg="3" md="6" cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
-									<img @click.stop="upvote(item.proposals_id)" src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"> {{ item.likes }}
-                  <img @click.stop="downvote(item.proposals_id)" src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"> {{ item.dislikes }}
+									<button @click.stop="upvote(item.proposals_id)" :disabled="session.address ? false : true"><img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"></button> {{ item.likes }}
+                  <button @click.stop="downvote(item.proposals_id)" :disabled="session.address ? false : true"><img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"></button> {{ item.dislikes }}
 								</v-col>
 							</v-row>
 						</div>
@@ -273,7 +273,6 @@ export default {
       result,
       loading,
       error,
-      session: ref(null),
 			currentPage: ref(1),
       cardsPerPage: ref(3),
 			page: ref(1),
@@ -281,6 +280,7 @@ export default {
 			radio_buttons2: 2,
 			itemSelected: '',
 			filterSelected: '',
+      session: ref({}),
 
 			cardsProposals: ref([/*
 				{
@@ -304,7 +304,7 @@ export default {
 
   mounted() {
     // this.initProposal();
-    this.session = WalletP2p.getAccount().address;
+    this.session = WalletP2p.getAccount();
   },
 
 	computed: {
@@ -319,7 +319,11 @@ export default {
     displayedCards() {
       if(this.result) {
         const cardsProposals = this.result.proposals.map((item) => {
-          console.log("item.approval_date: ", item.approval_date);
+          let amount = null
+          if(item.proposal_type == "Transfer") {
+            amount = Number((JSON.parse(item.kind).Transfer.amount / 1000000000000000000000000).toFixed(2));
+          }
+
           return {
             proposals_id: item.id,
             title_desc: item.proposal_type,
@@ -328,7 +332,7 @@ export default {
             near_id: item.proposer,
             desc: item.description,
             link: item.link,
-            amount: 0,
+            amount: amount,
             currency: '',
             time_complete: '7 Días',
             likes: item.upvote,
