@@ -64,7 +64,7 @@
               Fondos DAO
             </h5>
 
-            <v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
+            <!--<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
               <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
                 7D
               </v-btn>
@@ -84,7 +84,7 @@
               <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
                 ALL
               </v-btn>
-            </v-btn-toggle>
+            </v-btn-toggle>-->
           </div>
           <div class="apexchart-container">
             <apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
@@ -99,7 +99,7 @@
               <span style="font-weight: 700!important;">
                 Fondos DAO
               </span>
-              <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
+              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
             </div>
             <h5 style="margin-bottom: 0;">
               {{ delegationNear }} NEAR
@@ -125,10 +125,10 @@
               <span style="font-weight: 700!important;">
                 NFTs
               </span>
-              <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
+              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
             </div>
             <h5 style="margin-bottom: 0;">
-              77 USD
+               USD
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
@@ -138,7 +138,7 @@
               <span style="font-weight: 700!important;">
                 Propuestas Activas
               </span>
-              <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
+              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
             </div>
             <h5 style="margin-bottom: 0;">
               {{ result?.proposaldata?.proposal_actives }}
@@ -148,7 +148,7 @@
               <span style="font-weight: 700!important;">
                 Propuestas Totales
               </span>
-              <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
+              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
             </div>
             <h5 style="margin-bottom: 0;">
               {{ result?.proposaldata?.proposal_total }}
@@ -181,7 +181,7 @@ const QUERY = gql`
       total_amount
     }
 
-    delegationhists {
+    delegationhists(orderBy: date_time, orderDirection: asc) {
       amount
       date_time
     }

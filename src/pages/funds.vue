@@ -39,14 +39,14 @@
 			<section class="section3-funds center">
 					<v-row style="width: 100%;">
 						<v-col v-for="(item, index) in headerCards" :key="index" xl="3" lg="3" md="6" sm="6" cols="12">
-							<v-card 
-							class="card-header-funds" 
+							<v-card
+							class="card-header-funds"
 							:class="{'first-element': index === 0 && windowStep == 0,
 							'second-element': index === 1 && windowStep == 1,
-							'third-element': index === 2 && windowStep == 2, 
+							'third-element': index === 2 && windowStep == 2,
 							'fourth-element': index === 3 && windowStep == 3}"
 							@click="windowStep = index"
-							> 
+							>
 								<img :src="iconMap[item.icon]" :alt="item.icon_alt" style="width: 25px;">
 								<div class="divcol jstart">
 									<span style="font-size: 1.3rem;" class="jstart">
@@ -283,7 +283,7 @@ export default {
 	data() {
 		return{
 			currentPage: 1,
-      cardsPerPage: 10, 
+      cardsPerPage: 10,
 			page: 1,
 			selected: 'Menos Recientes',
 			radio_buttons: 1,
@@ -361,7 +361,7 @@ export default {
           categories: ["1 JUL", "2 JUL", "3 JUL", "4 JUL", "5 JUL", "6 JUL", "7 JUL "],
           labels: {
             style: {
-              colors: '#fff', 
+              colors: '#fff',
             },
           },
           tooltip: {
@@ -372,7 +372,7 @@ export default {
         yaxis: {
           labels: {
             style: {
-              colors: '#fff', 
+              colors: '#fff',
             },
           },
 
@@ -380,10 +380,10 @@ export default {
             show: true,
           },
         },
-        
+
         grid: {
           show: false,
-          
+
         },
       },
 			dataTransactions: [

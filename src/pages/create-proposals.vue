@@ -332,7 +332,7 @@ export default{
                 token_id: this.token_id.id,
                 receiver_id: document.getElementById("receiver_id").value,
                 amount: this.token_id.id ? document.getElementById("amount").value.toString() : (BigInt(document.getElementById("amount").value) * BigInt("1000000000000000000000000")).toString(),
-                msg: document.getElementById("msg").value ? document.getElementById("msg").value.lenght() > 0 ? document.getElementById("msg").value.length() : null : null,
+                msg: document.getElementById("msg").value ? document.getElementById("msg").value.lenght > 0 ? document.getElementById("msg").value.length : null : null,
               }
             },
             link: document.getElementById("titulo_propuesta").value,
