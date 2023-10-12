@@ -131,7 +131,7 @@
 						<v-btn v-if="session" class="mb-6" @click="$router.push('create-proposals')">Crear propuesta</v-btn>
 					</div>
 
-					<v-card v-for="(item, index) in displayedCards" :key="index" class="card-proposals" @click="$router.push('proposals-details')">
+					<v-card v-for="(item, index) in displayedCards" :key="index" class="card-proposals" @click="$router.push({path: 'proposals-details', query: {id: item.proposals_id}})">
 						<div class="side-bar">
 							<v-icon>mdi-tray-arrow-up</v-icon>
 							<div class="div-span-side">

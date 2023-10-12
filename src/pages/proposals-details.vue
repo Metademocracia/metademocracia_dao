@@ -33,7 +33,7 @@
 									<div class="divrow mt-1">
 										<h5 style="color: #000;">{{ item.title }}</h5> <v-icon class="ml-2 icon">mdi-link</v-icon>
 									</div>
-								</div>	
+								</div>
 
 								<div class="divcol jend aend mobile-left">
 									<v-menu location="start">
@@ -63,11 +63,10 @@
 								<div class="divcol">
 									<span class="tstart" style="color: #939393;">Proponente</span>
 									<span class="tstart" style="color: #000;">{{ item.near_id }}</span>
-									<span class="tstart" style="color: #000;">BGeam</span>
 								</div>
 
 								<div class="mr-10 no-margin">
-									<img src="@/assets/sources/images/approved.svg" alt="Approved" class="aprroved-failed-img">
+									<img v-if="item.date" src="@/assets/sources/images/approved.svg" alt="Approved" class="aprroved-failed-img">
 								</div>
 							</div>
 
@@ -88,10 +87,10 @@
 										{{ item.amount }} <img src="@/assets/sources/icons/near-icon.svg" alt="Near Icon" style="width: 20px;"> {{ item.currency }}
 									</div>
 								</v-col>
-								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
+								<!--<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
 									<span class="tstart" style="color: #939393; font-size: 12px;">Reclamaciones disponibles</span>
 									<span class="tstart" style="color: #000;">{{ item.claims }}</span>
-								</v-col>
+								</v-col>-->
 								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
 									<span class="tstart" style="color: #939393; font-size: 12px;">Tiempo para completar</span>
 									<span class="tstart" style="color: #000;">{{ item.time_complete }}</span>
@@ -208,10 +207,78 @@
 import '@/assets/styles/pages/proposals-details.scss'
 import like from '@/assets/sources/icons/like-icon.svg';
 import dislike from '@/assets/sources/icons/dislike-icon.svg';
+import gql from 'graphql-tag';
+import { useQuery } from '@vue/apollo-composable';
+import WalletP2p from '../services/wallet-p2p';
+import { ref, computed } from 'vue';
+
+const query = gql`
+  query Proposals($id: String!) {
+    proposal(id: $id) {
+      approval_date
+      creation_date
+      description
+      downvote
+      id
+      kind
+      link
+      proposer
+      proposal_type
+      status
+      submission_time
+      title
+      upvote
+      user_creation
+      vote(where: {user_id: "5d18671d5948cd3348ff4fe4578518ed25a77ee73d18e4ee2b21b335d1585df7"}) {
+        user_id
+      }
+    }
+  }
+`;
 
 export default {
-	data() {
+	setup() {
+    const valores = window.location.search;
+    const urlParams = new URLSearchParams(valores);
+    var id = urlParams.get('id');
+
+    console.log("otra vez: ", id)
+
+    const { result, loading, error } = useQuery(query, {id: id});
+
+
+    /*const realizarConsulta = (filtro) => {
+      // Define tu consulta GraphQL utilizando el filtro proporcionado
+      console.log("filtro", filtro)
+
+
+      // Realiza la consulta utilizando useQuery
+      const { result, loading, error } = useQuery(query, {
+        // variables: {
+          id: filtro,
+        // },
+      });
+
+      // Maneja la respuesta y los errores de la consulta aquí
+      // Puedes acceder a los datos de la consulta a través de result.value.data
+
+      // Ejemplo básico de cómo manejar la respuesta
+      if (loading) {
+        console.log('Cargando...');
+      } else if (error) {
+        console.error(error);
+      } else {
+        console.log(result);
+      }
+
+      return result
+    };*/
+
+
 		return{
+      result,
+      loading,
+      error,
 			openVoice: false,
 			openCouncil: false,
 			voices_left: 0,
@@ -219,7 +286,7 @@ export default {
 			council_left: 3,
 			council_goal: 4,
 			percent_council: 75,
-			cardsProposals:[
+			cardsProposals: ref(/*[
 				{
 					proposals_id: 1234,
 					title_desc: 'AddBounty',
@@ -230,12 +297,11 @@ export default {
 					link: 'gov.near.org',
 					amount: 777,
 					currency: 'NEAR',
-					claims: 222,
 					time_complete: '3 Meses',
 					likes: 117,
 					dislikes: 15,
 				},
-			],
+			]*/),
 
 			dataLikes: [
 				{icon: 'like'},
@@ -319,6 +385,40 @@ export default {
 			]
 		}
 	},
+
+  watch: {
+    result(response) {
+      console.log("response: ", response)
+      if(response){
+
+        console.log(response)
+        const data = response.proposal;
+
+        this.cardsProposals = [{
+          proposals_id: data.id,
+          title_desc: data.proposal_type,
+          title: data.title,
+          date: data.approval_date,
+          near_id: data.proposer,
+          desc: data.description,
+          link: data.link,
+          amount: null,
+          currency: 'NEAR',
+          time_complete: '7 Días',
+          likes: data.upvote,
+          dislikes: data.downvote,
+        }];
+
+      };
+    }
+  },
+
+  mounted() {
+
+  },
+  computed: {
+
+  },
 
 	methods: {
     openToggle() {

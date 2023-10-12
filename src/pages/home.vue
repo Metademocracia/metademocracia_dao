@@ -87,7 +87,7 @@
             </v-btn-toggle>
           </div>
           <div class="apexchart-container">
-            <apexchart type="area" :height="chartHeight" :options="chartOptionsComputed" :series="seriesComputed"></apexchart>
+            <apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
           </div>
         </div>
       </v-col>
@@ -168,7 +168,7 @@ import VueApexCharts from "vue3-apexcharts"
 import gql from 'graphql-tag';
 import { useQuery } from '@vue/apollo-composable';
 import WalletP2p from '../services/wallet-p2p';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import moment from 'moment';
 
 const QUERY = gql`
@@ -206,66 +206,8 @@ export default {
       toggle: ref(0),
       amount_near: ref(null),
       delegation_near: ref(0),
-      series: ref([
-        {
-          name: 'series1',
-          data: [100, 150, 138, 200, 248, 230, 180],
-        }
-      ]),
-      chartOptions: ref({
-        tooltip: {
-          theme: 'custom-tooltip',
-          custom: function({ series, seriesIndex, dataPointIndex, w }) {
-            const value = series[seriesIndex][dataPointIndex];
-
-            return '<div class="custom-tooltip-content">' +
-              '<span>' + '$' + value + '</span>' +
-              '</div>';
-          }
-        },
-        chart: {
-          type: 'area',
-          toolbar: {
-            show:false,
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'smooth',
-          width: 1,
-        },
-        xaxis: {
-          type: 'datetime',
-          categories: ["1 JUL", "2 JUL", "3 JUL", "4 JUL", "5 JUL", "6 JUL", "7 JUL "],
-          labels: {
-            style: {
-              colors: '#fff',
-            },
-          },
-          tooltip: {
-            enabled: false,
-          },
-        },
-
-        yaxis: {
-          labels: {
-            style: {
-              colors: '#fff',
-            },
-          },
-
-          axisBorder: {
-            show: true,
-          },
-        },
-
-        grid: {
-          show: false,
-
-        },
-      }),
+      series: ref(null),
+      chartOptions: ref(null),
 
       chartSeries2: [
         {
@@ -334,6 +276,12 @@ export default {
     }
   },
 
+  watch: {
+    result(response) {
+      this.loadChart(response);
+    }
+  },
+
   computed: {
     chartHeight() {
       return window.innerWidth < 690 ? '250px' : '450px';
@@ -344,55 +292,14 @@ export default {
       }
       return this.delegation_near
     },
-
-    seriesComputed() {
-      /*if(this.result){
-        if(this.result.delegationhists) {
-          const data = [];
-          for(let i = 0; i < this.result.delegationhists.length; i++){
-            data.push(Number((this.result.delegationhists[i].amount / 1000000000000000000000000).toFixed(2)))
-          }
-
-          console.log("data series: ", data)
-
-          // this.series.data = data;
-
-          // console.log(this.series.data);
-          // this.series.data =
-          return this.series;
-        }
-      }*/
-
-      return this.series;
-    },
-
-    chartOptionsComputed() {
-      /*if(this.result){
-        if(this.result.delegationhists) {
-          let chartOptions = this.chartOptions;
-          const data = [];
-          for(let i = 0; i < this.result.delegationhists.length; i++){
-            data.push(moment(this.result.delegationhists[i].date_time/1000000).format('MM Do HH:MM'))
-          }
-
-          console.log("data options: ", data)
-
-          chartOptions.xaxis.categories = data;
-
-          // this.chartOptions = chartOptions;
-
-          return this.chartOptions;
-        }
-      }*/
-
-      // this.chartOptions.xaxis.categories = ["11 JUL", "12 JUL", "13 JUL", "14 JUL", "15 JUL", "16 JUL", "17 JUL "];
-
-      return this.chartOptions;
-    }
   },
 
   mounted() {
-
+    if(this.result){
+      if(this.result.delegationhists) {
+        this.loadChart(this.result);
+      }
+    }
   },
 
   methods: {
@@ -418,6 +325,100 @@ export default {
       } else {
         console.log("debe introducir un monto")
       }
+    },
+
+    loadChart(response) {
+      console.log("watch: ", response)
+      if(response){
+        if(response.delegationhists) {
+          this.series = null;
+          this.chartOptions = null;
+
+          const data_series = [];
+          for(let i = 0; i < response.delegationhists.length; i++){
+            data_series.push(Number((response.delegationhists[i].amount / 1000000000000000000000000).toFixed(2)))
+          }
+
+          let series = [
+            {
+              name: 'series1',
+              data: data_series, // [100, 150, 138, 200, 248, 230, 180],
+            }
+          ];
+
+          console.log("data series: ", data_series)
+
+
+
+          const data_chartOptions = [];
+          for(let i = 0; i < response.delegationhists.length; i++){
+            // data.push(moment(this.result.delegationhists[i].date_time/1000000).format('DD MM HH:MM'))
+            data_chartOptions.push(response.delegationhists[i].date_time/1000000)
+          }
+
+          let chartOptions = {
+            tooltip: {
+              theme: 'custom-tooltip',
+              custom: function({ series, seriesIndex, dataPointIndex, w }) {
+                const value = series[seriesIndex][dataPointIndex];
+
+                return '<div class="custom-tooltip-content">' +
+                  '<span>' + '$' + value + '</span>' +
+                  '</div>';
+              }
+            },
+            chart: {
+              type: 'area',
+              toolbar: {
+                show:false,
+              }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            stroke: {
+              curve: 'smooth',
+              width: 1,
+            },
+            xaxis: {
+              type: 'datetime',
+              categories: data_chartOptions, // ["1 JUL", "2 JUL", "3 JUL", "4 JUL", "5 JUL", "6 JUL", "7 JUL "],
+              labels: {
+                style: {
+                  colors: '#fff',
+                },
+              },
+              tooltip: {
+                enabled: false,
+              },
+            },
+
+            yaxis: {
+              labels: {
+                style: {
+                  colors: '#fff',
+                },
+              },
+
+              axisBorder: {
+                show: true,
+              },
+            },
+
+            grid: {
+              show: false,
+
+            },
+          };
+
+          console.log("data options: ", data_chartOptions)
+
+          this.series = series;
+          this.chartOptions = chartOptions;
+
+        }
+      }
+
     }
   },
 }
