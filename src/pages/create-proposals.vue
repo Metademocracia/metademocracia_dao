@@ -53,7 +53,7 @@
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="proponente">Proponente</label>
               <v-text-field
-              v-model="proponente" id="proponente" class="input" variant="outlined"
+              v-model="proponente" id="proponente" class="input" variant="outlined" disabled
               elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.address" required
               ></v-text-field>
             </v-col>
@@ -283,9 +283,10 @@ export default{
         ],
       },
       network: process.env.NETWORK,
+      proponente: WalletP2p.getAccount()?.address,
       itemsTipoPropuesta: ref([]),
       titulo_propuesta: ref(null),
-      proponente: ref(null),
+      //proponente: ref(null),
       tipo_propuesta: ref(null),
       itemsTokenId: [
         {id: null, desc: "Near"},
