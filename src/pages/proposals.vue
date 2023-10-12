@@ -228,6 +228,7 @@
 						:total-visible="5"
 						size="small"
 					></v-pagination>
+
 				</v-col>
 			</v-row>
     </div>
@@ -243,7 +244,7 @@ import { ref } from 'vue';
 
 const QUERY = gql`
   query Proposals {
-    proposals {
+    proposals(orderBy: creation_date, orderDirection: desc) {
       approval_date
       creation_date
       description
@@ -273,9 +274,9 @@ export default {
       loading,
       error,
       session: ref(null),
-			currentPage: 1,
-      cardsPerPage: 3,
-			page: 1,
+			currentPage: ref(1),
+      cardsPerPage: ref(3),
+			page: ref(1),
 			radio_buttons: null,
 			radio_buttons2: 2,
 			itemSelected: '',
@@ -317,7 +318,6 @@ export default {
     },
     displayedCards() {
       if(this.result) {
-        console.log("result: ", this.result);
         const cardsProposals = this.result.proposals.map((item) => {
           console.log("item.approval_date: ", item.approval_date);
           return {

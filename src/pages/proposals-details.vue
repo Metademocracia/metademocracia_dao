@@ -86,7 +86,7 @@
 							</div>
 
 							<v-row>
-								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
+								<v-col xl="4" lg="4" md="6" cols="6" class="divcol jstart">
 									<span class="tstart" style="color: #939393; font-size: 12px;">Cantidad</span>
 									<div class="divrow jstart acenter" style="color: #000; gap: 8px;">
 										{{ item.amount }} <img src="@/assets/sources/icons/near-icon.svg" alt="Near Icon" style="width: 20px;"> {{ item.currency }}
@@ -96,12 +96,13 @@
 									<span class="tstart" style="color: #939393; font-size: 12px;">Reclamaciones disponibles</span>
 									<span class="tstart" style="color: #000;">{{ item.claims }}</span>
 								</v-col>-->
-								<v-col xl="3" lg="3" md="6" cols="6" class="divcol jstart">
+								<v-col xl="4" lg="4" md="6" cols="6" class="divcol jstart">
 									<span class="tstart" style="color: #939393; font-size: 12px;">Tiempo para completar</span>
 									<span class="tstart" style="color: #000;">{{ item.time_complete }}</span>
 								</v-col>
-								<v-col xl="3" lg="3" md="6" cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
-									<img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"> {{ item.likes }} <img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"> {{ item.dislikes }}
+								<v-col xl="4" lg="4" md="6" cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
+									<img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"> {{ item.likes }}
+                  <img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"> {{ item.dislikes }}
 								</v-col>
 							</v-row>
 						</div>
