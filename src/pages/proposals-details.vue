@@ -373,6 +373,54 @@ export default {
 
   watch: {
     result(response) {
+      this.loadData(response)
+    }
+  },
+
+
+  mounted() {
+    this.session = WalletP2p.getAccount();
+    if(this.result){
+      this.loadData(this.result);
+    }
+  },
+
+  computed: {
+
+  },
+
+	methods: {
+    copy(id) {
+      const link = window.location.origin + window.location.pathname + window.location.search
+      navigator.clipboard.writeText(link);
+    },
+    upvote(id) {
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "update_proposal",
+        args: {
+          id: Number(id),
+          action: "VoteApprove"
+        },
+        gas: "300000000000000"
+      };
+
+      WalletP2p.call(json, "/metademocracia/proposals");
+    },
+    downvote(id) {
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "update_proposal",
+        args: {
+          id: Number(id),
+          action: "VoteReject"
+        },
+        gas: "300000000000000"
+      };
+
+      WalletP2p.call(json, "/metademocracia/proposals");
+    },
+    loadData(response){
       if(response){
         const data = response.proposal;
 
@@ -416,46 +464,6 @@ export default {
         }];
 
       };
-    }
-  },
-
-  mounted() {
-    this.session = WalletP2p.getAccount();
-  },
-  computed: {
-
-  },
-
-	methods: {
-    copy(id) {
-      const link = window.location.origin + window.location.pathname + window.location.search
-      navigator.clipboard.writeText(link);
-    },
-    upvote(id) {
-      const json = {
-        contractId: process.env.CONTRACT_NFT,
-        methodName: "update_proposal",
-        args: {
-          id: Number(id),
-          action: "VoteApprove"
-        },
-        gas: "300000000000000"
-      };
-
-      WalletP2p.call(json, "/metademocracia/proposals");
-    },
-    downvote(id) {
-      const json = {
-        contractId: process.env.CONTRACT_NFT,
-        methodName: "update_proposal",
-        args: {
-          id: Number(id),
-          action: "VoteReject"
-        },
-        gas: "300000000000000"
-      };
-
-      WalletP2p.call(json, "/metademocracia/proposals");
     },
     openToggle() {
 			this.openVoice = !this.openVoice

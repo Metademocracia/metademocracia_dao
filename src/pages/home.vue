@@ -128,7 +128,7 @@
               <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
             </div>
             <h5 style="margin-bottom: 0;">
-               USD
+              {{ result?.serie?.supply }}
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
