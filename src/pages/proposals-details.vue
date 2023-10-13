@@ -446,7 +446,7 @@ export default {
         gas: "300000000000000"
       };
 
-      WalletP2p.call(json);
+      WalletP2p.call(json, "/metademocracia/proposals");
     },
     downvote(id) {
       const json = {
@@ -459,7 +459,7 @@ export default {
         gas: "300000000000000"
       };
 
-      WalletP2p.call(json);
+      WalletP2p.call(json, "/metademocracia/proposals");
     },
     openToggle() {
 			this.openVoice = !this.openVoice

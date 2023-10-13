@@ -35,8 +35,8 @@ function call (json, ruta) {
     success: ruta ? window.location.origin + ruta : window.location.origin + window.location.pathname,
     error: window.location.origin + window.location.pathname,
   }))
-   console.log(JSON.parse(window.atob(token)));
-  //window.open(_routeWallet+"/execute?token="+token, "_self");
+   //console.log(JSON.parse(window.atob(token)));
+  window.open(_routeWallet+"/execute?token="+token, "_self");
 }
 
 function getAccount() {
