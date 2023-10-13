@@ -155,6 +155,19 @@
       </v-card>
     </v-dialog>
   </nav>
+  <v-alert
+      v-model="alert"
+      :type="colorAlert"
+      elevation="3"
+      closable
+      close-label="Close Alert"
+      :title="titleAlert"
+      style="width: 40%; margin-left:30%;"
+    >
+      <p class="mt-5">Hash: <a :href="hashRouteAlert" target="_blank">{{ hashAlert }}</a></p>
+
+      <p v-if="errorAlert"> {{ errorAlert }} </p>
+    </v-alert>
 </template>
 
 <script>
@@ -162,11 +175,17 @@
 import { useWindowScroll } from '@vueuse/core';
 import { ref } from 'vue';
 import WalletP2p from '../services/wallet-p2p';
-
+import moment from 'moment';
 
 export default {
   setup(){
     return{
+      alert: ref(false),
+      colorAlert: ref("success"),
+      titleAlert: ref("Success"),
+      hashAlert: ref(""),
+      hashRouteAlert: ref(""),
+      errorAlert: ref(null),
       menuToggle: false,
       selectedLang: 'ES',
       dialogConnect: ref(false),
@@ -184,8 +203,47 @@ export default {
   },
   mounted() {
     this.verifySession();
+    this.verifyResponse();
   },
   methods: {
+    verifyResponse(){
+      try {
+        const valores = window.location.search;
+        const urlParams = new URLSearchParams(valores);
+        var response = urlParams.get('response');
+
+        if(!response) return
+
+        const response_json = JSON.parse(window.atob(response));
+
+        if(!response_json?.data || !response_json?.date_time) return
+
+        const now = moment(new Date()); //todays date
+        const end = moment(response_json.date_time*1000); // another date
+        const duration = moment.duration(now.diff(end));
+        const minutes = duration.asMinutes();
+
+        if(minutes > 0.7) return
+
+        const hash = response_json?.data?.transaction.hash;
+        const status_json = response_json?.data?.receipts_outcome[3]?.outcome?.status;
+        const status = status_json?.Failure != undefined ? "Failure" : status_json?.SuccessValue  != undefined ? "Success" : "";
+
+        this.alert = true;
+        this.colorAlert = status == "Failure" ? "error" : this.colorAlert;
+        this.titleAlert = status == "Failure" ? "Failure" : this.titleAlert;
+        this.hashAlert = hash;
+        this.hashRouteAlert = process.env.ROUTER_EXPLORER_NEAR_HASH + hash;
+        this.errorAlert = status_json?.Failure?.ActionError?.kind?.FunctionCallError?.ExecutionError;
+
+        // location.href = 'http://127.0.0.1:3002/metademocracia/proposals';
+
+      } catch (error) {
+       console.log("error al cargar mensaje", error.toString());
+      }
+
+
+    },
     verifySession(){
       let wallet = localStorage.getItem("session");
 
