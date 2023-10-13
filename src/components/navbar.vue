@@ -198,8 +198,6 @@ export default {
       const urlParams = new URLSearchParams(valores);
       var token = urlParams.get('token');
 
-      console.log("valores: ", token)
-
       if(!token) return
 
       wallet = JSON.parse(window.atob(token)).wallet

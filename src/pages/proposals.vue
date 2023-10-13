@@ -303,7 +303,6 @@ export default {
   },
 
   mounted() {
-    // this.initProposal();
     this.session = WalletP2p.getAccount();
   },
 
@@ -378,34 +377,6 @@ export default {
       };
 
       WalletP2p.call(json);
-    },
-    async initProposal() {
-      const { result, loading,  error } = useQuery(QUERY);
-      const value = await result;
-
-      console.log("loading: ", await loading);
-      console.log("error: ", await error);
-      console.log("result: ", await value._value.proposals);
-
-      this.cardsProposals = value._value.proposals.map((item) => {
-        return {
-					proposals_id: item.id,
-					title_desc: item.proposal_type,
-					title: item.title,
-					date: item.approval_date, //  'Aprobado el: 31 de Agosto de 2023',
-					near_id: item.proposer,
-					desc: item.description,
-					link: item.link,
-					amount: 0,
-					currency: '',
-					time_complete: '7 Días',
-					likes: 0,
-					dislikes: 0,
-				}
-      });
-
-
-      console.log("aqui paso");
     },
   },
 }

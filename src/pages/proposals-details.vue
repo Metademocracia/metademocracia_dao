@@ -395,7 +395,6 @@ export default {
 
   watch: {
     result(response) {
-      console.log("response: ", response)
       if(response){
         const data = response.proposal;
 

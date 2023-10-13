@@ -319,7 +319,7 @@ export default {
           gas: "300000000000000",
           attachedDeposit: deposit
         };
-        console.log("json: ", json)
+
         // 1000000000000000000000
         WalletP2p.call(json);
       } else {
@@ -345,9 +345,6 @@ export default {
               data: data_series, // [100, 150, 138, 200, 248, 230, 180],
             }
           ];
-
-          console.log("data series: ", data_series)
-
 
 
           const data_chartOptions = [];
@@ -411,7 +408,6 @@ export default {
             },
           };
 
-          console.log("data options: ", data_chartOptions)
 
           this.series = series;
           this.chartOptions = chartOptions;
