@@ -150,6 +150,7 @@
                   item-title="desc"
                   item-value="id"
                   density="compact"
+                  :selected="token_id"
                   :rules="[v => !!v || 'Is required']"
                   rounded
                   menu-icon="mdi-chevron-down"
@@ -292,7 +293,7 @@ export default{
         {id: null, desc: "Near"},
         {id: "usdc", desc: "USDC"},
       ],
-      token_id: ref(null),
+      token_id: ref({id: null, desc: "Near"}),
     }
   },
   mounted() {
@@ -330,7 +331,7 @@ export default{
             proponent: document.getElementById("proponente").value,
             kind: {
               Transfer: {
-                token_id: this.token_id.id,
+                token_id: this.token_id.id, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
                 receiver_id: document.getElementById("receiver_id").value,
                 amount: this.token_id.id ? document.getElementById("amount").value.toString() : (BigInt(document.getElementById("amount").value) * BigInt("1000000000000000000000000")).toString(),
                 msg: document.getElementById("msg").value ? document.getElementById("msg").value.lenght > 0 ? document.getElementById("msg").value.length : null : null,
@@ -342,7 +343,7 @@ export default{
         gas: "300000000000000",
         attachedDeposit: "1"
       };
-
+      
       WalletP2p.call(json, "/metademocracia/proposals");
     }
   },

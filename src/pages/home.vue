@@ -328,7 +328,6 @@ export default {
     },
 
     loadChart(response) {
-      console.log("watch: ", response)
       if(response){
         if(response.delegationhists) {
           this.series = null;

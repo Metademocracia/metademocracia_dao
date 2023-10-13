@@ -132,7 +132,7 @@
 					<v-row>
 						<v-col xl="2" lg="2" md="2" cols="12" class="center jstart">
 							<h6 class="mb-0 tstart" style="width: 100%;">
-								No miembros de DAO
+								Miembros de DAO
 							</h6>
 						</v-col>
 
@@ -166,7 +166,7 @@
 						</v-col>
 					</v-row>
 
-					<v-row>
+					<!--<v-row>
 						<v-col xl="1" lg="1" md="1" cols="12" class="center jstart">
 							<h6 class="mb-0 tstart" style="width: 100%;">
 								Concejo
@@ -203,7 +203,7 @@
 								<span>{{ item.date }}</span>
 							</div>
 						</v-col>
-					</v-row>
+					</v-row>-->
 				</div>
 			</section>
 	</div>
@@ -216,15 +216,19 @@ import dislike from '@/assets/sources/icons/dislike-icon.svg';
 import gql from 'graphql-tag';
 import { useQuery } from '@vue/apollo-composable';
 import WalletP2p from '../services/wallet-p2p';
+import moment from 'moment';
 import { ref, computed } from 'vue';
 
 const query = gql`
   query Proposals($id: String!) {
+    serie(id: "1") {
+      supply
+    }
+
     proposal(id: $id) {
       approval_date
       creation_date
       description
-      downvote
       id
       kind
       link
@@ -234,9 +238,12 @@ const query = gql`
       submission_time
       title
       upvote
+      downvote
       user_creation
-      vote(where: {user_id: "5d18671d5948cd3348ff4fe4578518ed25a77ee73d18e4ee2b21b335d1585df7"}) {
+      vote(orderBy: date_time, orderDirection: desc) {
         user_id
+        vote
+        date_time
       }
     }
   }
@@ -247,8 +254,6 @@ export default {
     const valores = window.location.search;
     const urlParams = new URLSearchParams(valores);
     var id = urlParams.get('id');
-
-    console.log("otra vez: ", id)
 
     const { result, loading, error } = useQuery(query, {id: id});
 
@@ -286,13 +291,13 @@ export default {
       loading,
       error,
       session: ref({}),
-			openVoice: false,
-			openCouncil: false,
-			voices_left: 0,
-			voices_goal: 1,
-			council_left: 3,
-			council_goal: 4,
-			percent_council: 75,
+			openVoice: ref(false),
+			openCouncil: ref(false),
+			voices_left: ref(0),
+			voices_goal: ref(0),
+			council_left: ref(3),
+			council_goal: ref(4),
+			percent_council: ref(75),
 			cardsProposals: ref(/*[
 				{
 					proposals_id: 1234,
@@ -310,8 +315,8 @@ export default {
 				},
 			]*/),
 
-			dataLikes: [
-				{icon: 'like'},
+			dataLikes: ref([
+				/*{icon: 'like'},
 				{ icon: 'dislike'},
 				{icon: 'like'},
 				{icon: 'like'},
@@ -332,28 +337,28 @@ export default {
 				{icon: 'like'},
 				{icon: 'like'},
 				{icon: 'like'},
-				{icon: 'like'},
-			],
+				{icon: 'like'},*/
+			]),
 
 			iconMap: {
         like,
         dislike,
       },
 
-			dataVoice: [
-				{
-					icon: 'mdi-vote',
+			dataVoice: ref([
+				/*{
+					icon: 'mdi-thumb-up',
 					name: 'pruebavotar.near',
 				},
 				{
 					icon: 'mdi-thumb-down',
 					name: 'pruebavotar.near',
 					date: '02 May 2023 22:56:28',
-				},
-			],
+				},*/
+			]),
 
 			dataCouncil:[
-				{
+				/*{
 					icon: 'mdi-thumb-up',
 					name: 'pruebavotar.near',
 				},
@@ -361,34 +366,7 @@ export default {
 					icon: 'mdi-thumb-down',
 					name: 'pruebavotar.near',
 					date: '02 May 2023 22:56:28',
-				},
-				{
-					icon: 'mdi-thumb-down',
-					name: 'pruebavotar.near',
-				},
-				{
-					icon: 'mdi-vote',
-					name: 'pruebavotar.near',
-					date: '02 May 2023 22:56:28',
-				},
-				{
-					icon: 'mdi-thumb-up',
-					name: 'pruebavotar.near',
-				},
-				{
-					icon: 'mdi-thumb-up',
-					name: 'pruebavotar.near',
-					date: '02 May 2023 22:56:28',
-				},
-				{
-					icon: 'mdi-thumb-up',
-					name: 'pruebavotar.near',
-				},
-				{
-					icon: 'mdi-vote',
-					name: 'pruebavotar.near',
-					date: '02 May 2023 22:56:28',
-				},
+				},*/
 			]
 		}
 	},
@@ -402,6 +380,25 @@ export default {
         if(data.proposal_type == "Transfer") {
           amount = Number((JSON.parse(data.kind).Transfer.amount / 1000000000000000000000000).toFixed(2));
         }
+
+        const dataLikes = [];
+        const dataVoice = [];
+        for(let i = 0; i<data.vote.length; i++) {
+          const type_vote = data.vote[i].vote == "VoteApprove" ? {icon: 'like'} : {icon: 'dislike'};
+          dataLikes.push(type_vote);
+
+          dataVoice.push({
+            icon: data.vote[i].vote == "VoteApprove" ? 'mdi-thumb-up' : 'mdi-thumb-down',
+            name: data.vote[i].user_id,
+            date: moment(data.vote[i].date_time/1000000).format('DD MMM yyyy HH:mm:ss'),
+          });
+        }
+
+        this.dataLikes = dataLikes;
+        this.dataVoice = dataVoice;
+        this.voices_goal = response.serie.supply;
+        this.voices_left = Number(data.upvote) + Number(data.downvote)
+
 
         this.cardsProposals = [{
           proposals_id: data.id,

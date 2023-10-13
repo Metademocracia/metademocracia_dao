@@ -26,8 +26,8 @@
 						</div>
 						<v-divider vertical :thickness="1" class="border-opacity-50" style="color: rgba(#fff, 0.7);"></v-divider>
 						<div class="divcol jstart" style="gap: 5px;">
-							<span class="tstart" style="color: #61C2D5; font-size: 12px; margin-bottom: 0px;">Valor total bloqueado</span>
-							<span class="tstart">{{ total_value }} USD</span>
+							<span class="tstart" style="color: #61C2D5; font-size: 12px; margin-bottom: 0px;">Valor total</span>
+							<span class="tstart">{{ total_value_computed }} USD</span>
 						</div>
 					</div>
 					<div class="delete-mobile" style="width: 80px; height: 1px;"></div>
@@ -70,7 +70,7 @@
 												Actividad
 											</h5>
 
-											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
+											<!--<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
 												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													7D
 												</v-btn>
@@ -90,7 +90,7 @@
 												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													ALL
 												</v-btn>
-											</v-btn-toggle>
+											</v-btn-toggle> -->
 										</div>
 										<div class="apexchart-container">
 											<apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
@@ -229,7 +229,7 @@
 							id="proposer"
 							class="input mt-6 mb-6"
 							variant="solo"
-							placeholder="andresdom.near"
+							placeholder="address"
 							append-inner-icon="mdi-magnify"
 							></v-text-field>
 						</div>
@@ -275,31 +275,64 @@ import stnear from '@/assets/sources/icons/stnear-icon.svg';
 import usdc from '@/assets/sources/icons/usdc-icon.svg';
 import usdt from '@/assets/sources/icons/tether-icon.svg';
 import VueApexCharts from "vue3-apexcharts"
+import gql from 'graphql-tag';
+import { useQuery } from '@vue/apollo-composable';
+import WalletP2p from '../services/wallet-p2p';
+import { ref, watch } from 'vue';
+import axios from 'axios';
+import moment from 'moment';
+
+const QUERY = gql`
+  query MyQuery {
+    serie(id: "1") {
+      supply
+    }
+
+    delegation(id: "near") {
+      total_amount
+    }
+
+    delegationhists(orderBy: date_time, orderDirection: asc) {
+      delegator
+      amount
+      date_time
+    }
+
+    proposaldata(id: "1") {
+      proposal_actives
+      proposal_total
+    }
+  }
+`;
 
 export default {
 	components: {
     apexchart: VueApexCharts,
   },
 	data() {
+    const { result, loading,  error } = useQuery(QUERY);
 		return{
-			currentPage: 1,
-      cardsPerPage: 10,
-			page: 1,
-			selected: 'Menos Recientes',
-			radio_buttons: 1,
-			toggle: 0,
-			windowStep: 0,
-			dao_account_name: 'metademocracia.near',
-			total_value: '10,350.22',
+      result,
+      loading,
+      error,
+			currentPage: ref(1),
+      cardsPerPage: ref(10),
+			page: ref(1),
+			selected: ref('Menos Recientes'),
+			radio_buttons: ref(1),
+			toggle: ref(0),
+			windowStep: ref(0),
+			dao_account_name: process.env.CONTRACT_NFT,
+			total_value: ref(0),
 
-			headerCards:[
+			headerCards: ref([
 				{
 					icon: 'near',
 					amount: '1234.87',
 					currency: 'NEAR',
 					amount_usd: '3456.878'
 				},
-				{
+				/*{
 					icon: 'stnear',
 					amount: '1234.87',
 					currency: 'STNEAR',
@@ -316,8 +349,8 @@ export default {
 					amount: '1234.87',
 					currency: 'USDT',
 					amount_usd: '3456.878'
-				},
-			],
+				},*/
+			]),
 
 			iconMap: {
         near,
@@ -326,13 +359,13 @@ export default {
 				usdt
       },
 
-			series: [
+			series: ref(null), /* [
         {
           name: 'series1',
           data: [100, 150, 138, 200, 248, 230, 180],
         }
-      ],
-      chartOptions: {
+      ],*/
+      chartOptions: ref(null), /*{
         tooltip: {
           theme: 'custom-tooltip',
           custom: function({ series, seriesIndex, dataPointIndex, w }) {
@@ -385,36 +418,11 @@ export default {
           show: false,
 
         },
-      },
-			dataTransactions: [
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 31.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 41.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 31.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 41.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 31.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 41.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-			]
+      }*/
+			dataTransactions: ref([
+				/*{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
+				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},*/
+			])
 		}
 	},
 
@@ -426,6 +434,12 @@ export default {
 		openToggleCouncil() {
 			this.openCouncil = !this.openCouncil
 		},
+  },
+
+  watch: {
+    result(response) {
+      this.loadChartAndTable(response);
+    }
   },
 
 	computed: {
@@ -440,6 +454,138 @@ export default {
       const endIndex = startIndex + this.cardsPerPage;
       return this.dataTransactions.slice(startIndex, endIndex);
     },
+    total_value_computed() {
+      if(this.result) {
+        console.log(this.result.delegationhists)
+        this.total_value = this.result.delegation.total_amount / 1000000000000000000000000;
+        this.headerCards[0].amount = this.total_value;
+
+        axios.post(process.env.URL_APIP_PRICE,
+          {fiat: "USD", crypto: "NEAR"})
+        .then((response) => {
+          const balanceNear = Number(this.headerCards[0].amount);
+          this.headerCards[0].amount_usd = (balanceNear * response.data[0].value).toFixed(2)
+        }).catch((error) => {
+          console.log("error balane: ", error)
+        })
+      }
+      return this.total_value
+    },
+  },
+
+  mounted() {
+    if(this.result){
+      if(this.result.delegationhists) {
+        this.loadChartAndTable(this.result);
+      }
+    }
+  },
+
+  methods: {
+    loadChartAndTable(response) {
+      if(response){
+        if(response.delegationhists) {
+          this.series = null;
+          this.chartOptions = null;
+
+          const data_series = [];
+          const data_chartOptions = [];
+          const data_table = [];
+
+          for(let i = 0; i < response.delegationhists.length; i++){
+            const amount = Number((response.delegationhists[i].amount / 1000000000000000000000000).toFixed(2))
+            const epoch = response.delegationhists[i].date_time/1000000;
+
+            data_series.push(amount);
+            data_chartOptions.push(epoch);
+
+            data_table.push({
+              near: '+ '+amount+' NEAR',
+              icon: 'mdi-tray-arrow-down',
+              name: response.delegationhists[i].delegator,
+              date: moment(epoch).format("DD MMM yyyy HH:mm:ss")
+            });
+          }
+          
+          this.dataTransactions = data_table;
+
+          let series = [
+            {
+              name: 'series1',
+              data: data_series, // [100, 150, 138, 200, 248, 230, 180],
+            }
+          ];
+
+
+
+          /*for(let i = 0; i < response.delegationhists.length; i++){
+            // data.push(moment(this.result.delegationhists[i].date_time/1000000).format('DD MM HH:MM'))
+            data_chartOptions.push(response.delegationhists[i].date_time/1000000)
+          }*/
+
+          let chartOptions = {
+            tooltip: {
+              theme: 'custom-tooltip',
+              custom: function({ series, seriesIndex, dataPointIndex, w }) {
+                const value = series[seriesIndex][dataPointIndex];
+
+                return '<div class="custom-tooltip-content">' +
+                  '<span>' + '$' + value + '</span>' +
+                  '</div>';
+              }
+            },
+            chart: {
+              type: 'area',
+              toolbar: {
+                show:false,
+              }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            stroke: {
+              curve: 'smooth',
+              width: 1,
+            },
+            xaxis: {
+              type: 'datetime',
+              categories: data_chartOptions, // ["1 JUL", "2 JUL", "3 JUL", "4 JUL", "5 JUL", "6 JUL", "7 JUL "],
+              labels: {
+                style: {
+                  colors: '#fff',
+                },
+              },
+              tooltip: {
+                enabled: false,
+              },
+            },
+
+            yaxis: {
+              labels: {
+                style: {
+                  colors: '#fff',
+                },
+              },
+
+              axisBorder: {
+                show: true,
+              },
+            },
+
+            grid: {
+              show: false,
+
+            },
+          };
+
+
+          this.series = series;
+          this.chartOptions = chartOptions;
+
+        }
+      }
+
+    }
   },
 }
 </script>
