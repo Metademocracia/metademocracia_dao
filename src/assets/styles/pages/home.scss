@@ -80,6 +80,7 @@
       background-color: #fff;
       height: max-content;
       border-radius: 30px;
+      
 
       .input-search{
         width: 150px;
@@ -131,6 +132,10 @@
 
         @include media(max,810px){
           width: 100px;
+        }
+
+        @include media(max,500px){
+          width: 70px;
         }
       }
     }

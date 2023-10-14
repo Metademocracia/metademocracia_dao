@@ -186,7 +186,7 @@ export default {
       hashAlert: ref(""),
       hashRouteAlert: ref(""),
       errorAlert: ref(null),
-      menuToggle: false,
+      menuToggle: ref(false),
       selectedLang: 'ES',
       dialogConnect: ref(false),
       obtenWallet: false,
