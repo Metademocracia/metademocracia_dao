@@ -4,7 +4,7 @@ import axios from 'axios';
 //const { KeyPair, keyStores, connect } = nearAPI;
 
 const _routeWallet = process.env.ROUTER_WALLET
-const _routeRpc = process.env.ROTER_RPC
+const _routeRpc = process.env.ROUTER_RPC
 
 
 function login (contract) {
