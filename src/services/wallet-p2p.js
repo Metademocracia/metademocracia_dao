@@ -1,4 +1,7 @@
 import axios from 'axios';
+// import { configNear }  from './nearConfig';
+//import * as nearAPI from "near-api-js";
+//const { KeyPair, keyStores, connect } = nearAPI;
 
 const _routeWallet = process.env.ROUTER_WALLET
 const _routeRpc = process.env.ROTER_RPC
