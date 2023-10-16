@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const _routeWallet = process.env.ROUTER_WALLET
+const _routeRpc = process.env.ROTER_RPC
 
 
 function login (contract) {
@@ -62,7 +63,7 @@ function getTransaction(hash, account_id) {
     "params": [hash, account]
   }
 
-  return axios.post('https://archival-rpc.testnet.near.org',
+  return axios.post(_routeRpc,
     json, {
       headers: {
         'Content-Type': 'application/json',
