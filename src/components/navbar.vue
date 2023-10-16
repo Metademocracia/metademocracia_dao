@@ -216,7 +216,7 @@ export default {
 
         const response_json = JSON.parse(window.atob(response));
 
-        if(!response_json?.data || !response_json?.date_time) return
+        if(!response_json?.hash || !response_json?.date_time) return
 
         const now = moment(new Date()); //todays date
         const end = moment(response_json.date_time*1000); // another date
@@ -225,16 +225,20 @@ export default {
 
         if(minutes > 0.7) return
 
-        const hash = response_json?.data?.transaction.hash;
-        const status_json = response_json?.data?.receipts_outcome[3]?.outcome?.status;
-        const status = status_json?.Failure != undefined ? "Failure" : status_json?.SuccessValue  != undefined ? "Success" : "";
+        WalletP2p.getTransaction(response_json?.hash).then(response => {
+          const response_json = response.data.result;
+          const hash = response_json?.transaction.hash;
+          const status_json = response_json?.receipts_outcome[3]?.outcome?.status;
+          const status = status_json?.Failure != undefined ? "Failure" : status_json?.SuccessValue  != undefined ? "Success" : "";
 
-        this.alert = true;
-        this.colorAlert = status == "Failure" ? "error" : this.colorAlert;
-        this.titleAlert = status == "Failure" ? "Failure" : this.titleAlert;
-        this.hashAlert = hash;
-        this.hashRouteAlert = process.env.ROUTER_EXPLORER_NEAR_HASH + hash;
-        this.errorAlert = status_json?.Failure?.ActionError?.kind?.FunctionCallError?.ExecutionError;
+          this.alert = true;
+          this.colorAlert = status == "Failure" ? "error" : this.colorAlert;
+          this.titleAlert = status == "Failure" ? "Failure" : this.titleAlert;
+          this.hashAlert = hash;
+          this.hashRouteAlert = process.env.ROUTER_EXPLORER_NEAR_HASH + hash;
+          this.errorAlert = status_json?.Failure?.ActionError?.kind?.FunctionCallError?.ExecutionError;
+        });
+
 
         // location.href = 'http://127.0.0.1:3002/metademocracia/proposals';
 

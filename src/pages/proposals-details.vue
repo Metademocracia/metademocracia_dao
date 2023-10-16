@@ -101,8 +101,8 @@
 									<span class="tstart" style="color: #000;">{{ item.time_complete }}</span>
 								</v-col>
 								<v-col xl="4" lg="4" md="6" cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
-									<button @click.stop="upvote(item.proposals_id)" :disabled="session.address ? false : true" ><img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"></button> {{ item.likes }}
-                  <button @click.stop="downvote(item.proposals_id)" :disabled="session.address ? false : true"><img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"></button> {{ item.dislikes }}
+									<button @click.stop="upvote(item.proposals_id)" :disabled="(session.address ? false : true) || item.date" ><img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"></button> {{ item.likes }}
+                  <button @click.stop="downvote(item.proposals_id)" :disabled="(session.address ? false : true) || item.date"><img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"></button> {{ item.dislikes }}
 								</v-col>
 							</v-row>
 						</div>
@@ -385,9 +385,6 @@ export default {
     }
   },
 
-  computed: {
-
-  },
 
 	methods: {
     copy(id) {
@@ -447,12 +444,15 @@ export default {
         this.voices_goal = response.serie.supply;
         this.voices_left = Number(data.upvote) + Number(data.downvote)
 
+        const date = moment(data.approval_date/1000000)
+        const date_format = 'Aprobado el: ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
+        const date_final = data.approval_date ? date_format : data.approval_date;
 
         this.cardsProposals = [{
           proposals_id: data.id,
           title_desc: data.proposal_type,
           title: data.title,
-          date: data.approval_date,
+          date: date_final,
           near_id: data.proposer,
           desc: data.description,
           link: data.link,

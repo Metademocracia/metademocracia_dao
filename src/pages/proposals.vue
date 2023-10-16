@@ -215,8 +215,8 @@
 									<span class="tstart" style="color: #000;">{{ item.time_complete }}</span>
 								</v-col>
 								<v-col xl="3" lg="3" md="6" cols="6" class="divrow jend acenter" style="gap: 10px; color: #000;">
-									<button @click.stop="upvote(item.proposals_id)" :disabled="session.address ? false : true"><img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"></button> {{ item.likes }}
-                  <button @click.stop="downvote(item.proposals_id)" :disabled="session.address ? false : true"><img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"></button> {{ item.dislikes }}
+									<button @click.stop="upvote(item.proposals_id)" :disabled="(session.address ? false : true) || item.date"><img src="@/assets/sources/icons/like-icon.svg" alt="Like" style="width: 30px;"></button> {{ item.likes }}
+                  <button @click.stop="downvote(item.proposals_id)" :disabled="(session.address ? false : true) || item.date"><img src="@/assets/sources/icons/dislike-icon.svg" alt="Dislike" style="width: 30px; margin-left: 10px;"></button> {{ item.dislikes }}
 								</v-col>
 							</v-row>
 						</div>
@@ -240,6 +240,7 @@ import { initOnLoad } from 'apexcharts';
 import gql from 'graphql-tag';
 import { useQuery } from '@vue/apollo-composable';
 import WalletP2p from '../services/wallet-p2p';
+import moment from 'moment';
 import { ref } from 'vue';
 
 const QUERY = gql`
@@ -323,11 +324,15 @@ export default {
             amount = Number((JSON.parse(item.kind).Transfer.amount / 1000000000000000000000000).toFixed(2));
           }
 
+          const date = moment(item.approval_date/1000000)
+          const date_format = 'Aprobado el: ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
+          const date_final = item.approval_date ? date_format : item.approval_date;
+
           return {
             proposals_id: item.id,
             title_desc: item.proposal_type,
             title: item.title,
-            date: item.approval_date, //  'Aprobado el: 31 de Agosto de 2023',
+            date: date_final, //  'Aprobado el: 31 de Agosto de 2023',
             near_id: item.proposer,
             desc: item.description,
             link: item.link,

@@ -117,20 +117,44 @@
               </v-col>
             </template>
 
-            <template v-if="tipo_propuesta && tipo_propuesta.desc === 'Llamada de función'">
+            <template v-if="tipo_propuesta && tipo_propuesta.id === 'FunctionCall'">
               <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="receiver_id">ID de Receptor</label>
+                <label for="receiver_id">ID contrato</label>
                 <v-text-field
                 id="receiver_id" class="input" variant="outlined"
-                elevation="1" placeholder="#123456"
+                elevation="1" placeholder="#123456" :rules="rules.required" required
                 ></v-text-field>
               </v-col>
 
               <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="actions">Accion</label>
+                <label for="method_name">Nombre del método</label>
                 <v-text-field
-                id="actions" class="input" variant="outlined"
-                elevation="1" placeholder="actions"
+                id="method_name" class="input" variant="outlined"
+                elevation="1" placeholder="Nombre del método" :rules="rules.required" required
+                ></v-text-field>
+              </v-col>
+
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="args">Argumentos</label>
+                <v-text-field
+                id="args" class="input" variant="outlined"
+                elevation="1" placeholder="Argumentos" :rules="rules.required" required
+                ></v-text-field>
+              </v-col>
+
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="deposit">Deposito</label>
+                <v-text-field
+                id="deposit" class="input" variant="outlined"
+                elevation="1" placeholder="Deposito" :rules="rules.required" required
+                ></v-text-field>
+              </v-col>
+
+              <v-col xl="6" lg="6" md="6" cols="12">
+                <label for="gas">Gas</label>
+                <v-text-field
+                id="gas" class="input" variant="outlined"
+                elevation="1" placeholder="Gas" :rules="rules.required" required
                 ></v-text-field>
               </v-col>
             </template>
@@ -302,7 +326,7 @@ export default{
         // {id: '', desc: 'Cambiar política'},
         // {id: '', desc: 'Agregar miembro del grupo'},
         // {id: '', desc: 'Eliminar miembro del grupo'},
-        // {id: '', desc: 'Llamada de función'},
+        {id: 'FunctionCall', desc: 'Llamada de función', fn: this.addFunctionCall},
         {id: 'Transfer', desc: 'Transferencia', fn: this.addTransfer},
         // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
         // {id: '', desc: 'Cambiar política eliminar rol'},
@@ -320,6 +344,7 @@ export default{
         }
       }
     },
+
     addTransfer(){
       const json = {
         contractId: process.env.CONTRACT_NFT,
@@ -333,19 +358,53 @@ export default{
               Transfer: {
                 token_id: this.token_id.id, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
                 receiver_id: document.getElementById("receiver_id").value,
-                amount: this.token_id.id ? document.getElementById("amount").value.toString() : (BigInt(document.getElementById("amount").value) * BigInt("1000000000000000000000000")).toString(),
+                amount: this.token_id.id ? document.getElementById("amount").value.toString() : BigInt(Number(document.getElementById("amount").value) * 1000000000000000000000000).toString(),
                 msg: document.getElementById("msg").value ? document.getElementById("msg").value.lenght > 0 ? document.getElementById("msg").value.length : null : null,
               }
             },
-            link: document.getElementById("titulo_propuesta").value,
+            link: document.getElementById("link").value,
           }
         },
         gas: "300000000000000",
         attachedDeposit: "1"
       };
-      
+
       WalletP2p.call(json, "/metademocracia/proposals");
-    }
+    },
+
+    addFunctionCall(){
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "set_proposal",
+        args: {
+          data: {
+            title: document.getElementById("titulo_propuesta").value,
+            description: document.getElementById("descripcion").value,
+            proponent: document.getElementById("proponente").value,
+            kind: {
+              FunctionCall: {
+                receiver_id: document.getElementById("receiver_id").value,
+                actions: [
+                  {
+                    method_name: document.getElementById("method_name").value,
+                    args: window.btoa(JSON.stringify(document.getElementById("args").value)),
+                    deposit: BigInt(Number(document.getElementById("deposit").value) * 1000000000000000000000000).toString(),
+                    gas: document.getElementById("gas").value,
+                  }
+                ],
+              }
+            },
+            link: document.getElementById("link").value,
+          }
+        },
+        gas: "300000000000000",
+        attachedDeposit: "1"
+      };
+
+      WalletP2p.call(json, "/metademocracia/proposals");
+    },
+
+
   },
 }
 

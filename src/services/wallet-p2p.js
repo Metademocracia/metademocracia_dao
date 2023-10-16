@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const _routeWallet = process.env.ROUTER_WALLET
 
 
@@ -51,8 +53,27 @@ function getAccount() {
 }
 
 
+function getTransaction(hash, account_id) {
+  const account = account_id ? account_id : getAccount().address;
+  const json = {
+    "jsonrpc": "2.0",
+    "id": "dontcare",
+    "method": "tx",
+    "params": [hash, account]
+  }
+
+  return axios.post('https://archival-rpc.testnet.near.org',
+    json, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+}
+
+
 export default {
   login,
   call,
-  getAccount
+  getAccount,
+  getTransaction
 }
