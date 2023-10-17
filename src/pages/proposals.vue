@@ -246,6 +246,7 @@
       			:length="totalPages"
 						:total-visible="5"
 						size="small"
+            @click="loadPage()"
 					></v-pagination>
 
 				</v-col>
@@ -319,6 +320,7 @@ export default {
         { id: "Expired", desc: "Expiradas"},
         { id: "Failed", desc: "Fallidas"},
       ],
+      proposal_list: ref([]),
 			cardsProposals: ref([]),
       totalPages: ref(Math.ceil(0 / 0)),
       proposer: ref(null),
@@ -379,6 +381,7 @@ export default {
       const link = window.location.origin + process.env.BASE_URL + "proposals-details?id=" + id
       navigator.clipboard.writeText(link);
     },
+
     upvote(id) {
       const json = {
         contractId: process.env.CONTRACT_NFT,
@@ -488,12 +491,21 @@ export default {
           }
         });
 
+        // const startIndex = (this.currentPage - 1) * this.cardsPerPage;
+        // const endIndex = startIndex + this.cardsPerPage;
+
+        this.totalPages = Math.ceil(cardsProposals.length / this.cardsPerPage);
+        this.proposal_list = cardsProposals;
+        this.loadPage();
+        // this.cardsProposals = cardsProposals.slice(startIndex, endIndex);
+
+      },
+
+      loadPage() {
         const startIndex = (this.currentPage - 1) * this.cardsPerPage;
         const endIndex = startIndex + this.cardsPerPage;
 
-        this.totalPages = Math.ceil(cardsProposals.length / this.cardsPerPage);
-        this.cardsProposals = cardsProposals.slice(startIndex, endIndex);
-
+        this.cardsProposals = this.proposal_list.slice(startIndex, endIndex);
       },
 
   },

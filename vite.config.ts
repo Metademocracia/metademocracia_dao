@@ -36,7 +36,7 @@ export default defineConfig((userConfig) => {
         ROUTER_WALLET: env.ROUTER_WALLET,
         ROUTER_EXPLORER_NEAR_HASH: env.ROUTER_EXPLORER_NEAR_HASH,
         URL_APIP_PRICE: env.URL_APIP_PRICE,
-        ROUTER_RPC: env.ROTER_RPC,
+        ROUTER_RPC: env.ROUTER_RPC,
         ROUTER_GRAPH: env.ROUTER_GRAPH,
       },
       __VUE_I18N_FULL_INSTALL__: true,

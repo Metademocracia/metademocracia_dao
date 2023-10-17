@@ -214,23 +214,28 @@
 								Elige un Filtro
 							</span>
 							<v-radio-group
-								v-model="radio_buttons"
+								v-model="select_radio_buttons"
+                v-for="(item, index) in typeTransaction" :key="index"
 								hide-details
 								class="mb-6"
+                @change="loadTransactions()"
 							>
-								<v-radio label="Todos" class="radios mr-4" :value="1"></v-radio>
+                <v-radio :label="item.desc" class="radios mr-4" :value="item.id"></v-radio>
+								<!--<v-radio label="Todos" class="radios mr-4" :value="1"></v-radio>
 								<v-radio label="Recibidos" class="radios mr-4"	:value="2"></v-radio>
-								<v-radio label="Enviados" class="radios mr-4"	:value="3"></v-radio>
+								<v-radio label="Enviados" class="radios mr-4"	:value="3"></v-radio>-->
 							</v-radio-group>
 						</div>
 						<div>
-							<label for="proposer">Filtrar por Wallet</label>
+							<label for="address">Filtrar por Wallet</label>
 							<v-text-field
-							id="proposer"
+              v-model="address"
+							id="address"
 							class="input mt-6 mb-6"
 							variant="solo"
 							placeholder="address"
 							append-inner-icon="mdi-magnify"
+              @keyup="loadTransactions()"
 							></v-text-field>
 						</div>
 					</v-col>
@@ -247,7 +252,7 @@
 							style="color: white;"
 						></v-select>
 
-						<div v-for="(item, index) in displayedCards" :key="index" class="card-desc-votes">
+						<div v-for="(item, index) in dataTransactions" :key="index" class="card-desc-votes">
 							<div class="div-img" :class="{'purple-absolute' : item.icon == 'mdi-tray-arrow-down', 'red-absolute' : item.icon == 'mdi-tray-arrow-up'}">
 								<v-icon>{{ item.icon }}</v-icon>
 							</div>
@@ -261,6 +266,7 @@
 							:length="totalPages"
 							:total-visible="5"
 							size="small"
+              @click="loadPage()"
 						></v-pagination>
 					</v-col>
 				</v-row>
@@ -281,6 +287,7 @@ import WalletP2p from '../services/wallet-p2p';
 import { ref, watch } from 'vue';
 import axios from 'axios';
 import moment from 'moment';
+import graphQl from '@/services/graphQl'
 
 const QUERY = gql`
   query MyQuery {
@@ -319,7 +326,7 @@ export default {
       cardsPerPage: ref(10),
 			page: ref(1),
 			selected: ref('Menos Recientes'),
-			radio_buttons: ref(1),
+			select_radio_buttons: ref("todos"),
 			toggle: ref(0),
 			windowStep: ref(0),
 			dao_account_name: process.env.CONTRACT_NFT,
@@ -419,10 +426,16 @@ export default {
 
         },
       }*/
-			dataTransactions: ref([
-				/*{	near: '+ 1.78 NEAR',icon: 'mdi-tray-arrow-down',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},
-				{	near: '+ 11.78 NEAR',icon: 'mdi-tray-arrow-up',name: 'pruebavotar.near',date: '02 May 2023 22:56:28'},*/
-			])
+			dataTransactions: ref([]),
+      transactions_list: ref([]),
+      totalPages: ref(Math.ceil(0 / 0)),
+      typeTransaction: ref([
+        {id: "todos", desc: "Todos"},
+        {id: "received", desc: "Recibidos"},
+        {id: "transfer", desc: "Enviados"},
+      ]),
+      address: ref(null),
+
 		}
 	},
 
@@ -446,14 +459,14 @@ export default {
     chartHeight() {
       return window.innerWidth < 690 ? '250px' : '450px';
     },
-		totalPages() {
+		/*totalPages() {
       return Math.ceil(this.dataTransactions.length / this.cardsPerPage);
     },
     displayedCards() {
       const startIndex = (this.currentPage - 1) * this.cardsPerPage;
       const endIndex = startIndex + this.cardsPerPage;
       return this.dataTransactions.slice(startIndex, endIndex);
-    },
+    },*/
     total_value_computed() {
       if(this.result) {
         this.total_value = this.result.delegation.total_amount / 1000000000000000000000000;
@@ -478,6 +491,7 @@ export default {
         this.loadChartAndTable(this.result);
       }
     }
+    this.loadTransactions()
   },
 
   methods: {
@@ -489,7 +503,7 @@ export default {
 
           const data_series = [];
           const data_chartOptions = [];
-          const data_table = [];
+          //const data_table = [];
 
           for(let i = 0; i < response.delegationhists.length; i++){
             const amount = Number((response.delegationhists[i].amount / 1000000000000000000000000).toFixed(2))
@@ -498,15 +512,15 @@ export default {
             data_series.push(amount);
             data_chartOptions.push(epoch);
 
-            data_table.push({
+            /*data_table.push({
               near: '+ '+amount+' NEAR',
               icon: 'mdi-tray-arrow-down',
               name: response.delegationhists[i].delegator,
               date: moment(epoch).format("DD MMM yyyy HH:mm:ss")
-            });
+            });*/
           }
 
-          this.dataTransactions = data_table;
+          //this.dataTransactions = data_table;
 
           let series = [
             {
@@ -584,7 +598,73 @@ export default {
         }
       }
 
-    }
+    },
+
+    async loadTransactions() {
+      let typeTransactions = this.typeTransaction.map(item => { return item.id }).splice(1, this.typeTransaction.length);
+      typeTransactions = this.select_radio_buttons != 'todos' ? [this.select_radio_buttons] : typeTransactions;
+
+      const query1 = `query MyQuery($typeTransactions: [String]) {
+        fundshists(where: {type_in: $typeTransactions}) {
+          amount
+          date_time
+          id
+          token_id
+          type
+          user_id
+        }
+      }`;
+
+      const query2 = `query MyQuery($typeTransactions: [String], $address: String) {
+        fundshists(where: {type_in: $typeTransactions, user_id_contains_nocase: $address}) {
+          amount
+          date_time
+          id
+          token_id
+          type
+          user_id
+        }
+      }`;
+
+      const querys = !this.address ? query1 : query2;
+
+      const variables = { typeTransactions, address: this.address };
+
+      await graphQl.getQuery(querys, variables).then(response => {
+        this.loadTransactionsTable(response.data.data.fundshists);
+      });
+    },
+
+    loadTransactionsTable(response) {
+      const dataTransactions = response.map((item) => {
+        const epoch = item.date_time/1000000;
+
+        return {
+            near: (item.type == "received" ? '+ ' : '- ')+Number(item.amount).toFixed(2)+' '+item.token_id,
+            icon: item.type == "received" ? 'mdi-tray-arrow-down' : 'mdi-tray-arrow-up',
+            name: item.user_id,
+            date: moment(epoch).format("DD MMM yyyy HH:mm:ss")
+          };
+      });
+
+      // const startIndex = (this.currentPage - 1) * this.cardsPerPage;
+      // const endIndex = startIndex + this.cardsPerPage;
+
+      this.totalPages = Math.ceil(dataTransactions.length / this.cardsPerPage);
+      this.transactions_list = dataTransactions;
+      this.loadPage();
+      // this.dataTransactions = dataTransactions.slice(startIndex, endIndex);
+
+    },
+
+    loadPage() {
+      const startIndex = (this.currentPage - 1) * this.cardsPerPage;
+      const endIndex = startIndex + this.cardsPerPage;
+
+      this.dataTransactions = this.transactions_list.slice(startIndex, endIndex);
+    },
+
+
   },
 }
 </script>

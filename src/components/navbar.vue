@@ -203,7 +203,7 @@ export default {
     this.verifySession();
     this.verifyResponse();
   },
-  
+
   methods: {
     verifyResponse(){
       try {
