@@ -456,7 +456,6 @@ export default {
     },
     total_value_computed() {
       if(this.result) {
-        console.log(this.result.delegationhists)
         this.total_value = this.result.delegation.total_amount / 1000000000000000000000000;
         this.headerCards[0].amount = this.total_value;
 
@@ -506,7 +505,7 @@ export default {
               date: moment(epoch).format("DD MMM yyyy HH:mm:ss")
             });
           }
-          
+
           this.dataTransactions = data_table;
 
           let series = [

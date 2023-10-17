@@ -198,13 +198,12 @@ export default {
       titleBtnLogin: ref("Conectar Wallet"),
     }
   },
-  computed: {
 
-  },
   mounted() {
     this.verifySession();
     this.verifyResponse();
   },
+  
   methods: {
     verifyResponse(){
       try {
