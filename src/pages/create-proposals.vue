@@ -330,8 +330,8 @@ export default{
         {id: 'Transfer', desc: 'Transferencia', fn: this.addTransfer},
         // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
         // {id: '', desc: 'Cambiar política eliminar rol'},
-        // {id: '', desc: 'Cambiar política actualizar política de votación'},
-        // {id: '', desc: 'Cambiar los parámetros de actualización de políticas'}
+        {id: 'ChangePolicyUpdateVotePolicy', desc: 'Cambiar política actualizar política de votación'},
+        {id: 'ChangePolicyUpdateParameters', desc: 'Cambiar los parámetros de actualización de políticas'}
       ];
   },
   methods: {
