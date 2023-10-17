@@ -170,6 +170,7 @@ import { useQuery } from '@vue/apollo-composable';
 import WalletP2p from '../services/wallet-p2p';
 import { ref, watch } from 'vue';
 import moment from 'moment';
+import graphQl from '@/services/graphQl';
 
 const QUERY = gql`
   query MyQuery {

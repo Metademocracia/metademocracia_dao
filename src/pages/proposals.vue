@@ -20,22 +20,26 @@
 				<div class="container-radios divrow acenter">
 					<h5 class="mb-0 mr-8">Propuestas</h5>
 					<v-radio-group
-						v-model="radio_buttons"
+						v-model="filterTypeProposalSelected"
+            v-for="(item, index) in typeProposal" :key="index"
 						inline
 						hide-details
 						class="delete-mobile"
+            @change="loadProposal()"
 					>
-						<v-radio label="Todos" class="radios mr-4" :value="1"></v-radio>
-						<v-radio label="Llamadas a Funciones" class="radios mr-4"	:value="2"></v-radio>
-						<v-radio label="Gobernancia" class="radios mr-4"	:value="3"></v-radio>
-						<v-radio label="Transferencias" class="radios mr-4"	:value="4"></v-radio>
-						<v-radio label="Recompensas" class="radios mr-4"	:value="5"></v-radio>
-						<v-radio label="Miembros" class="radios mr-4"	:value="6"></v-radio>
-						<v-radio label="Centro" class="radios mr-4" :value="7"></v-radio>
+            <v-radio :label="item.desc" class="radios mr-4" :value="item.id"></v-radio>
+						<!--<v-radio label="Todos" class="radios mr-4" :value="'*'"></v-radio>
+						<v-radio label="Llamadas a Funciones" class="radios mr-4"	:value="'FunctionCall'"></v-radio>
+						<!-<v-radio label="Gobernancia" class="radios mr-4"	:value="''"></v-radio>--
+						<v-radio label="Transferencias" class="radios mr-4"	:value="'Transfer'"></v-radio>
+						<v-radio label="Actualizar política de votación" class="radios mr-4"	:value="'ChangePolicyUpdateVotePolicy'"></v-radio>
+						<!-<v-radio label="Actualización parámetros de políticas" class="radios mr-4"	:value="'ChangePolicyUpdateParameters'"></v-radio>--
+            <!-<v-radio label="Miembros" class="radios mr-4"	:value="''"></v-radio>--
+						<v-radio label="Centro" class="radios mr-4" :value="''"></v-radio>-->
 					</v-radio-group>
 
 					<div class="divrow center" style="gap: 10px; min-width: max-content!important;">
-						<h6 class="mb-0">{{ itemSelected }}</h6>
+						<h6 class="mb-0">{{ typeProposal.find(item => item.id == filterTypeProposalSelected ).desc  }}</h6>
 						<v-menu location="start">
 							<template v-slot:activator="{ props }">
 								<v-icon v-bind="props" size="x-large" class="show-mobile" style="margin-top: -5px;">mdi-filter-variant</v-icon>
@@ -43,16 +47,19 @@
 							<v-list>
 								<v-list-item>
 									<v-radio-group
-										v-model="itemSelected"
+										v-model="filterTypeProposalSelected"
+                    v-for="(item, index) in typeProposal" :key="index"
 										hide-details
+                    @change="loadProposal()"
 									>
-										<v-radio label="Todos" class="radios mr-4" :value="'Todos'"></v-radio>
+                    <v-radio :label="item.desc" class="radios mr-4" :value="item.id"></v-radio>
+										<!--<v-radio label="Todos" class="radios mr-4" :value="'Todos'"></v-radio>
 										<v-radio label="Llamadas a Funciones" class="radios mr-4"	:value="'Llamadas a Funciones'"></v-radio>
 										<v-radio label="Gobernancia" class="radios mr-4"	:value="'Gobernancia'"></v-radio>
 										<v-radio label="Transferencias" class="radios mr-4"	:value="'Transferencias'"></v-radio>
 										<v-radio label="Recompensas" class="radios mr-4"	:value="'Recompensas'"></v-radio>
 										<v-radio label="Miembros" class="radios mr-4"	:value="'Miembros'"></v-radio>
-										<v-radio label="Centro" class="radios mr-4" :value="'Centro'"></v-radio>
+										<v-radio label="Centro" class="radios mr-4" :value="'Centro'"></v-radio>-->
 									</v-radio-group>
 								</v-list-item>
 							</v-list>
@@ -70,39 +77,46 @@
 							Elige un filtro
 						</span>
 						<v-radio-group
-							v-model="radio_buttons2"
+							v-model="filterStatusSelected"
+              v-for="(item, index) in statusProposal" :key="index"
 							hide-details
 							class="mb-6"
+              @change="loadProposal()"
 						>
-							<v-radio label="Todos" class="radios mr-4" :value="1"></v-radio>
-							<v-radio label="Activas" class="radios mr-4"	:value="2"></v-radio>
-							<v-radio label="Aprobadas" class="radios mr-4"	:value="3"></v-radio>
-							<v-radio label="Populares" class="radios mr-4"	:value="4"></v-radio>
-							<v-radio label="Fallidas" class="radios mr-4"	:value="5"></v-radio>
+              <v-radio :label="item.desc" class="radios mr-4" :value="item.id"></v-radio>
+							<!--<v-radio label="Todos" class="radios mr-4" :value="'*'"></v-radio>
+							<v-radio label="Activas" class="radios mr-4"	:value="'InProgress'"></v-radio>
+              <v-radio label="Aprobadas" class="radios mr-4"	:value="'Approved'"></v-radio>
+              <v-radio label="Rechazadas" class="radios mr-4"	:value="'Rejected'"></v-radio>
+							<!-<v-radio label="Removed" class="radios mr-4"	:value="'Removed'"></v-radio>->
+							<v-radio label="expiradas" class="radios mr-4"	:value="'Expired'"></v-radio>
+							<v-radio label="Fallidas" class="radios mr-4"	:value="'Failed'"></v-radio>-->
 						</v-radio-group>
 					</div>
 					<div>
 						<label for="proposer">Filtrar por proponente</label>
 						<v-text-field
+            v-model="proposer"
 						id="proposer"
 						class="input mt-6 mb-6"
 						variant="solo"
 						placeholder="andresdom.near"
 						append-inner-icon="mdi-magnify"
+            @keyup="loadProposal()"
 						></v-text-field>
 
-						<label for="categoria">Filtrar por categoría</label>
+						<!--<label for="categoria">Filtrar por categoría</label>
 						<v-text-field
 						id="categoria"
 						class="input mt-6 mb-6"
 						variant="solo"
 						placeholder="Lorem Ipsum"
 						append-inner-icon="mdi-magnify"
-						></v-text-field>
+						></v-text-field>-->
 					</div>
 
 					<div class="show-mobile divrow" style="gap: 8px; display: flex;">
-						<h6 class="mb-0 mr-0" style="max-width: max-content;">{{ filterSelected }}</h6>
+						<h6 class="mb-0 mr-0" style="max-width: max-content;">{{ statusProposal.find(item => item.id == filterStatusSelected ).desc }}</h6>
 						<v-menu location="start">
 							<template v-slot:activator="{ props }">
 								<v-icon v-bind="props" size="x-large" class="show-mobile" style="margin-top: -5px;">mdi-filter-variant</v-icon>
@@ -110,14 +124,19 @@
 							<v-list>
 								<v-list-item>
 									<v-radio-group
-										v-model="filterSelected"
+										v-model="filterStatusSelected"
+                    v-for="(item, index) in statusProposal" :key="index"
 										hide-details
+                    @change="loadProposal()"
 									>
-										<v-radio label="Todos" class="radios mr-4" :value="'Todos'"></v-radio>
-										<v-radio label="Activas" class="radios mr-4"	:value="'Activas'"></v-radio>
-										<v-radio label="Aprobadas" class="radios mr-4"	:value="'Aprobadas'"></v-radio>
-										<v-radio label="Populares" class="radios mr-4"	:value="'Populares'"></v-radio>
-										<v-radio label="Fallidas" class="radios mr-4"	:value="'Fallidas'"></v-radio>
+                    <v-radio :label="item.desc" class="radios mr-4" :value="item.id"></v-radio>
+                    <!--<v-radio label="Todos" class="radios mr-4" :value="'*'"></v-radio>
+                    <v-radio label="Activas" class="radios mr-4"	:value="'InProgress'"></v-radio>
+                    <v-radio label="Aprobadas" class="radios mr-4"	:value="'Approved'"></v-radio>
+                    <v-radio label="Rechazadas" class="radios mr-4"	:value="'Rejected'"></v-radio>
+                    <!-<v-radio label="Removed" class="radios mr-4"	:value="'Removed'"></v-radio>->
+                    <v-radio label="expiradas" class="radios mr-4"	:value="'Expired'"></v-radio>
+                    <v-radio label="Fallidas" class="radios mr-4"	:value="'Failed'"></v-radio>-->
 									</v-radio-group>
 								</v-list-item>
 							</v-list>
@@ -131,7 +150,7 @@
 						<v-btn v-if="session.address" class="mb-6" @click="$router.push('create-proposals')">Crear propuesta</v-btn>
 					</div>
 
-					<v-card v-for="(item, index) in displayedCards" :key="index" class="card-proposals" @click="$router.push({path: 'proposals-details', query: {id: item.proposals_id}})">
+					<v-card v-for="(item, index) in cardsProposals" :key="index" class="card-proposals" @click="$router.push({path: 'proposals-details', query: {id: item.proposals_id}})">
 						<div class="side-bar">
 							<v-icon>mdi-tray-arrow-up</v-icon>
 							<div class="div-span-side">
@@ -241,7 +260,8 @@ import gql from 'graphql-tag';
 import { useQuery } from '@vue/apollo-composable';
 import WalletP2p from '../services/wallet-p2p';
 import moment from 'moment';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import graphQl from '@/services/graphQl'
 
 const QUERY = gql`
   query Proposals {
@@ -277,46 +297,48 @@ export default {
 			currentPage: ref(1),
       cardsPerPage: ref(3),
 			page: ref(1),
-			radio_buttons: null,
-			radio_buttons2: 2,
-			itemSelected: '',
-			filterSelected: '',
-      session: ref({}),
+      filterTypeProposalSelected: ref('*'),
+			filterStatusSelected: ref('*'),
+      session: WalletP2p.getAccount(),
+      typeProposal: [
+        {id: "*", desc: "Todos"},
+        {id: "FunctionCall", desc: "Llamadas a Funciones"},
+        //{id: "Gobernancia", desc: "Gobernancia"},
+        {id: "Transfer", desc: "Transferencias"},
+        {id: "ChangePolicyUpdateVotePolicy", desc: "Actualizar política de votación"},
+        //{id: "ChangePolicyUpdateParameters", desc: "Actualización parámetros de políticas"},
+        //{id: "Miembros", desc: "Miembros"},
 
-			cardsProposals: ref([/*
-				{
-					proposals_id: 1234,
-					title_desc: 'AddBounty2',
-					title: 'Crear una recompensa',
-					date: 'Aprobado el: 31 de Agosto de 2023',
-					near_id: 'andresdom.near',
-					desc: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore eaque adipisci officia a. Vitae facilis quia minus numquam labore perspiciatis culpa odio totam eum, veniam fuga corrupti saepe temporibus dolore a voluptatem asperiores. Repellendus dignissimos doloribus optio eaque, ipsam id adipisci repellat atque? Praesentium repellendus pariatur reprehenderit deleniti ipsa dolores possimus velit nemo corporis optio cumque itaque officia qui nostrum suscipit delectus nulla labore quibusdam, vero, in quasi eos at? Beatae quos a laudantium ratione dignissimos perferendis quod, repudiandae nulla!',
-					link: 'gov.near.org',
-					amount: 777,
-					currency: 'NEAR',
-					claims: 222,
-					time_complete: '3 Meses',
-					likes: 117,
-					dislikes: 15,
-				},*/
-			])
+      ],
+      statusProposal: [
+        { id: "*", desc: "Todos"},
+        { id: "InProgress", desc: "Activas"},
+        { id: "Approved", desc: "Aprobadas"},
+        { id: "Rejected", desc: "Rechazadas"},
+        // { id: "Removed", desc: "Removed"},
+        { id: "Expired", desc: "Expiradas"},
+        { id: "Failed", desc: "Fallidas"},
+      ],
+			cardsProposals: ref([]),
+      totalPages: ref(Math.ceil(0 / 0)),
+      proposer: ref(null),
     }
   },
 
   mounted() {
-    this.session = WalletP2p.getAccount();
+    this.loadProposal();
   },
 
 	computed: {
-    totalPages() {
+    /*totalPages() {
       if(this.result) {
         const cardsProposals = this.result.proposals;
         return Math.ceil(cardsProposals.length / this.cardsPerPage);
       } else {
         return Math.ceil(0 / this.cardsPerPage)
       }
-    },
-    displayedCards() {
+    },*/
+    /*displayedCards() {
       if(this.result) {
         const cardsProposals = this.result.proposals.map((item) => {
           let amount = null
@@ -349,7 +371,7 @@ export default {
       } else {
         return [];
       }
-    },
+    },*/
   },
 
   methods: {
@@ -383,6 +405,97 @@ export default {
 
       WalletP2p.call(json);
     },
+
+    async loadProposal() {
+      let status = this.statusProposal.map(item => { return item.id }).splice(1, this.statusProposal.length);
+      let type = this.typeProposal.map(item => { return item.id }).splice(1, this.typeProposal.length);
+
+      status = this.filterStatusSelected != '*' ? [this.filterStatusSelected] : status;
+      type = this.filterTypeProposalSelected != '*' ? [this.filterTypeProposalSelected] : type;
+
+
+      const query1 = `query Proposals($type: [String], $status: [String]) {
+        proposals(where: {proposal_type_in: $type, status_in: $status} orderBy: creation_date, orderDirection: desc) {
+          approval_date
+          creation_date
+          description
+          downvote
+          id
+          kind
+          link
+          proposer
+          proposal_type
+          status
+          submission_time
+          title
+          upvote
+          user_creation
+        }
+      }`;
+
+      const query2 = `query Proposals($type: [String], $status: [String], $proposer: String) {
+        proposals(where: {proposal_type_in: $type, status_in: $status, proposer_contains_nocase: $proposer} orderBy: creation_date, orderDirection: desc) {
+          approval_date
+          creation_date
+          description
+          downvote
+          id
+          kind
+          link
+          proposer
+          proposal_type
+          status
+          submission_time
+          title
+          upvote
+          user_creation
+        }
+      }`;
+
+      const querys = !this.proposer ? query1 : query2;
+
+      const variables = { type: type, status: status, proposer: this.proposer };
+
+      await graphQl.getQuery(querys, variables).then(response => {
+        this.loadCardProposal(response.data.data);
+      });
+    },
+
+    loadCardProposal(response) {
+        const cardsProposals = response.proposals.map((item) => {
+          let amount = null
+          if(item.proposal_type == "Transfer") {
+            amount = Number((JSON.parse(item.kind).Transfer.amount / 1000000000000000000000000).toFixed(2));
+          }
+
+          const date = moment(item.approval_date/1000000)
+          const date_format = 'Aprobado el: ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
+          const date_final = item.approval_date ? date_format : item.approval_date;
+
+          return {
+            proposals_id: item.id,
+            title_desc: item.proposal_type,
+            title: item.title,
+            date: date_final, //  'Aprobado el: 31 de Agosto de 2023',
+            near_id: item.proposer,
+            desc: item.description,
+            link: item.link,
+            amount: amount,
+            currency: '',
+            time_complete: '7 Días',
+            likes: item.upvote,
+            dislikes: item.downvote,
+          }
+        });
+
+        const startIndex = (this.currentPage - 1) * this.cardsPerPage;
+        const endIndex = startIndex + this.cardsPerPage;
+
+        this.totalPages = Math.ceil(cardsProposals.length / this.cardsPerPage);
+        this.cardsProposals = cardsProposals.slice(startIndex, endIndex);
+
+      },
+
   },
 }
 </script>

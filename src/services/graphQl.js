@@ -1,39 +1,47 @@
-const limit = 5;
-const query = `query author($limit: Int!) {
-    author(limit: $limit) {
-        id
-        name
-    }
-}`;
-
-fetch('/graphql', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-  body: JSON.stringify({
-    query,
-    variables: { limit },
-  })
-})
-  .then(r => r.json())
-  .then(data => console.log('data returned:', data));
+import axios from 'axios';
+//import fetch from 'fetch';
 
 
-function getTransaction(hash, account_id) {
-  const account = account_id ? account_id : getAccount().address;
-  const json = {
-    "jsonrpc": "2.0",
-    "id": "dontcare",
-    "method": "tx",
-    "params": [hash, account]
-  }
+/*function getQuery(query, variables) {
+  try {
 
-  return axios.post(_routeRpc,
-    json, {
+
+    const limit = 5;
+
+
+    fetch(process.env.ROUTER_GRAPH, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: { limit },
+      })
+    })
+      .then(r => r.json())
+      .then(data => console.log('data returned:', data));
+  } catch (error) {
+    console.log("error graph: ", error.toString());
+  }
+}*/
+
+function getQuery(query, variables) {
+  return axios.post(process.env.ROUTER_GRAPH,
+    {
+      "extensions":{"headers":null},
+      "operationName": "MyQuery",
+      "query": query,
+      "variables": variables,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
     });
+}
+
+export default {
+  getQuery
 }
