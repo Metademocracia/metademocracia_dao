@@ -38,6 +38,7 @@ export default defineConfig((userConfig) => {
         URL_APIP_PRICE: env.URL_APIP_PRICE,
         ROUTER_RPC: env.ROUTER_RPC,
         ROUTER_GRAPH: env.ROUTER_GRAPH,
+        CONTRACT_USDT: env.CONTRACT_USDT,
       },
       __VUE_I18N_FULL_INSTALL__: true,
       __VUE_I18N_LEGACY_API__: false,

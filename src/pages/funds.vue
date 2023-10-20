@@ -241,15 +241,18 @@
 					</v-col>
 					<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12" class="divcol pl-14 no-padding">
 						<v-select
-							v-model="selected"
-							:items="['Menos Recientes', 'Más Recientes']"
-							variant="solo"
+							v-model="selectedOrderBy"
+							:items="filterTableOrderBy"
+              item-title="desc"
+              item-value="id"
+              variant="solo"
 							flat
 							menu-icon="mdi-chevron-down"
 							class="select"
 							bg-color="transparent"
 							hide-details
 							style="color: white;"
+              onchange="loadTransactions()"
 						></v-select>
 
 						<div v-for="(item, index) in dataTransactions" :key="index" class="card-desc-votes">
@@ -295,11 +298,12 @@ const QUERY = gql`
       supply
     }
 
-    delegation(id: "near") {
+    delegations {
       total_amount
+      id
     }
 
-    delegationhists(orderBy: date_time, orderDirection: asc) {
+    delegationhists(orderBy: date_time, orderDirection: desc) {
       delegator
       amount
       date_time
@@ -325,7 +329,11 @@ export default {
 			currentPage: ref(1),
       cardsPerPage: ref(10),
 			page: ref(1),
-			selected: ref('Menos Recientes'),
+			selectedOrderBy: ref({id: "asc", desc: "Menos Recientes"}),
+      filterTableOrderBy: ref([
+        {id: "asc", desc: "Menos Recientes"},
+        {id: "desc", desc: "Más Recientes"}
+      ]),
 			select_radio_buttons: ref("todos"),
 			toggle: ref(0),
 			windowStep: ref(0),
@@ -335,9 +343,9 @@ export default {
 			headerCards: ref([
 				{
 					icon: 'near',
-					amount: '1234.87',
+					amount: 0,
 					currency: 'NEAR',
-					amount_usd: '3456.878'
+					amount_usd: 0
 				},
 				/*{
 					icon: 'stnear',
@@ -350,13 +358,13 @@ export default {
 					amount: '1234.87',
 					currency: 'USDC',
 					amount_usd: '3456.878'
-				},
+				},*/
 				{
 					icon: 'usdt',
-					amount: '1234.87',
+					amount: 0,
 					currency: 'USDT',
-					amount_usd: '3456.878'
-				},*/
+					amount_usd: 0
+				},
 			]),
 
 			iconMap: {
@@ -469,19 +477,28 @@ export default {
     },*/
     total_value_computed() {
       if(this.result) {
-        this.total_value = this.result?.delegation?.total_amount / 1000000000000000000000000;
-        this.headerCards[0].amount = this.total_value;
+        const balanceUsdt = this.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
+        const balanceNear = this.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
 
-        axios.post(process.env.URL_APIP_PRICE,
-          {fiat: "USD", crypto: "NEAR"})
+        this.headerCards[0].amount = balanceNear.toFixed(5);
+        this.headerCards[1].amount = balanceUsdt.toFixed(2);
+
+        axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"})
         .then((response) => {
-          const balanceNear = Number(this.headerCards[0].amount);
-          this.headerCards[0].amount_usd = (balanceNear * response.data[0].value).toFixed(2)
+          this.headerCards[0].amount_usd = Number((balanceNear * response.data[0].value).toFixed(2))
         }).catch((error) => {
           console.log("error balane: ", error)
         })
+
+        axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"})
+        .then((response) => {
+          this.headerCards[1].amount_usd = Number((balanceUsdt * response.data[0].value).toFixed(2))
+        }).catch((error) => {
+          console.log("error balane: ", error)
+        })
+
       }
-      return this.total_value
+      return (this.headerCards[0].amount_usd + this.headerCards[1].amount_usd).toFixed(2)
     },
   },
 
@@ -503,7 +520,6 @@ export default {
 
           const data_series = [];
           const data_chartOptions = [];
-          //const data_table = [];
 
           for(let i = 0; i < response.delegationhists.length; i++){
             const amount = Number((response.delegationhists[i].amount / 1000000000000000000000000).toFixed(2))
@@ -511,30 +527,15 @@ export default {
 
             data_series.push(amount);
             data_chartOptions.push(epoch);
-
-            /*data_table.push({
-              near: '+ '+amount+' NEAR',
-              icon: 'mdi-tray-arrow-down',
-              name: response.delegationhists[i].delegator,
-              date: moment(epoch).format("DD MMM yyyy HH:mm:ss")
-            });*/
           }
-
-          //this.dataTransactions = data_table;
 
           let series = [
             {
               name: 'series1',
-              data: data_series, // [100, 150, 138, 200, 248, 230, 180],
+              data: data_series,
             }
           ];
 
-
-
-          /*for(let i = 0; i < response.delegationhists.length; i++){
-            // data.push(moment(this.result.delegationhists[i].date_time/1000000).format('DD MM HH:MM'))
-            data_chartOptions.push(response.delegationhists[i].date_time/1000000)
-          }*/
 
           let chartOptions = {
             tooltip: {
@@ -604,8 +605,8 @@ export default {
       let typeTransactions = this.typeTransaction.map(item => { return item.id }).splice(1, this.typeTransaction.length);
       typeTransactions = this.select_radio_buttons != 'todos' ? [this.select_radio_buttons] : typeTransactions;
 
-      const query1 = `query MyQuery($typeTransactions: [String]) {
-        fundshists(where: {type_in: $typeTransactions}) {
+      const query1 = `query MyQuery($typeTransactions: [String], $orderDirection: String) {
+        fundshists(where: {type_in: $typeTransactions}, orderBy: date_time, orderDirection: $orderDirection ) {
           amount
           date_time
           id
@@ -615,8 +616,8 @@ export default {
         }
       }`;
 
-      const query2 = `query MyQuery($typeTransactions: [String], $address: String) {
-        fundshists(where: {type_in: $typeTransactions, user_id_contains_nocase: $address}) {
+      const query2 = `query MyQuery($typeTransactions: [String], $address: String, $orderDirection: String) {
+        fundshists(where: {type_in: $typeTransactions, user_id_contains_nocase: $address}, orderBy: date_time, orderDirection: $orderDirection ) {
           amount
           date_time
           id
@@ -628,7 +629,7 @@ export default {
 
       const querys = !this.address ? query1 : query2;
 
-      const variables = { typeTransactions, address: this.address };
+      const variables = { typeTransactions, address: this.address, orderDirection: this.selectedOrderBy?.id };
 
       await graphQl.getQuery(querys, variables).then(response => {
         this.loadTransactionsTable(response.data.data.fundshists);

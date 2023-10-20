@@ -42,6 +42,8 @@
           >Donar</v-btn>
         </div>
 
+
+
         <div class="divrow center" style="gap: 20px;">
           <v-icon color="#fff">mdi-magnify</v-icon>
           <v-icon color="#fff">mdi-instagram</v-icon>
@@ -61,7 +63,7 @@
         <div class="wrapper-chart">
           <div class="jspace acenter mobile-col mb-8" style="width: 100%;">
             <h5 style="font-weight: 700!important;">
-              Fondos DAO
+              Fondos NEAR DAO
             </h5>
 
             <!--<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
@@ -107,18 +109,18 @@
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
 
-          <!--<v-card class="card-charts">
+          <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
               <span style="font-weight: 700!important;">
                 Fondos DAO
               </span>
-              <v-sheet class="sheet-card">+ 12.34 %</v-sheet>
+              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
             </div>
             <h5 style="margin-bottom: 0;">
-              777 USDC
+              {{ delegationUsdt }} USDT
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
-          </v-card>-->
+          </v-card>
 
           <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
@@ -178,8 +180,9 @@ const QUERY = gql`
       supply
     }
 
-    delegation(id: "near") {
+    delegations {
       total_amount
+      id
     }
 
     delegationhists(orderBy: date_time, orderDirection: asc) {
@@ -207,6 +210,7 @@ export default {
       toggle: ref(0),
       amount_near: ref(null),
       delegation_near: ref(0),
+      delegation_usdt: ref(0),
       series: ref(null),
       chartOptions: ref(null),
 
@@ -289,9 +293,16 @@ export default {
     },
     delegationNear() {
       if(this.result) {
-        this.delegation_near = this.result?.delegation?.total_amount / 1000000000000000000000000;
+        console.log("delegacion: ", this.result?.delegations.find(item => item.id == "NEAR"))
+        this.delegation_near = this.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
       }
       return this.delegation_near.toFixed(2)
+    },
+    delegationUsdt() {
+      if(this.result) {
+        this.delegation_usdt = this.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
+      }
+      return this.delegation_usdt.toFixed(2)
     },
   },
 

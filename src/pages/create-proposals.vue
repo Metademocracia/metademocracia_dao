@@ -316,7 +316,7 @@ export default{
       tipo_propuesta: ref(null),
       itemsTokenId: [
         {id: null, desc: "Near"},
-        {id: "usdc", desc: "USDC"},
+        {id: process.env.CONTRACT_USDT, desc: "USDT"},
       ],
       token_id: ref({id: null, desc: "Near"}),
     }
@@ -377,7 +377,7 @@ export default{
               Transfer: {
                 token_id: this.token_id.id, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
                 receiver_id: document.getElementById("receiver_id").value,
-                amount: this.token_id.id ? document.getElementById("amount").value.toString() : BigInt(Number(document.getElementById("amount").value) * 1000000000000000000000000).toString(),
+                amount: this.token_id.id ? BigInt(Number(document.getElementById("amount")) * 1000000).value.toString() : BigInt(Number(document.getElementById("amount").value) * 1000000000000000000000000).toString(),
                 msg: document.getElementById("msg").value ? document.getElementById("msg").value.lenght > 0 ? document.getElementById("msg").value.length : null : null,
               }
             },
