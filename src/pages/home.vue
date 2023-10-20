@@ -289,9 +289,9 @@ export default {
     },
     delegationNear() {
       if(this.result) {
-        this.delegation_near = this.result.delegation.total_amount / 1000000000000000000000000;
+        this.delegation_near = this.result?.delegation?.total_amount / 1000000000000000000000000;
       }
-      return this.delegation_near
+      return this.delegation_near.toFixed(2)
     },
   },
 

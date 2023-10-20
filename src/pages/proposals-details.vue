@@ -50,12 +50,12 @@
                           </button>
                         </v-list-item-title>
 											</v-list-item>
-											<v-list-item style="max-height: 30px; min-height: 30px;">
+											<!--<v-list-item style="max-height: 30px; min-height: 30px;">
 												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-twitter</v-icon> Compartir en Twitter</v-list-item-title>
 											</v-list-item>
 											<v-list-item style="max-height: 30px; min-height: 30px;">
 												<v-list-item-title style="font-size: 12px!important; color: #61C2D5;"><v-icon style="font-size: 15px!important;  color: #8A5FA4;">mdi-send</v-icon> Compartir en Telegram</v-list-item-title>
-											</v-list-item>
+											</v-list-item>-->
 										</v-list>
 									</v-menu>
 									<span style="color: #8A5FA4;">{{ item.date }}</span>

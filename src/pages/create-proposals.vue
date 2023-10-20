@@ -293,6 +293,7 @@
 import '@/assets/styles/pages/create-proposals.scss'
 import { ref } from 'vue';
 import WalletP2p from '../services/wallet-p2p';
+import graphQl from '@/services/graphQl';
 
 export default{
   setup(){
@@ -323,29 +324,47 @@ export default{
   mounted() {
     this.session = WalletP2p.getAccount().address;
     this.itemsTipoPropuesta = [
-        // {id: '', desc: 'Cambiar política'},
-        // {id: '', desc: 'Agregar miembro del grupo'},
-        // {id: '', desc: 'Eliminar miembro del grupo'},
-        {id: 'FunctionCall', desc: 'Llamada de función', fn: this.addFunctionCall},
-        {id: 'Transfer', desc: 'Transferencia', fn: this.addTransfer},
-        // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
-        // {id: '', desc: 'Cambiar política eliminar rol'},
-        {id: 'ChangePolicyUpdateVotePolicy', desc: 'Cambiar política actualizar política de votación'},
-        {id: 'ChangePolicyUpdateParameters', desc: 'Cambiar los parámetros de actualización de políticas'}
-      ];
+      // {id: '', desc: 'Cambiar política'},
+      // {id: '', desc: 'Agregar miembro del grupo'},
+      // {id: '', desc: 'Eliminar miembro del grupo'},
+      {id: 'FunctionCall', desc: 'Llamada de función', fn: this.addFunctionCall},
+      {id: 'Transfer', desc: 'Transferencia', fn: this.addTransfer},
+      // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
+      // {id: '', desc: 'Cambiar política eliminar rol'},
+      {id: 'ChangePolicyUpdateVotePolicy', desc: 'Cambiar política actualizar política de votación'},
+      {id: 'ChangePolicyUpdateParameters', desc: 'Cambiar los parámetros de actualización de políticas'}
+    ];
+
+    this.searchBond();
   },
   methods: {
+    searchBond(tipo_proposal) {
+      const query = `query MyQuery {
+        proposaldata(id: "1") {
+          proposal_bond
+        }
+      }`;
+
+      return graphQl.getQuery(query).then(response => {
+        const bond_json = JSON.parse(response.data.data.proposaldata.proposal_bond);
+        return bond_json[tipo_proposal];
+      });
+    },
+
     async addProposal() {
       const { valid } = await this.$refs.formdefault.validate()
 
       if (valid) {
         if (this.tipo_propuesta.fn) {
-          this.tipo_propuesta.fn();
+          await this.searchBond(this.tipo_propuesta.id).then(item => {
+            console.log("aqui es: ", item)
+            this.tipo_propuesta.fn(item);
+          })
         }
       }
     },
 
-    addTransfer(){
+    addTransfer(bond){
       const json = {
         contractId: process.env.CONTRACT_NFT,
         methodName: "set_proposal",
@@ -366,7 +385,7 @@ export default{
           }
         },
         gas: "300000000000000",
-        attachedDeposit: "1"
+        attachedDeposit: bond.toString()
       };
 
       WalletP2p.call(json, "/metademocracia/proposals");

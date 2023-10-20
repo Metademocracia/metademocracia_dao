@@ -469,7 +469,7 @@ export default {
     },*/
     total_value_computed() {
       if(this.result) {
-        this.total_value = this.result.delegation.total_amount / 1000000000000000000000000;
+        this.total_value = this.result?.delegation?.total_amount / 1000000000000000000000000;
         this.headerCards[0].amount = this.total_value;
 
         axios.post(process.env.URL_APIP_PRICE,
