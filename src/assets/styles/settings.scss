@@ -79,6 +79,13 @@
   }
 }
 
+.v-input {
+  .v-messages__message {
+    color: rgb(var(--v-theme-error)) !important;
+    margin-top: 6px;
+  }
+}
+
 
 //---------------------------------------------------------------------------------------------//
 //?========== utility classes ==========//

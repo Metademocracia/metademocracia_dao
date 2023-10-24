@@ -485,6 +485,7 @@ export default {
 
         axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"})
         .then((response) => {
+          console.log("balance: ", response)
           this.headerCards[0].amount_usd = Number((balanceNear * response.data[0].value).toFixed(2))
         }).catch((error) => {
           console.log("error balane: ", error)

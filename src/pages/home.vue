@@ -1,4 +1,16 @@
 <template>
+  <v-alert
+    v-model="alert"
+    type="error"
+    elevation="3"
+    closable
+    close-label="Close Alert"
+    title="Error"
+    style="width: 40%; margin-left:30%;"
+  >
+    <p class="mt-5">Debe conectar su wallet primero para poder donar</p>
+  </v-alert>
+
   <div id="home" class="center divcol" style="gap: 30px;">
     <section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">
       <v-carousel cycle color="#DB107C" :show-arrows="false">
@@ -27,27 +39,30 @@
 
         <div class="center divrow container-text-field-btn">
           <img src="@/assets/sources/images/search-near.svg" alt="Search Near Logo" class="pl-3">
+          <v-form ref="form">
           <v-text-field
             v-model="amount_near"
             id="amount_near"
-            hide-details
             variant="solo"
             flat
             class="input-search"
+            :rules="required"
+            required
           ></v-text-field>
+        </v-form>
           <v-btn
             class="btn-donar"
             style="font-weight: 700!important;"
-            @click="delegate()"
+            @click="openDialog()"
           >Donar</v-btn>
         </div>
 
 
 
         <div class="divrow center" style="gap: 20px;">
-          <v-icon color="#fff">mdi-magnify</v-icon>
+        <!--  <v-icon color="#fff">mdi-magnify</v-icon>
           <v-icon color="#fff">mdi-instagram</v-icon>
-          <v-icon color="#fff">mdi-share-variant</v-icon>
+          <v-icon color="#fff">mdi-share-variant</v-icon>-->
         </div>
       </div>
 
@@ -160,6 +175,39 @@
         </div>
       </v-col>
     </v-row>
+
+    <v-row justify="center">
+      <v-dialog
+        v-model="dialog"
+        persistent
+        width="auto"
+      >
+        <v-card>
+          <v-card-title class="text-h5">
+            Estás saliendo de METADEMOCRACIA
+          </v-card-title>
+          <v-card-text>luego de aprobar la transferencia de fondos volvera a esta página.</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="green-darken-1"
+              variant="text"
+              @click="dialog = false"
+            >
+              Negar
+            </v-btn>
+            <v-btn
+              color="green-darken-1"
+              variant="text"
+              @click="delegate()"
+            >
+              Aceptar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+
   </div>
 </template>
 
@@ -207,6 +255,9 @@ export default {
       result,
       loading,
       error,
+      dialog: ref(false),
+      alert: ref(false),
+      required: [v => !!v || 'Ingrese un monto'],
       toggle: ref(0),
       amount_near: ref(null),
       delegation_near: ref(0),
@@ -293,7 +344,6 @@ export default {
     },
     delegationNear() {
       if(this.result) {
-        console.log("delegacion: ", this.result?.delegations.find(item => item.id == "NEAR"))
         this.delegation_near = this.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
       }
       return this.delegation_near.toFixed(2)
@@ -315,28 +365,36 @@ export default {
   },
 
   methods: {
-    delegate(){
-      if(Number(this.amount_near)) {
-        console.log("amount near: ", this.amount_near)
-        const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
-        const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
-
-        const json = {
-          contractId: process.env.CONTRACT_NFT,
-          methodName: "delegate",
-          args: {
-            account_id: WalletP2p.getAccount().address,
-            amount: amount
-          },
-          gas: "300000000000000",
-          attachedDeposit: deposit
-        };
-
-        // 1000000000000000000000
-        WalletP2p.call(json);
-      } else {
-        console.log("debe introducir un monto")
+    async openDialog() {
+      if(!WalletP2p.getAccount().address) {
+        this.alert = true;
+        return
       }
+
+      const { valid } = await this.$refs.form.validate()
+
+      if(Number(this.amount_near) && valid) {
+        this.dialog = true;
+      }
+    },
+
+    delegate(){
+      const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
+      const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
+
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "delegate",
+        args: {
+          account_id: WalletP2p.getAccount().address,
+          amount: amount
+        },
+        gas: "300000000000000",
+        attachedDeposit: deposit
+      };
+
+      // 1000000000000000000000
+      WalletP2p.call(json);
     },
 
     loadChart(response) {

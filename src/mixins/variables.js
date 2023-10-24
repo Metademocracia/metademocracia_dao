@@ -6,8 +6,8 @@ import { useTheme } from "vuetify/lib/framework.mjs"
 export default {
   // ? custom defines
   globalRules: {
-    required: (v) => !!v || "Field required",
-    listRequired: (v) => !!v?.length || "Field required",
+    required: (v) => !!v || "Es requerido",
+    listRequired: (v) => !!v?.length || "Es requerido",
     email: (v) => {
       const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       return pattern.test(v) || 'Invalid email.'

@@ -44,7 +44,7 @@
     </div>
 
     <div class="center divrow delete-mobile" style="gap: 10px;">
-      <v-select
+      <!--<v-select
         v-model="selectedLang"
         :items="['ENG', 'ES']"
         variant="solo"
@@ -54,8 +54,8 @@
         bg-color="transparent"
         hide-details
         style="color: white;"
-      ></v-select>
-      <v-btn class="btn" @click="login('near')">{{ titleBtnLogin }}</v-btn>
+      ></v-select>-->
+      <v-btn class="btn" @click="openDialog()">{{ titleBtnLogin }}</v-btn>
       <!--<v-btn class="btn" @click="dialogConnect = true">Conectar Wallet</v-btn>-->
     </div>
 
@@ -156,18 +156,51 @@
     </v-dialog>
   </nav>
   <v-alert
-      v-model="alert"
-      :type="colorAlert"
-      elevation="3"
-      closable
-      close-label="Close Alert"
-      :title="titleAlert"
-      style="width: 40%; margin-left:30%;"
-    >
-      <p class="mt-5">Hash: <a :href="hashRouteAlert" target="_blank">{{ hashAlert }}</a></p>
+    v-model="alert"
+    :type="colorAlert"
+    elevation="3"
+    closable
+    close-label="Close Alert"
+    :title="titleAlert"
+    style="width: 40%; margin-left:30%;"
+  >
+    <p class="mt-5">Hash: <a :href="hashRouteAlert" target="_blank">{{ hashAlert }}</a></p>
 
-      <p v-if="errorAlert"> {{ errorAlert }} </p>
-    </v-alert>
+    <p v-if="errorAlert"> {{ errorAlert }} </p>
+  </v-alert>
+
+  <v-row justify="center">
+    <v-dialog
+      v-model="dialog"
+      persistent
+      width="auto"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          Estás saliendo de METADEMOCRACIA
+        </v-card-title>
+        <v-card-text>luego de crear tu wallet o conectar una ya existente puedes volver a esta página para vincularla a tu perfil.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            @click="dialog = false"
+          >
+            Negar
+          </v-btn>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            @click="login('near')"
+          >
+            Aceptar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
+
 </template>
 
 <script>
@@ -181,6 +214,7 @@ export default {
   setup(){
     return{
       alert: ref(false),
+      dialog: ref(false),
       colorAlert: ref("success"),
       titleAlert: ref("Success"),
       hashAlert: ref(""),
@@ -271,14 +305,18 @@ export default {
       this.titleBtnLogin = wallet_final;
     },
 
-    login() {
+    openDialog() {
       if(localStorage.getItem("session")) {
         this.dialogConnect = true
 
         return
       }
-      WalletP2p.login(process.env.CONTRACT_NFT);
 
+      this.dialog = true
+    },
+
+    login() {
+      WalletP2p.login(process.env.CONTRACT_NFT);
     },
 
     logout() {

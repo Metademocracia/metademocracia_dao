@@ -34,7 +34,7 @@
                 item-title="desc"
                 item-value="id"
                 density="compact"
-                :rules="[v => !!v || 'Is required']"
+                :rules="[v => !!v || 'Es requerido']"
                 rounded
                 menu-icon="mdi-chevron-down"
                 class="select-create"
@@ -47,28 +47,28 @@
               <label for="titulo_propuesta">Titulo de Propuesta</label>
               <v-text-field
               v-model="titulo_propuesta" id="titulo_propuesta" class="input" variant="outlined"
-              elevation="1" placeholder="Titulo de Propuesta" :rules="rules.required" required
+              elevation="1" placeholder="Titulo de Propuesta" :rules="[globalRules.required]" required
               ></v-text-field>
             </v-col>
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="proponente">Proponente</label>
               <v-text-field
               v-model="proponente" id="proponente" class="input" variant="outlined" disabled
-              elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.required" required
+              elevation="1" :placeholder="'ejemplo.'+network" :rules="[globalRules.required]" required
               ></v-text-field>
             </v-col>
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="descripcion">Descripción</label>
               <v-text-field
               id="descripcion" class="input" variant="outlined"
-              elevation="1" placeholder="Descripción" :rules="rules.required" required
+              elevation="1" placeholder="Descripción" :rules="[globalRules.required]" required
               ></v-text-field>
             </v-col>
             <v-col xl="6" lg="6" md="6" cols="12">
               <label for="link">Link</label>
               <v-text-field
               id="link" class="input" variant="outlined"
-              elevation="1" placeholder="Link" :rules="rules.required" required
+              elevation="1" placeholder="Link" :rules="[globalRules.required]" required
               ></v-text-field>
             </v-col>
 
@@ -122,7 +122,7 @@
                 <label for="receiver_id">ID contrato</label>
                 <v-text-field
                 id="receiver_id" class="input" variant="outlined"
-                elevation="1" placeholder="#123456" :rules="rules.required" required
+                elevation="1" :placeholder="'wallet.' + network" :rules="[globalRules.required]" required
                 ></v-text-field>
               </v-col>
 
@@ -130,7 +130,7 @@
                 <label for="method_name">Nombre del método</label>
                 <v-text-field
                 id="method_name" class="input" variant="outlined"
-                elevation="1" placeholder="Nombre del método" :rules="rules.required" required
+                elevation="1" placeholder="Nombre del método" :rules="[globalRules.required]" required
                 ></v-text-field>
               </v-col>
 
@@ -138,7 +138,7 @@
                 <label for="args">Argumentos</label>
                 <v-text-field
                 id="args" class="input" variant="outlined"
-                elevation="1" placeholder="Argumentos" :rules="rules.required" required
+                elevation="1" placeholder="Argumentos" :rules="[globalRules.required]" required
                 ></v-text-field>
               </v-col>
 
@@ -146,7 +146,7 @@
                 <label for="deposit">Deposito</label>
                 <v-text-field
                 id="deposit" class="input" variant="outlined"
-                elevation="1" placeholder="Deposito" :rules="rules.required" required
+                elevation="1" placeholder="Deposito" :rules="[globalRules.required]" required
                 ></v-text-field>
               </v-col>
 
@@ -154,7 +154,7 @@
                 <label for="gas">Gas</label>
                 <v-text-field
                 id="gas" class="input" variant="outlined"
-                elevation="1" placeholder="Gas" :rules="rules.required" required
+                elevation="1" placeholder="Gas" :rules="[globalRules.required]" required
                 ></v-text-field>
               </v-col>
             </template>
@@ -175,7 +175,7 @@
                   item-value="id"
                   density="compact"
                   :selected="token_id"
-                  :rules="[v => !!v || 'Is required']"
+                  :rules="[v => !!v || 'Es requerido']"
                   rounded
                   menu-icon="mdi-chevron-down"
                   class="select-create"
@@ -189,7 +189,7 @@
                 <label for="receiver_id">ID de Receptor</label>
                 <v-text-field
                 id="receiver_id" class="input" variant="outlined"
-                elevation="1" :placeholder="'ejemplo.'+network" :rules="rules.required" required
+                elevation="1" :placeholder="'ejemplo.'+network" :rules="[globalRules.required]" required
                 ></v-text-field>
               </v-col>
 
@@ -197,7 +197,7 @@
                 <label for="amount">Cantidad</label>
                 <v-text-field
                 id="amount" class="input" variant="outlined" type="number"
-                elevation="1" placeholder="0.00" :rules="rules.required" required
+                elevation="1" placeholder="0.00" :rules="[globalRules.required]" required
                 ></v-text-field>
               </v-col>
 
@@ -294,17 +294,19 @@ import '@/assets/styles/pages/create-proposals.scss'
 import { ref } from 'vue';
 import WalletP2p from '../services/wallet-p2p';
 import graphQl from '@/services/graphQl';
+import variables from '@/mixins/variables';
 
 export default{
   setup(){
+    const { globalRules } = variables;
     const regular_expression_email = process.env.NETWORK == "testnet" ? /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.testnet+$/i : /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.mainnet+$/i;
     return{
       Transfer: ref(false),
       session: ref(null),
+      globalRules,
       rules: {
-        required: [v => !!v || 'Is required'],
         address: [
-          v => !!v || 'Is required',
+          v => !!v || 'Es requerido',
           v =>  regular_expression_email.test(v) || 'Incorrect format'
         ],
       },
