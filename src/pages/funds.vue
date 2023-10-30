@@ -93,7 +93,7 @@
 											</v-btn-toggle> -->
 										</div>
 										<div class="apexchart-container">
-											<apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
+											<apexchart type="area" :height="chartHeight" :options="chartOptionsNear" :series="seriesNear"></apexchart>
 										</div>
 									</div>
 								</v-window-item>
@@ -104,7 +104,7 @@
 												Actividad
 											</h5>
 
-											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
+											<!--<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
 												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													7D
 												</v-btn>
@@ -124,10 +124,10 @@
 												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
 													ALL
 												</v-btn>
-											</v-btn-toggle>
+											</v-btn-toggle> -->
 										</div>
 										<div class="apexchart-container">
-											<apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
+											<apexchart type="area" :height="chartHeight" :options="chartOptionsUsdt" :series="seriesUsdt"></apexchart>
 										</div>
 									</div>
 								</v-window-item>
@@ -303,7 +303,7 @@ const QUERY = gql`
       id
     }
 
-    delegationhists(orderBy: date_time, orderDirection: desc) {
+    delegationhists(where: {delegation_: {id: "NEAR"}}, orderBy: date_time, orderDirection: desc) {
       delegator
       amount
       date_time
@@ -316,16 +316,28 @@ const QUERY = gql`
   }
 `;
 
+const QUERY_USDT = gql`
+  query MyQuery {
+    delegationhists(where: {delegation_: {id: "USDT"}}, orderBy: date_time, orderDirection: desc) {
+      delegator
+      amount
+      date_time
+    }
+  }
+`;
+
 export default {
 	components: {
     apexchart: VueApexCharts,
   },
 	data() {
-    const { result, loading,  error } = useQuery(QUERY);
+    const resultChartNear = useQuery(QUERY);
+    const resultChartUsdt = useQuery(QUERY_USDT);
 		return{
-      result,
-      loading,
-      error,
+      resultChartNear,
+      resultNear: ref(resultChartNear.result),
+      resultChartUsdt,
+      resultUsdt: ref(resultChartUsdt.result),
 			currentPage: ref(1),
       cardsPerPage: ref(10),
 			page: ref(1),
@@ -347,6 +359,12 @@ export default {
 					currency: 'NEAR',
 					amount_usd: 0
 				},
+        {
+					icon: 'usdt',
+					amount: 0,
+					currency: 'USDT',
+					amount_usd: 0
+				},
 				/*{
 					icon: 'stnear',
 					amount: '1234.87',
@@ -359,12 +377,6 @@ export default {
 					currency: 'USDC',
 					amount_usd: '3456.878'
 				},*/
-				{
-					icon: 'usdt',
-					amount: 0,
-					currency: 'USDT',
-					amount_usd: 0
-				},
 			]),
 
 			iconMap: {
@@ -373,67 +385,10 @@ export default {
 				usdc,
 				usdt
       },
-
-			series: ref(null), /* [
-        {
-          name: 'series1',
-          data: [100, 150, 138, 200, 248, 230, 180],
-        }
-      ],*/
-      chartOptions: ref(null), /*{
-        tooltip: {
-          theme: 'custom-tooltip',
-          custom: function({ series, seriesIndex, dataPointIndex, w }) {
-            const value = series[seriesIndex][dataPointIndex];
-
-            return '<div class="custom-tooltip-content">' +
-              '<span>' + '$' + value + '</span>' +
-              '</div>';
-          }
-        },
-        chart: {
-          type: 'area',
-          toolbar: {
-            show:false,
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'smooth',
-          width: 1,
-        },
-        xaxis: {
-          type: 'datetime',
-          categories: ["1 JUL", "2 JUL", "3 JUL", "4 JUL", "5 JUL", "6 JUL", "7 JUL "],
-          labels: {
-            style: {
-              colors: '#fff',
-            },
-          },
-          tooltip: {
-            enabled: false,
-          },
-        },
-
-        yaxis: {
-          labels: {
-            style: {
-              colors: '#fff',
-            },
-          },
-
-          axisBorder: {
-            show: true,
-          },
-        },
-
-        grid: {
-          show: false,
-
-        },
-      }*/
+      seriesNear: ref(null),
+      chartOptionsNear: ref(null),
+      seriesUsdt: ref(null),
+      chartOptionsUsdt: ref(null),
 			dataTransactions: ref([]),
       transactions_list: ref([]),
       totalPages: ref(Math.ceil(0 / 0)),
@@ -458,9 +413,12 @@ export default {
   },
 
   watch: {
-    result(response) {
-      this.loadChartAndTable(response);
-    }
+    resultNear(response) {
+      this.loadChartNear(response);
+    },
+    resultUsdt(response) {
+      this.loadChartUsdt(response);
+    },
   },
 
 	computed: {
@@ -476,16 +434,16 @@ export default {
       return this.dataTransactions.slice(startIndex, endIndex);
     },*/
     total_value_computed() {
-      if(this.result) {
-        const balanceUsdt = this.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
-        const balanceNear = this.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
+      if(this.resultChartNear.result) {
+        const balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
+        const balanceNear = this.resultChartNear.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
 
         this.headerCards[0].amount = balanceNear.toFixed(5);
         this.headerCards[1].amount = balanceUsdt.toFixed(2);
 
         axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"})
         .then((response) => {
-          console.log("balance: ", response)
+          // console.log("balance: ", response)
           this.headerCards[0].amount_usd = Number((balanceNear * response.data[0].value).toFixed(2))
         }).catch((error) => {
           console.log("error balane: ", error)
@@ -504,102 +462,93 @@ export default {
   },
 
   mounted() {
-    if(this.result){
-      if(this.result.delegationhists) {
-        this.loadChartAndTable(this.result);
+    if(this.resultChartNear.result){
+      if(this.resultChartNear.result.delegationhists) {
+        this.loadChartNear(this.resultChartNear.result);
+      }
+    }
+    if(this.resultChartUsdt.result){
+      if(this.resultChartUsdt.result.delegationhists) {
+        this.loadChartUsdt(this.resultChartUsdt.result);
       }
     }
     this.loadTransactions()
   },
 
   methods: {
-    loadChartAndTable(response) {
-      if(response){
-        if(response.delegationhists) {
-          this.series = null;
-          this.chartOptions = null;
+    mapChart(response, asset) {
+      const data_series = [];
+      const data_chartOptions = [];
 
-          const data_series = [];
-          const data_chartOptions = [];
+      for(let i = 0; i < response.delegationhists.length; i++){
+        const divider = asset == "NEAR" ? 1000000000000000000000000 : 1000000;
+        const amount = Number((response.delegationhists[i].amount / divider).toFixed(2))
+        const epoch = response.delegationhists[i].date_time/1000000;
 
-          for(let i = 0; i < response.delegationhists.length; i++){
-            const amount = Number((response.delegationhists[i].amount / 1000000000000000000000000).toFixed(2))
-            const epoch = response.delegationhists[i].date_time/1000000;
-
-            data_series.push(amount);
-            data_chartOptions.push(epoch);
-          }
-
-          let series = [
-            {
-              name: 'series1',
-              data: data_series,
-            }
-          ];
-
-
-          let chartOptions = {
-            tooltip: {
-              theme: 'custom-tooltip',
-              custom: function({ series, seriesIndex, dataPointIndex, w }) {
-                const value = series[seriesIndex][dataPointIndex];
-
-                return '<div class="custom-tooltip-content">' +
-                  '<span>' + '$' + value + '</span>' +
-                  '</div>';
-              }
-            },
-            chart: {
-              type: 'area',
-              toolbar: {
-                show:false,
-              }
-            },
-            dataLabels: {
-              enabled: false
-            },
-            stroke: {
-              curve: 'smooth',
-              width: 1,
-            },
-            xaxis: {
-              type: 'datetime',
-              categories: data_chartOptions, // ["1 JUL", "2 JUL", "3 JUL", "4 JUL", "5 JUL", "6 JUL", "7 JUL "],
-              labels: {
-                style: {
-                  colors: '#fff',
-                },
-              },
-              tooltip: {
-                enabled: false,
-              },
-            },
-
-            yaxis: {
-              labels: {
-                style: {
-                  colors: '#fff',
-                },
-              },
-
-              axisBorder: {
-                show: true,
-              },
-            },
-
-            grid: {
-              show: false,
-
-            },
-          };
-
-
-          this.series = series;
-          this.chartOptions = chartOptions;
-
-        }
+        data_series.push(amount);
+        data_chartOptions.push(epoch);
       }
 
+      let series = [ { name: 'series', data: data_series } ];
+
+      let chartOptions = {
+        tooltip: {
+          theme: 'custom-tooltip',
+          custom: function({ series, seriesIndex, dataPointIndex, w }) {
+            const value = series[seriesIndex][dataPointIndex];
+
+            return '<div class="custom-tooltip-content">' +
+              '<span>' + asset + value + '</span>' +
+              '</div>';
+          }
+        },
+        chart: { type: 'area', toolbar: { show:false } },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 1 },
+        xaxis: {
+          type: 'datetime',
+          categories: data_chartOptions,
+          labels: { style: { colors: '#fff' } },
+          tooltip: { enabled: false },
+        },
+        yaxis: {
+          labels: { style: { colors: '#fff' } },
+          axisBorder: { show: true },
+        },
+        grid: { show: false },
+      };
+
+
+      return { series, chartOptions };
+
+    },
+
+    loadChartNear(response) {
+      if(response){
+        if(response.delegationhists) {
+          this.seriesNear = null;
+          this.chartOptionsNear = null;
+
+          const { series, chartOptions } = this.mapChart(response, 'NEAR');
+
+          this.seriesNear = series;
+          this.chartOptionsNear = chartOptions;
+        }
+      }
+    },
+
+    loadChartUsdt(response) {
+      if(response){
+        if(response.delegationhists) {
+          this.seriesUsdt = null;
+          this.chartOptionsUsdt = null;
+
+          const { series, chartOptions } = this.mapChart(response, 'USDT');
+
+          this.seriesUsdt = series;
+          this.chartOptionsUsdt = chartOptions;
+        }
+      }
     },
 
     async loadTransactions() {

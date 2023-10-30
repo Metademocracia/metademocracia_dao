@@ -329,12 +329,12 @@ export default{
       // {id: '', desc: 'Cambiar política'},
       // {id: '', desc: 'Agregar miembro del grupo'},
       // {id: '', desc: 'Eliminar miembro del grupo'},
-      {id: 'FunctionCall', desc: 'Llamada de función', fn: this.addFunctionCall},
-      {id: 'Transfer', desc: 'Transferencia', fn: this.addTransfer},
+      {id: 'FunctionCall', desc: 'Ejecutar funcion de contrato inteligente mediante el DAO', fn: this.addFunctionCall},
+      {id: 'Transfer', desc: 'Solicitud de fondos', fn: this.addTransfer},
       // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
       // {id: '', desc: 'Cambiar política eliminar rol'},
-      {id: 'ChangePolicyUpdateVotePolicy', desc: 'Cambiar política actualizar política de votación'},
-      {id: 'ChangePolicyUpdateParameters', desc: 'Cambiar los parámetros de actualización de políticas'}
+      // {id: 'ChangePolicyUpdateVotePolicy', desc: 'Cambiar política actualizar política de votación'},
+      // {id: 'ChangePolicyUpdateParameters', desc: 'Cambiar los parámetros de actualización de políticas'}
     ];
 
     this.searchBond();
