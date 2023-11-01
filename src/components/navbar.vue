@@ -33,7 +33,7 @@
     </div>
 
     <div class="absolute-img">
-      <img src="@/assets/sources/logos/white-logo.svg" alt="Logo">
+      <img src="@/assets/sources/logos/white-logo.svg" alt="Logo" @click="$router.push('/')" style="cursor: pointer;">
     </div>
 
 
@@ -162,9 +162,8 @@
     closable
     close-label="Close Alert"
     :title="titleAlert"
-    style="width: 40%; margin-left:30%;"
   >
-    <p class="mt-5">Hash: <a :href="hashRouteAlert" target="_blank">{{ hashAlert }}</a></p>
+    <p class="mt-5">Hash: <a :href="hashRouteAlert" target="_blank"> {{ hashAlert }}</a></p>
 
     <p v-if="errorAlert"> {{ errorAlert }} </p>
   </v-alert>
@@ -174,17 +173,19 @@
       v-model="dialog"
       persistent
       width="auto"
+      content-class="dialog-dao"
     >
       <v-card>
         <v-card-title class="text-h5">
           Estás saliendo de METADEMOCRACIA
         </v-card-title>
-        <v-card-text>luego de crear tu wallet o conectar una ya existente puedes volver a esta página para vincularla a tu perfil.</v-card-text>
+        <v-card-text>Luego de crear tu wallet o conectar una ya existente puedes volver a esta página para vincularla a tu perfil.</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
             color="green-darken-1"
             variant="text"
+            class="btn"
             @click="dialog = false"
           >
             Negar
@@ -192,6 +193,7 @@
           <v-btn
             color="green-darken-1"
             variant="text"
+            class="btn"
             @click="login('near')"
           >
             Aceptar
@@ -371,6 +373,37 @@ export default {
     i{
       color: $primary;
     }
+  }
+}
+
+.dialog-dao{
+  .v-card{
+    background-image: linear-gradient(45deg, #7b48ad 30%, #5577c1 80%);
+
+    .v-card-title{
+      color: #fff; 
+    }
+
+    .v-card-text{
+      color: #fff;
+    }
+  }
+}
+
+.v-alert{
+  background: linear-gradient(45deg, #7b48ad 30%, #5577c1 60%)!important;
+  width: 40%; 
+  margin-inline: auto;
+  @include media(max, 900px){
+    width: 90%;
+  }
+
+  a{
+    color: #fff;
+    text-decoration: underline;
+  }
+  .mdi-close{
+    font-size: 20px;
   }
 }
 
