@@ -307,10 +307,11 @@ export default {
       session: WalletP2p.getAccount(),
       typeProposal: [
         {id: "*", desc: "Todos"},
-        {id: "FunctionCall", desc: "Llamadas a Funciones"},
+        // {id: "FunctionCall", desc: "Llamadas a Funciones"},
         //{id: "Gobernancia", desc: "Gobernancia"},
-        {id: "Transfer", desc: "Transferencias"},
-        {id: "ChangePolicyUpdateVotePolicy", desc: "Actualizar política de votación"},
+        {id: "Transfer", desc: "Solicitud de fondos"},
+        {id: "Vote", desc: "Votación"},
+        // {id: "ChangePolicyUpdateVotePolicy", desc: "Actualizar política de votación"},
         //{id: "ChangePolicyUpdateParameters", desc: "Actualización parámetros de políticas"},
         //{id: "Miembros", desc: "Miembros"},
 
