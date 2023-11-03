@@ -6,17 +6,25 @@
   >
     <div class="jspace divrow acenter" style="width: 100%;">
       <div class="divcol center">
-        <img src="@/assets/sources/logos/white-logo.svg" alt="Logo">
+        <img src="@/assets/sources/logos/white-logo.svg" alt="Logo" @click="$router.push('/')" style="cursor: pointer;">
         <div class="divrow center mt-8" style="gap: 15px;">
-          <img src="@/assets/sources/icons/instagram.svg" alt="Icon" style="max-width: 20px;">
-          <img src="@/assets/sources/icons/twitter.svg" alt="Icon" style="max-width: 20px;">
-          <img src="@/assets/sources/icons/discord.svg" alt="Icon" style="max-width: 20px;">
-          <img src="@/assets/sources/icons/telegram.svg" alt="Icon" style="max-width: 20px;">
+          <a href="https://instagram.com/metademocracia?igshid=NzZlODBkYWE4Ng==" target="_blank">
+            <img src="@/assets/sources/icons/instagram.svg" alt="Icon" class="social-media-link">
+          </a>
+          <a href="https://x.com/metademocracia_?t=f48NeAgxSrlfXUb9d7kTLw&s=09" target="_blank">
+            <img src="@/assets/sources/icons/twitter.svg" alt="Icon" class="social-media-link">
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=61550736934932&mibextid=ZbWKwL" target="_blank">
+            <v-icon color="#fff" class="social-media-link">mdi-facebook</v-icon>
+          </a>
         </div>
       </div>
 
-      <div class="divrow center" style="gap: 15px;">
-        <a v-for="(item,index) in dataFooter" :href="item.link" :key="index" style="color: #fff; font-weight: 700;">{{ item.name }}</a>
+      <div class="divrow center divcol-mobile" style="gap: 15px;">
+        <a v-for="(item,index) in dataFooter" 
+        :href="item.ref" target="_blank" :key="index" style="color: #fff; font-weight: 700; cursor: pointer;"
+        @click="$router.push(item.link)"
+        >{{ item.name }}</a>
       </div>
     </div>
 
@@ -44,6 +52,14 @@ export default {
         {
           name: "Fondos",
           link: 'funds',
+        },
+        {
+          name: "Foro",
+          ref: "https://forum.metademocracia.social/"
+        },
+        {
+          name: "Metainfo",
+          ref: "https://metademocracia.com/"
         }
       ]
     }
@@ -64,5 +80,18 @@ export default {
   position: absolute;
   margin-bottom: -70px;
   padding-block: 30px 10px;
+
+  .social-media-link{
+    cursor: pointer;
+    max-width: 20px;
+  }
+
+  .divcol-mobile{
+    @include media(max, 660px){
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+  }
 }
 </style>

@@ -25,7 +25,13 @@
 
           <v-row class="mt-6">
             <v-col cols="12" class="col-select">
-              <label for="tipo_propuesta">Tipo de Propuesta</label>
+              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Acción requerida en el DAO (transferir fondos o votación)">
+                <template v-slot:activator="{ props }">
+                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
+                    <label for="tipo_propuesta">Tipo de Propuesta</label>
+                  </v-badge>
+                </template>
+              </v-tooltip>
               <v-select
                 v-model="tipo_propuesta"
                 id="tipo_propuesta"
@@ -44,28 +50,52 @@
               ></v-select>
             </v-col>
             <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="titulo_propuesta">Titulo de Propuesta</label>
+              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Identificador de la propuesta">
+                <template v-slot:activator="{ props }">
+                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
+                    <label for="titulo_propuesta">Titulo de Propuesta</label>
+                  </v-badge>
+                </template>
+              </v-tooltip>
               <v-text-field
               v-model="titulo_propuesta" id="titulo_propuesta" class="input" variant="outlined"
               elevation="1" placeholder="Titulo de Propuesta" :rules="[globalRules.required]" required
               ></v-text-field>
             </v-col>
             <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="proponente">Proponente</label>
+              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Persona o Wallet que realiza la propuesta">
+                <template v-slot:activator="{ props }">
+                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
+                    <label for="proponente">Proponente</label>
+                  </v-badge>
+                </template>
+              </v-tooltip>
               <v-text-field
               v-model="proponente" id="proponente" class="input" variant="outlined" disabled
               elevation="1" :placeholder="'ejemplo.'+network" :rules="[globalRules.required]" required
               ></v-text-field>
             </v-col>
             <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="descripcion">Descripción</label>
+              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Detalle explicativo de la propuesta a realizar">
+                <template v-slot:activator="{ props }">
+                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
+                    <label for="descripcion">Descripción</label>
+                  </v-badge>
+                </template>
+              </v-tooltip>
               <v-text-field
               id="descripcion" class="input" variant="outlined"
               elevation="1" placeholder="Descripción" :rules="[globalRules.required]" required
               ></v-text-field>
             </v-col>
             <v-col xl="6" lg="6" md="6" cols="12">
-              <label for="link">Link</label>
+              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Respaldo explicativo en el foro de gobernanza de la propuesta">
+                <template v-slot:activator="{ props }">
+                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
+                    <label for="link">Link</label>
+                  </v-badge>
+                </template>
+              </v-tooltip>
               <v-text-field
               id="link" class="input" variant="outlined"
               elevation="1" placeholder="Link" :rules="[globalRules.required]" required
@@ -161,7 +191,13 @@
 
             <template v-if="tipo_propuesta && tipo_propuesta.id === 'Transfer'">
               <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="token_id">ID de Token</label>
+                <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Token o cryptomoneda a transferir">
+                  <template v-slot:activator="{ props }">
+                    <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
+                      <label for="token_id">ID de Token</label>
+                    </v-badge>
+                  </template>
+                </v-tooltip>
                 <!--<v-text-field
                 id="token_id" class="input" variant="outlined"
                 elevation="1" placeholder="#123456"
@@ -186,7 +222,13 @@
               </v-col>
 
               <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="receiver_id">ID de Receptor</label>
+                <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Wallet o persona que va a recibir el dinero">
+                  <template v-slot:activator="{ props }">
+                    <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
+                      <label for="receiver_id">ID de Receptor</label>
+                    </v-badge>
+                  </template>
+                </v-tooltip>
                 <v-text-field
                 id="receiver_id" class="input" variant="outlined"
                 elevation="1" :placeholder="'ejemplo.'+network" :rules="[globalRules.required]" required
@@ -194,7 +236,14 @@
               </v-col>
 
               <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="amount">Cantidad</label>
+                <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Tokens a enviar, ejemplo: 50 USDT">
+                  <template v-slot:activator="{ props }">
+                    <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
+                      <label for="amount">Cantidad</label>
+                    </v-badge>
+                  </template>
+                </v-tooltip>
+
                 <v-text-field
                 id="amount" class="input" variant="outlined" type="number"
                 elevation="1" placeholder="0.00" :rules="[globalRules.required]" required
@@ -202,7 +251,13 @@
               </v-col>
 
               <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="msg">Mensaje</label>
+                <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Cualquier mensaje opcional que se desee agrergar">
+                  <template v-slot:activator="{ props }">
+                    <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
+                      <label for="msg">Mensaje</label>
+                    </v-badge>
+                  </template>
+                </v-tooltip>
                 <v-text-field
                 id="msg" class="input" variant="outlined"
                 elevation="1" placeholder="Opcional"
