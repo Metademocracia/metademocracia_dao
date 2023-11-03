@@ -21,6 +21,7 @@
             <a
               v-for="(item, i) in dataNavbar" :key="i"
               class="text-a-menu"
+              :href="item.ref" target="_blank"
               @click="$router.push(item.link), menuToggle = false">
               {{item.name}}
             </a>
@@ -38,9 +39,9 @@
 
 
     <div class="center divrow delete-mobile" style="gap: 15px; margin-left: 140px">
-      <span v-for="(item, index) in dataNavbar" :key="index" style="color: #fff; cursor: pointer; font-weight: 700!important;" @click="$router.push(item.link)">
+      <a v-for="(item, index) in dataNavbar" :key="index" style="color: #fff; cursor: pointer; font-weight: 700!important;" @click="$router.push(item.link)" :href="item.ref" target="_blank">
         <v-icon color="white mr-1">{{ item.icon }}</v-icon> {{ item.name }}
-      </span>
+      </a>
     </div>
 
     <div class="center divrow delete-mobile" style="gap: 10px;">
@@ -229,7 +230,9 @@ export default {
       dataNavbar: [
        { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
        { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
-       { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' }
+       { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' },
+       { icon: 'mdi-account-group-outline', name: 'Foro', ref: 'https://forum.metademocracia.social/'},
+       { icon: 'mdi-information-outline', name: 'Metainfo', ref: 'https://metademocracia.com/' }
       ],
       titleBtnLogin: ref("Conectar Wallet"),
     }
@@ -468,8 +471,8 @@ export default {
   }
 
 .menu-toggle{
-  height: 100vh!important;
-  min-height: 100%;
+  height: 400vh!important;
+  min-height: 100%!important;
   width: 100vw;
   max-width: 100%;
   padding-inline: 30px;

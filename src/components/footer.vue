@@ -20,8 +20,11 @@
         </div>
       </div>
 
-      <div class="divrow center" style="gap: 15px;">
-        <a v-for="(item,index) in dataFooter" :href="item.link" :key="index" style="color: #fff; font-weight: 700;">{{ item.name }}</a>
+      <div class="divrow center divcol-mobile" style="gap: 15px;">
+        <a v-for="(item,index) in dataFooter" 
+        :href="item.ref" target="_blank" :key="index" style="color: #fff; font-weight: 700; cursor: pointer;"
+        @click="$router.push(item.link)"
+        >{{ item.name }}</a>
       </div>
     </div>
 
@@ -49,6 +52,14 @@ export default {
         {
           name: "Fondos",
           link: 'funds',
+        },
+        {
+          name: "Foro",
+          ref: "https://forum.metademocracia.social/"
+        },
+        {
+          name: "Metainfo",
+          ref: "https://metademocracia.com/"
         }
       ]
     }
@@ -73,6 +84,14 @@ export default {
   .social-media-link{
     cursor: pointer;
     max-width: 20px;
+  }
+
+  .divcol-mobile{
+    @include media(max, 660px){
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
   }
 }
 </style>
