@@ -385,7 +385,7 @@ export default{
       // {id: '', desc: 'Agregar miembro del grupo'},
       // {id: '', desc: 'Eliminar miembro del grupo'},
       {id: 'Transfer', desc: 'Solicitud de fondos', fn: this.addTransfer},
-      {id: "Vote", desc: "Votación", fn: this.addVote},
+      {id: "Voting", desc: "Votación", fn: this.addVote},
       // {id: 'FunctionCall', desc: 'Llamar funciones de contratos inteligentes usando el DAO', fn: this.addFunctionCall},
       // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
       // {id: '', desc: 'Cambiar política eliminar rol'},
@@ -482,6 +482,7 @@ export default{
     },
 
     addVote(bond) {
+      console.log("bond", bond)
       const json = {
         contractId: process.env.CONTRACT_NFT,
         methodName: "set_proposal",

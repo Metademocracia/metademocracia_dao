@@ -310,7 +310,7 @@ export default {
         // {id: "FunctionCall", desc: "Llamadas a Funciones"},
         //{id: "Gobernancia", desc: "Gobernancia"},
         {id: "Transfer", desc: "Solicitud de fondos"},
-        {id: "Vote", desc: "Votación"},
+        {id: "Voting", desc: "Votación"},
         // {id: "ChangePolicyUpdateVotePolicy", desc: "Actualizar política de votación"},
         //{id: "ChangePolicyUpdateParameters", desc: "Actualización parámetros de políticas"},
         //{id: "Miembros", desc: "Miembros"},
