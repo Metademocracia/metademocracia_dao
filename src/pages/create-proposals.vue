@@ -449,7 +449,7 @@ export default{
       WalletP2p.call(json, "/metademocracia/proposals");
     },
 
-    addFunctionCall(){
+    addFunctionCall(bond){
       const json = {
         contractId: process.env.CONTRACT_NFT,
         methodName: "set_proposal",
@@ -475,14 +475,30 @@ export default{
           }
         },
         gas: "300000000000000",
-        attachedDeposit: "1"
+        attachedDeposit: bond.toString()
       };
 
       WalletP2p.call(json, "/metademocracia/proposals");
     },
 
-    addVote() {
-      console.log("comin soong");
+    addVote(bond) {
+      const json = {
+        contractId: process.env.CONTRACT_NFT,
+        methodName: "set_proposal",
+        args: {
+          data: {
+            title: document.getElementById("titulo_propuesta").value,
+            description: document.getElementById("descripcion").value,
+            proponent: document.getElementById("proponente").value,
+            kind: "Voting",
+            link: document.getElementById("link").value,
+          }
+        },
+        gas: "300000000000000",
+        attachedDeposit: bond.toString()
+      };
+
+      WalletP2p.call(json, "/metademocracia/proposals");
     }
 
 
