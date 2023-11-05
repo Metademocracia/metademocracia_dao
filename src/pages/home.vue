@@ -222,8 +222,8 @@ import gql from 'graphql-tag';
 import { useQuery } from '@vue/apollo-composable';
 import WalletP2p from '../services/wallet-p2p';
 import { ref, watch } from 'vue';
-import moment from 'moment';
-import graphQl from '@/services/graphQl';
+// import moment from 'moment';
+// import graphQl from '@/services/graphQl';
 
 const QUERY = gql`
   query MyQuery {
@@ -349,7 +349,7 @@ export default {
       if(this.result) {
         this.delegation_near = this.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
       }
-      return this.delegation_near.toFixed(2)
+      return isNaN(this.delegation_near) ? 0.00 : this.delegation_near.toFixed(2);
     },
     delegationUsdt() {
       if(this.result) {
@@ -369,6 +369,7 @@ export default {
 
   methods: {
     async openDialog() {
+      console.log(WalletP2p.getAccount().address)
       if(!WalletP2p.getAccount().address) {
         this.alert = true;
         return
