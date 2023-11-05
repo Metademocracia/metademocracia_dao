@@ -69,7 +69,7 @@
       <hr class="mt-8 mb-8" style="width: 100%; border-bottom: 1px solid #fff;">
 
       <span class="tcenter mb-8">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc volutpat ligula orci, ac imperdiet tortor cursus vitae. Nunc fringilla lacus vel tempus ultrices. Nulla facilisi. Donec rutrum posuere sollicitudin. Donec et quam sit amet mauris gravida volutpat. Sed volutpat dignissim nibh vitae interdum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed congue
+        Tu voz importa. Levantarla depende de ti. Esta es una revolución en política que se empodera gracias a las nuevas tecnologías de la web3. Los ciudadanos tienen un papel activo en la formación de políticas y proyectos, lo que fortalece su sentido de pertenencia y empoderamiento en la sociedad. 
       </span>
     </section>
 
@@ -181,17 +181,19 @@
         v-model="dialog"
         persistent
         width="auto"
+        content-class="dialog-dao"
       >
         <v-card>
           <v-card-title class="text-h5">
             Estás saliendo de METADEMOCRACIA
           </v-card-title>
-          <v-card-text>luego de aprobar la transferencia de fondos volvera a esta página.</v-card-text>
+          <v-card-text>Luego de aprobar la transferencia de fondos volvera a esta página.</v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
               color="green-darken-1"
               variant="text"
+              class="btn"
               @click="dialog = false"
             >
               Negar
@@ -199,6 +201,7 @@
             <v-btn
               color="green-darken-1"
               variant="text"
+              class="btn"
               @click="delegate()"
             >
               Aceptar
@@ -499,3 +502,18 @@ function anything() {
   })
 }
 </script>
+<style lang="scss">
+.dialog-dao{
+  .v-card{
+    background-image: linear-gradient(45deg, #7b48ad 30%, #5577c1 80%);
+
+    .v-card-title{
+      color: #fff;
+    }
+
+    .v-card-text{
+      color: #fff;
+    }
+  }
+}
+</style>
