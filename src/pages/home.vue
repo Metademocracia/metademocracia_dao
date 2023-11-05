@@ -504,6 +504,9 @@ function anything() {
 }
 </script>
 <style lang="scss">
+.v-window__controls {
+  margin-top: -50px !important; /* Adjust this value as needed */
+}
 .dialog-dao{
   .v-card{
     background-image: linear-gradient(45deg, #7b48ad 30%, #5577c1 80%);
