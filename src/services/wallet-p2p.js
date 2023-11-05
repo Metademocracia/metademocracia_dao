@@ -32,11 +32,12 @@ function call (json, ruta) {
         attachedDeposit: "10000000000000000000",
       }
   */
+  const dataWallet = JSON.parse(localStorage.getItem("session"))
   const token = window.btoa(JSON.stringify({
     action: "call",
     domain: window.location.host,
     contract: json.contractId,
-    from: localStorage.getItem("session"),
+    from: dataWallet.wallet,
     json: json,
     success: ruta ? window.location.origin + ruta : window.location.origin + window.location.pathname,
     error: window.location.origin + window.location.pathname,
@@ -46,8 +47,9 @@ function call (json, ruta) {
 }
 
 function getAccount() {
+  const dataWallet = JSON.parse(localStorage.getItem("session"))
   const account = {
-    address: localStorage.getItem("session"),
+    address: dataWallet.wallet,
     publicKey: '',
     privateKey: '',
   };
