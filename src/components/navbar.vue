@@ -291,7 +291,6 @@ export default {
 
 
       if(dataSession) {
-        console.log("por aca: ", dataSession)
         const dataSessionJson = JSON.parse(dataSession);
         const wallet = dataSessionJson.email || dataSessionJson.wallet
         this.initSession(wallet)
@@ -303,8 +302,6 @@ export default {
       var token = urlParams.get('token');
 
       if(!token) return
-
-      console.log("token aqui: ", JSON.parse(window.atob(token)))
 
       dataSession = window.atob(token)
 
