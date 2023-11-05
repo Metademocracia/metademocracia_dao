@@ -208,7 +208,8 @@
 								</div>
 
 								<div class="mr-10 no-margin">
-									<img v-if="item.date" src="@/assets/sources/images/approved.svg" alt="Approved" class="aprroved-failed-img">
+									<img v-if="item.status == 'Approved'" src="@/assets/sources/images/icono_aprobado_color.png" alt="Approved" class="aprroved-failed-img">
+                  <img v-if="item.status == 'Rejected'" src="@/assets/sources/images/icono_negado_color.png" alt="Approved" class="aprroved-failed-img">
 								</div>
 							</div>
 
@@ -493,6 +494,7 @@ export default {
             time_complete: '7 Días',
             likes: item.upvote,
             dislikes: item.downvote,
+            status: item.status,
           }
         });
 

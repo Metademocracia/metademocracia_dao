@@ -287,9 +287,13 @@ export default {
 
     },
     verifySession(){
-      let wallet = localStorage.getItem("session");
+      let dataSession = localStorage.getItem("session");
 
-      if(wallet) {
+
+      if(dataSession) {
+        console.log("por aca: ", dataSession)
+        const dataSessionJson = JSON.parse(dataSession);
+        const wallet = dataSessionJson.email || dataSessionJson.wallet
         this.initSession(wallet)
         return
       }
@@ -300,8 +304,13 @@ export default {
 
       if(!token) return
 
-      wallet = JSON.parse(window.atob(token)).wallet
-      localStorage.setItem("session", wallet)
+      console.log("token aqui: ", JSON.parse(window.atob(token)))
+
+      dataSession = window.atob(token)
+
+      localStorage.setItem("session", dataSession)
+      const dataSessionJson = JSON.parse(dataSession);
+      const wallet = dataSessionJson.email || dataSessionJson.wallet
       this.initSession(wallet)
     },
 
@@ -384,7 +393,7 @@ export default {
     background-image: linear-gradient(45deg, #7b48ad 30%, #5577c1 80%);
 
     .v-card-title{
-      color: #fff; 
+      color: #fff;
     }
 
     .v-card-text{
@@ -395,7 +404,7 @@ export default {
 
 .v-alert{
   background: linear-gradient(45deg, #7b48ad 30%, #5577c1 60%)!important;
-  width: 40%; 
+  width: 40%;
   margin-inline: auto;
   @include media(max, 900px){
     width: 90%;
