@@ -160,7 +160,7 @@
 								<div class="div-img" :class="{'purple-absolute' : item.icon == 'mdi-vote', 'red-absolute' : item.icon == 'mdi-thumb-down', 'green-absolute' : item.icon == 'mdi-thumb-up'}">
 									<v-icon>{{ item.icon }}</v-icon>
 								</div>
-								<span>{{ item.name }}</span>
+								<span>{{ item.name.substring(0, 20) }}...</span>
 								<span>{{ item.date }}</span>
 							</div>
 						</v-col>

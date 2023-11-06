@@ -260,7 +260,7 @@
 								<v-icon>{{ item.icon }}</v-icon>
 							</div>
 							<span>{{ item.near }}</span>
-							<span>{{ item.name }}</span>
+							<span>{{ item.name.substring(0, 20) }}...</span>
 							<span v-if="item.date">{{ item.date }} <v-icon color="#fff" style="transform: rotate(135deg); margin-top: -5px;">mdi-link</v-icon></span>
 						</div>
 
