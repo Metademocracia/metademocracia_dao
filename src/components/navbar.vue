@@ -25,6 +25,18 @@
               @click="$router.push(item.link), menuToggle = false">
               {{item.name}}
             </a>
+
+            <v-menu location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-btn color="transparent" flat v-bind="props" class="btn-list list-font-btn mt-0">
+                  dApps <v-icon>mdi-chevron-down</v-icon>
+                </v-btn>
+              </template>
+
+              <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 15px;">
+                <a v-for="(item,index) in dataLinks" :key="index" :href="item.ref" target="blank">{{ item.name }}</a>
+              </v-card>
+            </v-menu>
           </div>
 
           <v-btn class="btn mt-10" @click="dialogConnect = true">Conectar Wallet</v-btn>
@@ -42,6 +54,18 @@
       <a v-for="(item, index) in dataNavbar" :key="index" style="color: #fff; cursor: pointer; font-weight: 700!important;" @click="$router.push(item.link)" :href="item.ref" target="_blank">
         <v-icon color="white mr-1">{{ item.icon }}</v-icon> {{ item.name }}
       </a>
+
+      <v-menu location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn color="transparent" flat v-bind="props" class="btn-list">
+            dApps <v-icon>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
+          <a v-for="(item,index) in dataLinks" :key="index" :href="item.ref" target="blank">{{ item.name }}</a>
+        </v-card>
+      </v-menu>
     </div>
 
     <div class="center divrow delete-mobile" style="gap: 10px;">
@@ -234,6 +258,21 @@ export default {
        { icon: 'mdi-account-group-outline', name: 'Foro', ref: 'https://forum.metademocracia.social/'},
        { icon: 'mdi-information-outline', name: 'Metainfo', ref: 'https://metademocracia.com/' }
       ],
+
+      dataLinks:[
+        {
+          name: 'WhatsGPT',
+          ref: 'https://api.whatsapp.com/send/?phone=584244078772&text&type=phone_number&app_absent=0'
+        },
+        {
+          name: 'NearP2P',
+          ref: 'https://nearp2p.com/',
+        },
+        {
+          name: 'Billetera',
+          ref: 'https://develop.globaldv.tech/wallet-p2p/'
+        }
+      ],
       titleBtnLogin: ref("Conectar Wallet"),
     }
   },
@@ -382,6 +421,34 @@ export default {
     i{
       color: $primary;
     }
+  }
+}
+
+.btn-list{
+  width: max-content;
+  padding-inline: 0px;
+  border-radius: 5px!important;
+  span{
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+  }
+}
+
+.list-font-btn{
+  min-height: 1px!important;
+  height: max-content!important;
+  span{
+    font-size: 20px;
+  }
+}
+
+.card-menu{
+  background-image: linear-gradient(45deg, #7b48ad 30%, #5577c1 80%)!important;
+  padding: 15px 30px 0px 10px!important;
+  border-radius: 5px!important;
+  a{
+    color: #fff;
   }
 }
 
