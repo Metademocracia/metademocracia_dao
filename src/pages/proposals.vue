@@ -200,10 +200,10 @@
 
 							<hr class="mt-3 mb-3" style="width: 100%; border-bottom: 1px solid rgba(0,0,0,0.1); height: 1px;">
 
-							<div class="jspace" style="width: 100%; height: max-content;">
+							<div class="jspace mb-2" style="width: 100%; height: max-content;">
 								<div class="divcol">
 									<span class="tstart" style="color: #939393;">Proponente</span>
-									<span class="tstart" style="color: #000;">{{ item.near_id }}</span>
+									<span class="tstart" style="color: #000; max-width: 150px">{{ item.near_id }}</span>
 									<!--<span class="tstart" style="color: #000;">BGeam</span>-->
 								</div>
 

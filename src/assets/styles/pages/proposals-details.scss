@@ -50,6 +50,10 @@
 
 	.section2-proposals-details{
 		width: 70%;
+
+		@include media(max, 660px){
+			width: 100%;
+		}
 		.card-proposals{
 			width: 100%;
 			height: max-content;
