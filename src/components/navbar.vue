@@ -19,6 +19,25 @@
 
           <div class="divcol center mt-8 pt-6" style="gap: 40px;">
             <a
+              class="text-a-menu"
+              @click="$router.push('/'), menuToggle = false">
+              Home
+            </a>
+
+            <v-menu location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-btn color="transparent" flat v-bind="props" class="btn-list list-font-btn mt-0">
+                  Propuestas <v-icon>mdi-chevron-down</v-icon>
+                </v-btn>
+              </template>
+
+              <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
+                <a @click="$router.push('/proposals')">Propuestas</a>
+                <a @click="$router.push('/create-proposals')">Crear propuesta</a>
+              </v-card>
+            </v-menu>
+
+            <a
               v-for="(item, i) in dataNavbar" :key="i"
               class="text-a-menu"
               :href="item.ref" target="_blank"
@@ -33,7 +52,7 @@
                 </v-btn>
               </template>
 
-              <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 15px;">
+              <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
                 <a v-for="(item,index) in dataLinks" :key="index" :href="item.ref" target="blank">{{ item.name }}</a>
               </v-card>
             </v-menu>
@@ -51,6 +70,27 @@
 
 
     <div class="center divrow delete-mobile" style="gap: 15px; margin-left: 140px">
+      <a
+        class="text-a-menu"
+        @click="$router.push('/'), menuToggle = false"
+        style="color: #fff; cursor: pointer; font-weight: 700!important;"
+        >
+        <v-icon color="white mr-1">mdi-home-outline</v-icon> Home
+      </a>
+
+      <v-menu location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn color="transparent" flat v-bind="props" class="btn-list">
+            <v-icon color="white mr-1">mdi-file-edit-outline</v-icon> Propuestas <v-icon>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
+          <a @click="$router.push('/proposals')" style="cursor: pointer;">Propuestas</a>
+          <a @click="$router.push('/create-proposals')" style="cursor: pointer;">Crear propuesta</a>
+        </v-card>
+      </v-menu>
+
       <a v-for="(item, index) in dataNavbar" :key="index" style="color: #fff; cursor: pointer; font-weight: 700!important;" @click="$router.push(item.link)" :href="item.ref" target="_blank">
         <v-icon color="white mr-1">{{ item.icon }}</v-icon> {{ item.name }}
       </a>
@@ -252,8 +292,8 @@ export default {
       dialogConnect: ref(false),
       obtenWallet: false,
       dataNavbar: [
-       { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
-       { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
+      //  { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
+      //  { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
        { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' },
        { icon: 'mdi-account-group-outline', name: 'Foro', ref: 'https://forum.metademocracia.social/'},
        { icon: 'mdi-information-outline', name: 'Metainfo', ref: 'https://metademocracia.com/' }
