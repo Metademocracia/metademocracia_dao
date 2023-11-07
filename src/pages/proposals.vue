@@ -203,7 +203,7 @@
 							<div class="jspace mb-2" style="width: 100%; height: max-content;">
 								<div class="divcol">
 									<span class="tstart" style="color: #939393;">Proponente</span>
-									<span class="tstart" style="color: #000; max-width: 150px">{{ item.near_id }}</span>
+									<span class="tstart max150">{{ item.near_id }}</span>
 									<!--<span class="tstart" style="color: #000;">BGeam</span>-->
 								</div>
 

@@ -67,7 +67,7 @@
 							<div class="jspace mb-2" style="width: 100%; height: max-content;">
 								<div class="divcol">
 									<span class="tstart" style="color: #939393;">Proponente</span>
-									<span class="tstart" style="color: #000; max-width: 130px">{{ item.near_id }}</span>
+									<span class="tstart max150">{{ item.near_id }}</span>
 								</div>
 
 								<div class="mr-10 no-margin">

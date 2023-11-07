@@ -70,6 +70,15 @@
 			@include media(max, 560px){
 				padding: 0px 0px 0px 40px;
 			}
+
+			.max150{
+				color: #000!important; 
+				max-width: max-content;
+	
+				@include media(max, 660px){
+					max-width: 150px;
+				}
+			}
 	
 			.side-bar{
 				background-color: #8A5FA4;

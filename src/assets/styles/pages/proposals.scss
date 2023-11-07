@@ -199,6 +199,15 @@
 			padding: 0px 0px 0px 40px;
 		}
 
+		.max150{
+			color: #000!important; 
+			max-width: max-content;
+
+			@include media(max, 660px){
+				max-width: 150px;
+			}
+		}
+
 		.side-bar{
 			background-color: #8A5FA4;
 			position: absolute;
@@ -214,7 +223,6 @@
 			padding: 10px 5px 45px 5px;
 			box-shadow: 3px 3px 3px 1px rgba(0,0,0,0.1);
 			
-
 			.div-span-side{
 				background-color: transparent;
 				height: 40px;
