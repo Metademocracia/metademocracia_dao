@@ -147,7 +147,7 @@
 
 				<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12">
 					<div class="jend">
-						<v-btn v-if="session.address" class="mb-6" @click="$router.push('create-proposals')">Crear propuesta</v-btn>
+						<v-btn v-if="session.address" class="mb-6" @click="goCreateProposal()">Crear propuesta</v-btn>
 					</div>
 
 					<v-card v-for="(item, index) in cardsProposals" :key="index" class="card-proposals" @click="$router.push({path: 'proposals-details', query: {id: item.proposals_id}})">
@@ -257,6 +257,34 @@
 				</v-col>
 			</v-row>
     </div>
+
+
+    <v-row justify="center">
+      <v-dialog
+        v-model="alert"
+        persistent
+        width="auto"
+        content-class="dialog-dao"
+      >
+        <v-card>
+          <v-card-title class="text-h5">
+            <v-icon>mdi-alert-circle</v-icon> Advertencia
+          </v-card-title>
+          <v-card-text>Debe ser miembro para poder votar, solicite su membresía.</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="green-darken-1"
+              variant="text"
+              class="btn"
+              @click="alert = false"
+            >
+              Aceptar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
 </template>
 
 <script>
@@ -267,7 +295,8 @@ import { useQuery } from '@vue/apollo-composable';
 import WalletP2p from '../services/wallet-p2p';
 import moment from 'moment';
 import { ref, watch } from 'vue';
-import graphQl from '@/services/graphQl'
+import graphQl from '@/services/graphQl';
+import utilsDAO from '@/services/utils-dao';
 
 const QUERY = gql`
   query Proposals {
@@ -300,12 +329,14 @@ export default {
       result,
       loading,
       error,
+      alert: ref(false),
 			currentPage: ref(1),
       cardsPerPage: ref(3),
 			page: ref(1),
       filterTypeProposalSelected: ref('*'),
 			filterStatusSelected: ref('*'),
       session: WalletP2p.getAccount(),
+      isMember: ref(utilsDAO.isMember()),
       typeProposal: [
         {id: "*", desc: "Todos"},
         // {id: "FunctionCall", desc: "Llamadas a Funciones"},
@@ -388,31 +419,50 @@ export default {
       navigator.clipboard.writeText(link);
     },
 
-    upvote(id) {
-      const json = {
-        contractId: process.env.CONTRACT_NFT,
-        methodName: "update_proposal",
-        args: {
-          id: Number(id),
-          action: "VoteApprove"
-        },
-        gas: "300000000000000"
-      };
+    async goCreateProposal() {
+      const isMember = await this.isMember;
+      this.alert = !isMember || false;
 
-      WalletP2p.call(json);
+      if(isMember) {
+        this.$router.push('create-proposals');
+      }
     },
-    downvote(id) {
-      const json = {
-        contractId: process.env.CONTRACT_NFT,
-        methodName: "update_proposal",
-        args: {
-          id: Number(id),
-          action: "VoteReject"
-        },
-        gas: "300000000000000"
-      };
 
-      WalletP2p.call(json);
+    async upvote(id) {
+      const isMember = await this.isMember;
+      this.alert = !isMember || false;
+
+      if(isMember) {
+        const json = {
+          contractId: process.env.CONTRACT_NFT,
+          methodName: "update_proposal",
+          args: {
+            id: Number(id),
+            action: "VoteApprove"
+          },
+          gas: "300000000000000"
+        };
+
+        WalletP2p.call(json);
+      }
+    },
+    async downvote(id) {
+      const isMember = await this.isMember;
+      this.alert = !isMember || false;
+
+      if(isMember) {
+        const json = {
+          contractId: process.env.CONTRACT_NFT,
+          methodName: "update_proposal",
+          args: {
+            id: Number(id),
+            action: "VoteReject"
+          },
+          gas: "300000000000000"
+        };
+
+        WalletP2p.call(json);
+      }
     },
 
     async loadProposal() {

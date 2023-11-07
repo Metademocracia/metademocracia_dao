@@ -1,4 +1,5 @@
 import axios from 'axios';
+import graphQl from '@/services/graphQl';
 // import { configNear }  from './nearConfig';
 //import * as nearAPI from "near-api-js";
 //const { KeyPair, keyStores, connect } = nearAPI;
@@ -33,11 +34,12 @@ function call (json, ruta) {
       }
   */
   const dataWallet = JSON.parse(localStorage.getItem("session"))
+  const wallet = dataWallet ? dataWallet.wallet : undefined;
   const token = window.btoa(JSON.stringify({
     action: "call",
     domain: window.location.host,
     contract: json.contractId,
-    from: dataWallet.wallet,
+    from: wallet,
     json: json,
     success: ruta ? window.location.origin + ruta : window.location.origin + window.location.pathname,
     error: window.location.origin + window.location.pathname,
@@ -48,8 +50,10 @@ function call (json, ruta) {
 
 function getAccount() {
   const dataWallet = JSON.parse(localStorage.getItem("session"))
+  const wallet = dataWallet ? dataWallet.wallet : undefined;
+
   const account = {
-    address: dataWallet.wallet,
+    address: wallet,
     publicKey: '',
     privateKey: '',
   };

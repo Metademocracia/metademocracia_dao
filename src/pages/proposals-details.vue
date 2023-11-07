@@ -207,6 +207,34 @@
 				</div>
 			</section>
 	</div>
+
+
+  <v-row justify="center">
+      <v-dialog
+        v-model="alert"
+        persistent
+        width="auto"
+        content-class="dialog-dao"
+      >
+        <v-card>
+          <v-card-title class="text-h5">
+            <v-icon>mdi-alert-circle</v-icon> Advertencia
+          </v-card-title>
+          <v-card-text>Debe ser miembro para poder votar, solicite su membresía.</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="green-darken-1"
+              variant="text"
+              class="btn"
+              @click="alert = false"
+            >
+              Aceptar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
 </template>
 
 <script>
@@ -218,6 +246,7 @@ import { useQuery } from '@vue/apollo-composable';
 import WalletP2p from '../services/wallet-p2p';
 import moment from 'moment';
 import { ref, computed } from 'vue';
+import utilsDAO from '@/services/utils-dao';
 
 const query = gql`
   query Proposals($id: String!) {
@@ -290,7 +319,9 @@ export default {
       result,
       loading,
       error,
-      session: ref({}),
+      alert: ref(false),
+      session: WalletP2p.getAccount(),
+      isMember: ref(utilsDAO.isMember()),
 			openVoice: ref(false),
 			openCouncil: ref(false),
 			voices_left: ref(0),
@@ -379,7 +410,6 @@ export default {
 
 
   mounted() {
-    this.session = WalletP2p.getAccount();
     if(this.result){
       this.loadData(this.result);
     }
@@ -391,31 +421,41 @@ export default {
       const link = window.location.origin + window.location.pathname + window.location.search
       navigator.clipboard.writeText(link);
     },
-    upvote(id) {
-      const json = {
-        contractId: process.env.CONTRACT_NFT,
-        methodName: "update_proposal",
-        args: {
-          id: Number(id),
-          action: "VoteApprove"
-        },
-        gas: "300000000000000"
-      };
+    async upvote(id) {
+      const isMember = await this.isMember;
+      this.alert = !isMember || false;
 
-      WalletP2p.call(json, "/metademocracia/proposals");
+      if(isMember) {
+        const json = {
+          contractId: process.env.CONTRACT_NFT,
+          methodName: "update_proposal",
+          args: {
+            id: Number(id),
+            action: "VoteApprove"
+          },
+          gas: "300000000000000"
+        };
+
+        WalletP2p.call(json, "/metademocracia/proposals");
+      }
     },
-    downvote(id) {
-      const json = {
-        contractId: process.env.CONTRACT_NFT,
-        methodName: "update_proposal",
-        args: {
-          id: Number(id),
-          action: "VoteReject"
-        },
-        gas: "300000000000000"
-      };
+    async downvote(id) {
+      const isMember = await this.isMember;
+      this.alert = !isMember || false;
 
-      WalletP2p.call(json, "/metademocracia/proposals");
+      if(isMember) {
+        const json = {
+          contractId: process.env.CONTRACT_NFT,
+          methodName: "update_proposal",
+          args: {
+            id: Number(id),
+            action: "VoteReject"
+          },
+          gas: "300000000000000"
+        };
+
+        WalletP2p.call(json, "/metademocracia/proposals");
+      }
     },
     loadData(response){
       if(response){
