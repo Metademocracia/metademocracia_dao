@@ -39,7 +39,7 @@
             </v-menu>
           </div>
 
-          <v-btn class="btn mt-10" @click="dialogConnect = true">Conectar Wallet</v-btn>
+          <v-btn class="btn mt-10" @click="openDialog()">{{ titleBtnLogin }}</v-btn>
 
         </div>
       </v-menu>
