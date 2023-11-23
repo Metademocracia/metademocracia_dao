@@ -32,7 +32,7 @@ export default defineConfig((userConfig) => {
         RECAPTCHA_SITE_KEY: env.VITE_RECAPTCHA_SITE_KEY,
         DOMAIN_WEB: env.DOMAIN_WEB,
         NETWORK: env.NETWORK,
-        CONTRACT_NFT: env.CONTRACT_NFT,
+        CONTRACT_DAO: env.CONTRACT_DAO,
         ROUTER_WALLET: env.ROUTER_WALLET,
         ROUTER_EXPLORER_NEAR_HASH: env.ROUTER_EXPLORER_NEAR_HASH,
         URL_APIP_PRICE: env.URL_APIP_PRICE,

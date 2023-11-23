@@ -16,7 +16,9 @@ function login (contract) {
     success: window.location.origin + window.location.pathname,
   }))
 
-  window.open(_routeWallet+"/execute?token="+token, "_self");
+  const route = _routeWallet+"/execute?token="+token;
+  // console.log(route)
+  window.open(route, "_self");
 }
 
 function call (json, ruta) {

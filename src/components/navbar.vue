@@ -366,7 +366,7 @@ export default {
     },
 
     login() {
-      WalletP2p.login(process.env.CONTRACT_NFT);
+      WalletP2p.login(process.env.CONTRACT_DAO);
     },
 
     logout() {

@@ -349,7 +349,7 @@ export default {
 			select_radio_buttons: ref("todos"),
 			toggle: ref(0),
 			windowStep: ref(0),
-			dao_account_name: process.env.CONTRACT_NFT,
+			dao_account_name: process.env.CONTRACT_DAO,
 			total_value: ref(0),
 
 			headerCards: ref([

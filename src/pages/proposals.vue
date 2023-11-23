@@ -434,7 +434,7 @@ export default {
 
       if(isMember) {
         const json = {
-          contractId: process.env.CONTRACT_NFT,
+          contractId: process.env.CONTRACT_DAO,
           methodName: "update_proposal",
           args: {
             id: Number(id),
@@ -452,7 +452,7 @@ export default {
 
       if(isMember) {
         const json = {
-          contractId: process.env.CONTRACT_NFT,
+          contractId: process.env.CONTRACT_DAO,
           methodName: "update_proposal",
           args: {
             id: Number(id),

@@ -69,7 +69,7 @@
       <hr class="mt-8 mb-8" style="width: 100%; border-bottom: 1px solid #fff;">
 
       <span class="tcenter mb-8">
-        Tu voz importa. Levantarla depende de ti. Esta es una revolución en política que se empodera gracias a las nuevas tecnologías de la web3. Los ciudadanos tienen un papel activo en la formación de políticas y proyectos, lo que fortalece su sentido de pertenencia y empoderamiento en la sociedad. 
+        Tu voz importa. Levantarla depende de ti. Esta es una revolución en política que se empodera gracias a las nuevas tecnologías de la web3. Los ciudadanos tienen un papel activo en la formación de políticas y proyectos, lo que fortalece su sentido de pertenencia y empoderamiento en la sociedad.
       </span>
     </section>
 
@@ -253,7 +253,9 @@ export default {
     apexchart: VueApexCharts,
   },
   setup(){
+
     const { result, loading,  error } = useQuery(QUERY);
+
     return{
       result,
       loading,
@@ -387,7 +389,7 @@ export default {
       const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
 
       const json = {
-        contractId: process.env.CONTRACT_NFT,
+        contractId: process.env.CONTRACT_DAO,
         methodName: "delegate",
         args: {
           account_id: WalletP2p.getAccount().address,

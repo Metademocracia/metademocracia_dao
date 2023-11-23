@@ -424,7 +424,7 @@ export default{
 
     addTransfer(bond){
       const json = {
-        contractId: process.env.CONTRACT_NFT,
+        contractId: process.env.CONTRACT_DAO,
         methodName: "set_proposal",
         args: {
           data: {
@@ -451,7 +451,7 @@ export default{
 
     addFunctionCall(bond){
       const json = {
-        contractId: process.env.CONTRACT_NFT,
+        contractId: process.env.CONTRACT_DAO,
         methodName: "set_proposal",
         args: {
           data: {
@@ -484,7 +484,7 @@ export default{
     addVote(bond) {
       console.log("bond", bond)
       const json = {
-        contractId: process.env.CONTRACT_NFT,
+        contractId: process.env.CONTRACT_DAO,
         methodName: "set_proposal",
         args: {
           data: {
