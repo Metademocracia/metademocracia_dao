@@ -3,6 +3,7 @@ import graphQl from '@/services/graphQl';
 // import { configNear }  from './nearConfig';
 //import * as nearAPI from "near-api-js";
 //const { KeyPair, keyStores, connect } = nearAPI;
+import encryp from './encryp';
 
 const _routeWallet = process.env.ROUTER_WALLET
 const _routeRpc = process.env.ROUTER_RPC
@@ -37,15 +38,16 @@ function call (json, ruta) {
   */
   const dataWallet = JSON.parse(localStorage.getItem("session"))
   const wallet = dataWallet ? dataWallet.wallet : undefined;
-  const token = window.btoa(JSON.stringify({
+  const token = /*window.btoa(*/encryp.encryp(JSON.stringify({
     action: "call",
     domain: window.location.host,
     contract: json.contractId,
     from: wallet,
     json: json,
-    success: ruta ? window.location.origin + ruta : window.location.origin + window.location.pathname,
+    success: ruta ? window.location.origin + process.env.BASE_URL + ruta : window.location.origin + window.location.pathname,
     error: window.location.origin + window.location.pathname,
-  }))
+  })/*)*/);
+
   // console.log(JSON.parse(window.atob(token)));
   window.open(_routeWallet+"/execute?token="+token, "_self");
 }

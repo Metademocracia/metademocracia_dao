@@ -415,7 +415,6 @@ export default{
       if (valid) {
         if (this.tipo_propuesta.fn) {
           await this.searchBond(this.tipo_propuesta.id).then(item => {
-            console.log("aqui es: ", item)
             this.tipo_propuesta.fn(item);
           })
         }
@@ -446,7 +445,7 @@ export default{
         attachedDeposit: bond.toString()
       };
 
-      WalletP2p.call(json, "/metademocracia/proposals");
+      WalletP2p.call(json, "proposals");
     },
 
     addFunctionCall(bond){
@@ -478,7 +477,7 @@ export default{
         attachedDeposit: bond.toString()
       };
 
-      WalletP2p.call(json, "/metademocracia/proposals");
+      WalletP2p.call(json, "proposals");
     },
 
     addVote(bond) {
@@ -499,7 +498,7 @@ export default{
         attachedDeposit: bond.toString()
       };
 
-      WalletP2p.call(json, "/metademocracia/proposals");
+      WalletP2p.call(json, "proposals");
     }
 
 

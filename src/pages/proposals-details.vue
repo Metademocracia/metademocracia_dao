@@ -436,7 +436,7 @@ export default {
           gas: "300000000000000"
         };
 
-        WalletP2p.call(json, "/metademocracia/proposals");
+        WalletP2p.call(json, "proposals");
       }
     },
     async downvote(id) {
@@ -454,7 +454,7 @@ export default {
           gas: "300000000000000"
         };
 
-        WalletP2p.call(json, "/metademocracia/proposals");
+        WalletP2p.call(json, "proposals");
       }
     },
     loadData(response){
