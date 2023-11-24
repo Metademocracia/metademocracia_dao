@@ -33,7 +33,7 @@
 
               <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
                 <a @click="$router.push('/proposals')">Propuestas</a>
-                <a @click="$router.push('/create-proposals')">Crear propuesta</a>
+                <a @click="goCreateProposal()">Crear propuesta</a>
               </v-card>
             </v-menu>
 
@@ -87,7 +87,7 @@
 
         <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
           <a @click="$router.push('/proposals')" style="cursor: pointer;">Propuestas</a>
-          <a @click="$router.push('/create-proposals')" style="cursor: pointer;">Crear propuesta</a>
+          <a @click="goCreateProposal()" style="cursor: pointer;">Crear propuesta</a>
         </v-card>
       </v-menu>
 
@@ -268,6 +268,33 @@
     </v-dialog>
   </v-row>
 
+  <v-row justify="center">
+    <v-dialog
+      v-model="alert2"
+      persistent
+      width="auto"
+      content-class="dialog-dao"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          <v-icon>mdi-alert-circle</v-icon> Advertencia
+        </v-card-title>
+        <v-card-text>Debe ser miembro para poder votar, solicite su membresía.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            class="btn"
+            @click="alert2 = false"
+          >
+            Aceptar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
+
 </template>
 
 <script>
@@ -276,6 +303,7 @@ import { useWindowScroll } from '@vueuse/core';
 import { ref } from 'vue';
 import WalletP2p from '../services/wallet-p2p';
 import moment from 'moment';
+import utilsDAO from '@/services/utils-dao';
 
 export default {
   setup(){
@@ -291,6 +319,8 @@ export default {
       selectedLang: 'ES',
       dialogConnect: ref(false),
       obtenWallet: false,
+      alert2: ref(false),
+      isMember: ref(utilsDAO.isMember()),
       dataNavbar: [
       //  { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
       //  { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
@@ -323,6 +353,15 @@ export default {
   },
 
   methods: {
+    async goCreateProposal() {
+      console.log("paso por aqui")
+      const isMember = await this.isMember;
+      this.alert2 = !isMember || false;
+
+      if(isMember) {
+        this.$router.push('create-proposals');
+      }
+    },
     verifyResponse(){
       try {
         const valores = window.location.search;

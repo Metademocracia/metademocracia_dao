@@ -10,7 +10,7 @@ const _routeRpc = process.env.ROUTER_RPC
 
 
 function login (contract) {
-  const token = window.btoa(JSON.stringify({
+  const token = /*window.btoa(*/encryp.encryp(JSON.stringify({
     action: "connect",
     domain: window.location.host,
     contract: contract,
