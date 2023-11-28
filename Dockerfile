@@ -29,7 +29,6 @@ ENV VITE_ROUTER_RPC $VITE_ROUTER_RPC
 ENV VITE_ROUTER_GRAPH $VITE_ROUTER_GRAPH
 
 RUN npm run build
-RUN npm run generate
 
 # Stage 2: Serve Vue app with Nginx
 FROM nginx:1.25.1 as prod-stage
