@@ -340,7 +340,7 @@ export default {
         },
         {
           name: 'Billetera',
-          ref: 'https://develop.globaldv.tech/wallet-p2p/'
+          ref: 'https://wallet.nearp2p.com/'
         }
       ],
       titleBtnLogin: ref("Conectar Wallet"),
