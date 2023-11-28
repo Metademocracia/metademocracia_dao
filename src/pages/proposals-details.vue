@@ -81,7 +81,7 @@
 									{{ item.desc }}
 								</p>
 								<span class="tstart" style="color: #61C2D5;">
-									{{ item.link }} <v-icon class="icon" color="#61C2D5">mdi-link</v-icon>
+									<a :href="item.link" target="_blank" style="color: #61C2D5;">{{ item.link }} <v-icon class="icon" color="#61C2D5">mdi-link</v-icon></a>
 								</span>
 							</div>
 
