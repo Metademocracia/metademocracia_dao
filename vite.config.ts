@@ -28,7 +28,7 @@ export default defineConfig((userConfig) => {
     define: {
       'process.env': {
         BASE_URL: baseUrl,
-        // API_URL: env.VITE_API_URL,
+        API_URL: env.VITE_API_URL,
         // RECAPTCHA_SITE_KEY: env.VITE_RECAPTCHA_SITE_KEY,
         // DOMAIN_WEB: env.DOMAIN_WEB,
         NETWORK: env.VITE_NETWORK,
