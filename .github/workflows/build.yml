@@ -1,0 +1,72 @@
+name: Build Docker Container & Push to DO Registry
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      CLUSTER_NAME: k8s-1-28-2-do-0-fra1-1701125677266
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Insall doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_API_TOKEN_KEY }}
+      - name: Login to DO Container Registry with short-lived creds
+        run: doctl registry login --expiry-seconds 1200
+      - name: Build container image
+        working-directory: .
+        run: |
+          docker build -f Dockerfile \
+          --build-arg URL_BACKEND=${{ secrets.URL_BACKEND }} \
+          --build-arg VITE_BASE_URL=${{ secrets.VITE_BASE_URL}} \
+          --build-arg VITE_NETWORK=${{ secrets.VITE_NETWORK}} \
+          --build-arg VITE_CONTRACT_DAO=${{ secrets.VITE_CONTRACT_DAO}} \
+          --build-arg VITE_CONTRACT_USDT=${{ secrets.VITE_CONTRACT_USDT}} \
+          --build-arg VITE_ROUTER_WALLET=${{ secrets.VITE_ROUTER_WALLET}} \
+          --build-arg VITE_ROUTER_EXPLORER_NEAR_HASH=${{ secrets.VITE_ROUTER_EXPLORER_NEAR_HASH}} \
+          --build-arg VITE_URL_APIP_PRICE=${{ secrets.VITE_URL_APIP_PRICE}} \
+          --build-arg VITE_ROUTER_RPC=${{ secrets.VITE_ROUTER_RPC}} \
+          --build-arg VITE_ROUTER_GRAPH=${{ secrets.VITE_ROUTER_GRAPH}} \
+          -t registry.digitalocean.com/metademocracia/front-dao:latest \
+          -t registry.digitalocean.com/metademocracia/front-dao:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5} \
+            .
+      - name: Push image
+        run: |
+          docker push registry.digitalocean.com/metademocracia/front-dao --all-tags
+      - name: K8s cluster kubeconfig file with/ short-lived creds
+        run: |
+          doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER_NAME }}
+      - name: Verificar existencia del secreto
+        run: |
+          if kubectl get secret front-dao-prod-env &> /dev/null; then
+              kubectl delete secret front-dao-prod-env
+          else
+              echo "El secreto front-dao-prod-env no existe, no es necesario eliminarlo."
+          fi
+      - name: Update deployment secrets
+        run: |
+          cat << EOF >> .env.prod
+          VITE_BASE_URL=${{secrets.VITE_BASE_URL}}
+          VITE_NETWORK=${{secrets.VITE_NETWORK}}
+          VITE_CONTRACT_DAO=${{secrets.VITE_CONTRACT_DAO}}
+          VITE_CONTRACT_USDT=${{secrets.VITE_CONTRACT_USDT}}
+          VITE_ROUTER_WALLET=${{secrets.VITE_ROUTER_WALLET}}
+          VITE_ROUTER_EXPLORER_NEAR_HASH=${{secrets.VITE_ROUTER_EXPLORER_NEAR_HASH}}
+          VITE_URL_APIP_PRICE=${{secrets.VITE_URL_APIP_PRICE}}
+          VITE_ROUTER_RPC=${{secrets.VITE_ROUTER_RPC}}
+          VITE_ROUTER_GRAPH=${{secrets.VITE_ROUTER_GRAPH}}
+          EOF
+          kubectl create secret generic front-dao-prod-env --from-env-file=.env.prod
+      - name: Update Deployment image
+        run: |
+          kubectl set image deployment/front-dao-deployment front-dao=registry.digitalocean.com/metademocracia/front-dao:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+      - name: Wait for rollout to finish
+        run: |
+          kubectl rollout status deployment/front-dao-deployment
