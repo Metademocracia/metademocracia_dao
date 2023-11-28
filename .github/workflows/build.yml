@@ -25,15 +25,15 @@ jobs:
         run: |
           docker build -f Dockerfile \
           --build-arg URL_BACKEND=${{ secrets.URL_BACKEND }} \
-          --build-arg VITE_BASE_URL=${{ secrets.VITE_BASE_URL}}
-          --build-arg VITE_NETWORK=${{ secrets.VITE_NETWORK}}
-          --build-arg VITE_CONTRACT_DAO=${{ secrets.VITE_CONTRACT_DAO}}
-          --build-arg VITE_CONTRACT_USDT=${{ secrets.VITE_CONTRACT_USDT}}
-          --build-arg VITE_ROUTER_WALLET=${{ secrets.VITE_ROUTER_WALLET}}
-          --build-arg VITE_ROUTER_EXPLORER_NEAR_HASH=${{ secrets.VITE_ROUTER_EXPLORER_NEAR_HASH}}
-          --build-arg VITE_URL_APIP_PRICE=${{ secrets.VITE_URL_APIP_PRICE}}
-          --build-arg VITE_ROUTER_RPC=${{ secrets.VITE_ROUTER_RPC}}
-          --build-arg VITE_ROUTER_GRAPH=${{ secrets.VITE_ROUTER_GRAPH}}
+          --build-arg VITE_BASE_URL=${{ secrets.VITE_BASE_URL}} \
+          --build-arg VITE_NETWORK=${{ secrets.VITE_NETWORK}} \
+          --build-arg VITE_CONTRACT_DAO=${{ secrets.VITE_CONTRACT_DAO}} \
+          --build-arg VITE_CONTRACT_USDT=${{ secrets.VITE_CONTRACT_USDT}} \
+          --build-arg VITE_ROUTER_WALLET=${{ secrets.VITE_ROUTER_WALLET}} \
+          --build-arg VITE_ROUTER_EXPLORER_NEAR_HASH=${{ secrets.VITE_ROUTER_EXPLORER_NEAR_HASH}} \
+          --build-arg VITE_URL_APIP_PRICE=${{ secrets.VITE_URL_APIP_PRICE}} \
+          --build-arg VITE_ROUTER_RPC=${{ secrets.VITE_ROUTER_RPC}} \
+          --build-arg VITE_ROUTER_GRAPH=${{ secrets.VITE_ROUTER_GRAPH}} \
           -t registry.digitalocean.com/metademocracia/front-dao:latest \
           -t registry.digitalocean.com/metademocracia/front-dao:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5} \
             .
