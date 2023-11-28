@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-dao-deployment
+  labels:
+    app: front-dao-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: front-dao-deployment
+  template:
+    metadata:
+      labels:
+        app: front-dao-deployment
+    spec:
+      containers:
+      - name: front-dao
+        image: registry.digitalocean.com/metademocracia/front-dao:latest
+        imagePullPolicy: Always
+        envFrom:
+          - secretRef:
+              name: front-dao-prod-env
+        ports:
+        - containerPort: 80
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-dao-service
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: front-dao-deployment
