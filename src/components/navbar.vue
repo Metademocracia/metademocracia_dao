@@ -346,15 +346,16 @@ export default {
       titleBtnLogin: ref("Conectar Wallet"),
     }
   },
-
-  mounted() {
+  beforeMount() {
     this.verifySession();
     this.verifyResponse();
+  },
+  mounted() {
+
   },
 
   methods: {
     async goCreateProposal() {
-      console.log("paso por aqui")
       const isMember = await this.isMember;
       this.alert2 = !isMember || false;
 
