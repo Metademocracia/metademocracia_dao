@@ -435,7 +435,7 @@ export default {
       if(isMember) {
         const json = {
           contractId: process.env.CONTRACT_DAO,
-          methodName: "update_proposal",
+          methodName: "on_update_proposal",
           args: {
             id: Number(id),
             action: "VoteApprove"
@@ -454,7 +454,7 @@ export default {
       if(isMember) {
         const json = {
           contractId: process.env.CONTRACT_DAO,
-          methodName: "update_proposal",
+          methodName: "on_update_proposal",
           args: {
             id: Number(id),
             action: "VoteReject"
