@@ -440,7 +440,7 @@ export default {
             id: Number(id),
             action: "VoteApprove"
           },
-          gas: "100000000000000",
+          gas: "30000000000000",
           // attachedDeposit: "1000000000000000000"
         };
 
@@ -459,7 +459,7 @@ export default {
             id: Number(id),
             action: "VoteReject"
           },
-          gas: "100000000000000"
+          gas: "30000000000000"
           // attachedDeposit: "100000000000000000000"
         };
 
