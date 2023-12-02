@@ -433,7 +433,8 @@ export default {
             id: Number(id),
             action: "VoteApprove"
           },
-          gas: "300000000000000"
+          gas: "250000000000000"
+          // attachedDeposit: "100000000000000000000"
         };
 
         WalletP2p.call(json, "proposals");
@@ -451,7 +452,8 @@ export default {
             id: Number(id),
             action: "VoteReject"
           },
-          gas: "300000000000000"
+          gas: "250000000000000"
+          // attachedDeposit: "100000000000000000000"
         };
 
         WalletP2p.call(json, "proposals");
