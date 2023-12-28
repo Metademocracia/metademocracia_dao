@@ -1,0 +1,196 @@
+@use "@/assets/styles/main.scss" as *;
+//---------------------------------------------------------------------------------------------//
+//==================================== render-layout ==========================================//
+//---------------------------------------------------------------------------------------------//
+
+#render-layout {
+  @extend .parent;
+  @extend .margin-global;
+  padding-bottom: 0px!important;
+  padding-top: 30px;
+
+  *{
+    color: #fff;
+    font-family: var(--font1)!important;
+  }
+
+  .font300{
+    font-weight: 300!important;
+  }
+
+  .v-carousel{
+    max-height: 250px;
+    @include media(min, 1600px){max-height: 450px;}
+    @include media(min, 1600px){max-height: 450px;}
+
+    .banner-img{
+      max-height: 100%!important;
+      width: 100%!important;
+      max-width: 100%!important; 
+    }
+
+    @include media(max, 820px){max-height: 130px!important;}
+
+    .v-carousel__controls{
+      background: transparent;
+
+      .mdi-circle{
+        color: $primary!important;
+      }
+    }
+  }
+
+  .section2-home{
+    max-width: 1660px;
+    display: flex;
+    flex-direction: column;
+    padding-inline: 30px;
+    width: 100%;
+
+    .member-container{
+      width: 100%;
+      background-color: rgba(0,0,0,0.1);
+      padding-block: 10px;
+      padding-inline: 5px 25px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .mobile-div-member{
+        @include media(max, 690px){
+          gap: 5px!important;
+
+          img{
+            width: 40px;
+          }
+
+          span{
+            font-size: 14px!important;
+          }
+        }
+      }
+
+      @include media(max,1100px){
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding-inline: 25px;
+
+        > :last-child {
+          margin-top: 20px;
+        }
+      }
+    }
+
+    .bottom-options {
+      display: flex;
+      justify-content: center;
+
+      .v-slide-group {
+        background: rgba(111, 91, 165, .6);
+        border-radius: 0 0 0 20px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+        button { border-radius: 0 !important }
+
+        + button {
+          border-radius: 0 0 20px 0 !important;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+      }
+    }
+    * {border: none !important;}
+   
+    .token-selector {
+      position: relative;
+      width: max-content;
+      padding-right: 10px;
+
+      i { color: rgb(var(--v-theme-primary)) }
+
+      span {
+        font-size: 12px;
+        color: #000 !important;
+      }
+
+      .v-field__input { padding-right: 0 }
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        width: 1px;
+        height: 60%;
+        background-color: #000;
+      }
+    }
+
+    .container-input-search{
+      background-color: #fff;
+      height: max-content;
+      border-radius: 30px;
+      flex: 0 1 400px;
+      position: relative;
+      height: 45px!important;
+      max-height: 45px!important;
+      min-height: 1px!important;
+
+      .v-field{
+        padding-inline: 0;
+        height: 45px!important;
+        max-height: 45px!important;
+        min-height: 1px!important;
+        border-radius: 25px;
+      }
+
+      input{
+        color: #000!important;
+        font-size: 12px;
+        height: 45px!important;
+        max-height: 45px!important;
+        min-height: 1px!important;
+        margin-top: -5px;
+        padding-inline: 10px !important;
+      }
+
+      .v-field__input{
+        padding-left: 15px;
+        padding-block: 5px;
+        height: 45px!important;
+        max-height: 45px!important;
+        min-height: 1px!important;
+      }
+
+      @include media(max,810px){
+        width: 100px;
+      }
+
+      input{
+        margin-top: 0px; 
+      }
+      .v-field__input{
+        padding-block: 0px;
+      }
+    }
+
+    .btn-donar{
+      background-color: #61C2D5!important;
+      min-height: 45px!important;
+      width: 130px;
+
+      @include media(max,810px){
+        width: 100px;
+      }
+
+      @include media(max,500px){
+        width: 70px;
+      }
+    }
+  }
+
+}

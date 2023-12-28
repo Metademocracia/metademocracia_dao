@@ -31,7 +31,7 @@
                 </v-btn>
               </template>
 
-              <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
+              <v-card class="divcol card-menu">
                 <a @click="$router.push('/proposals')">Propuestas</a>
                 <a @click="goCreateProposal()">Crear propuesta</a>
               </v-card>
@@ -52,7 +52,7 @@
                 </v-btn>
               </template>
 
-              <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
+              <v-card class="divcol card-menu">
                 <a v-for="(item,index) in dataLinks" :key="index" :href="item.ref" target="blank">{{ item.name }}</a>
               </v-card>
             </v-menu>
@@ -69,7 +69,7 @@
     </div>
 
 
-    <div class="center divrow delete-mobile" style="gap: 15px; margin-left: 140px">
+    <div class="center divrow delete-mobile" style="gap: 20px; margin-left: 140px">
       <a
         class="text-a-menu"
         @click="$router.push('/'), menuToggle = false"
@@ -78,16 +78,38 @@
         <v-icon color="white mr-1">mdi-home-outline</v-icon> Home
       </a>
 
-      <v-menu location="bottom">
+      <!-- <v-menu location="bottom">
         <template v-slot:activator="{ props }">
           <v-btn color="transparent" flat v-bind="props" class="btn-list">
             <v-icon color="white mr-1">mdi-file-edit-outline</v-icon> Propuestas <v-icon>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
 
-        <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
+        <v-card class="divcol card-menu">
           <a @click="$router.push('/proposals')" style="cursor: pointer;">Propuestas</a>
           <a @click="goCreateProposal()" style="cursor: pointer;">Crear propuesta</a>
+        </v-card>
+      </v-menu> -->
+
+      <v-menu location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn color="transparent" flat v-bind="props" class="btn-list mt-0">
+            <img
+              src="@/assets/sources/icons/daos.svg"
+              alt="daos icon"
+              class="mr-2"
+              style="width: 16px;">
+            DAOs <v-icon>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card class="divcol card-menu">
+          <a @click="$router.push('/daos')">DAOs</a>
+          <a @click="$router.push('/my-daos')">Mis DAOs</a>
+          <a class="d-flex" @click="$router.push('/create-daos')">
+            Crear DAOs
+            <img class="ml-2" src="@/assets/sources/icons/plus.svg" alt="plus icon">
+          </a>
         </v-card>
       </v-menu>
 
@@ -98,11 +120,16 @@
       <v-menu location="bottom">
         <template v-slot:activator="{ props }">
           <v-btn color="transparent" flat v-bind="props" class="btn-list">
+            <img
+              src="@/assets/sources/icons/dapps.svg"
+              alt="dapps icon"
+              class="mr-2"
+              style="width: 16px;">
             dApps <v-icon>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
 
-        <v-card class="divcol pt-2 pb-2 pl-1 pr-1 card-menu" style="gap: 25px;">
+        <v-card class="divcol card-menu">
           <a v-for="(item,index) in dataLinks" :key="index" :href="item.ref" target="blank">{{ item.name }}</a>
         </v-card>
       </v-menu>
@@ -324,7 +351,7 @@ export default {
       dataNavbar: [
       //  { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
       //  { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
-       { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' },
+      //  { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' },
        { icon: 'mdi-account-group-outline', name: 'Foro', ref: 'https://forum.metademocracia.social/'},
        { icon: 'mdi-information-outline', name: 'Metainfo', ref: 'https://metademocracia.com/' }
       ],
@@ -524,10 +551,18 @@ export default {
 }
 
 .card-menu{
-  background-image: linear-gradient(45deg, #7b48ad 30%, #5577c1 80%)!important;
-  padding: 15px 30px 0px 10px!important;
-  border-radius: 5px!important;
-  a{
+  background-image: linear-gradient(145deg, #DA157C, #62C3D7)!important;
+  padding: 15px 10px!important;
+  border-radius: 12px!important;
+  box-shadow: inset 0 3 6 #231f204d;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between !important;
+
+  > *:not(:first-of-type, :last-child) { margin-top: 20px; }
+  * {
+    font-weight: 600 !important;
+    cursor: pointer;
     color: #fff;
   }
 }

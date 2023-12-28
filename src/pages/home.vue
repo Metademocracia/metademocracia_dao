@@ -1,77 +1,10 @@
 <template>
-  <v-alert
-    v-model="alert"
-    type="error"
-    elevation="3"
-    closable
-    close-label="Close Alert"
-    title="Error"
-    style="width: 40%; margin-left:30%;"
-  >
-    <p class="mt-5">Debe conectar su wallet primero para poder donar</p>
-  </v-alert>
+  <div id="home">
+    <hr class="mt-8 mb-8" style="width: 100%; border-bottom: 1px solid #fff;">
 
-  <div id="home" class="center divcol" style="gap: 30px;">
-    <section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">
-      <v-carousel cycle color="#DB107C" :show-arrows="false">
-        <v-carousel-item>
-          <img src="@/assets/sources/images/banner-3.svg" alt="Banner" class="banner-img">
-        </v-carousel-item>
-
-        <v-carousel-item>
-          <img src="@/assets/sources/images/banner-2.svg" alt="Banner" class="banner-img">
-        </v-carousel-item>
-
-        <v-carousel-item>
-          <img src="@/assets/sources/images/banner-1.svg" alt="Banner" class="banner-img">
-        </v-carousel-item>
-      </v-carousel>
-    </section>
-
-    <section class="section2-home">
-      <div class="member-container">
-        <div class="divrow center mobile-div-member" style="gap: 20px;">
-          <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;" class="member-img">
-          <span style="font-weight: 700!important;">
-            Miembros <br> <span style="font-size: 1.5rem;"> <span v-if="result">{{ result?.serie?.supply }}</span> </span>
-          </span>
-        </div>
-
-        <div class="center divrow container-text-field-btn">
-          <img src="@/assets/sources/images/search-near.svg" alt="Search Near Logo" class="pl-3">
-          <v-form ref="form">
-          <v-text-field
-            v-model="amount_near"
-            id="amount_near"
-            variant="solo"
-            flat
-            class="input-search"
-            :rules="required"
-            required
-          ></v-text-field>
-        </v-form>
-          <v-btn
-            class="btn-donar"
-            style="font-weight: 700!important;"
-            @click="openDialog()"
-          >Donar</v-btn>
-        </div>
-
-
-
-        <div class="divrow center" style="gap: 20px;">
-        <!--  <v-icon color="#fff">mdi-magnify</v-icon>
-          <v-icon color="#fff">mdi-instagram</v-icon>
-          <v-icon color="#fff">mdi-share-variant</v-icon>-->
-        </div>
-      </div>
-
-      <hr class="mt-8 mb-8" style="width: 100%; border-bottom: 1px solid #fff;">
-
-      <span class="tcenter mb-8">
-        Tu voz importa. Levantarla depende de ti. Esta es una revolución en política que se empodera gracias a las nuevas tecnologías de la web3. Los ciudadanos tienen un papel activo en la formación de políticas y proyectos, lo que fortalece su sentido de pertenencia y empoderamiento en la sociedad.
-      </span>
-    </section>
+    <span class="tcenter mb-8">
+      Tu voz importa. Levantarla depende de ti. Esta es una revolución en política que se empodera gracias a las nuevas tecnologías de la web3. Los ciudadanos tienen un papel activo en la formación de políticas y proyectos, lo que fortalece su sentido de pertenencia y empoderamiento en la sociedad.
+    </span>
 
     <v-row style="max-width: 1660px; width: 100%;">
       <v-col xl="8" lg="8" md="8" cols="12">
@@ -175,53 +108,16 @@
         </div>
       </v-col>
     </v-row>
-
-    <v-row justify="center">
-      <v-dialog
-        v-model="dialog"
-        persistent
-        width="auto"
-        content-class="dialog-dao"
-      >
-        <v-card>
-          <v-card-title class="text-h5">
-            Estás saliendo de METADEMOCRACIA
-          </v-card-title>
-          <v-card-text>Luego de aprobar la transferencia de fondos volvera a esta página.</v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="green-darken-1"
-              variant="text"
-              class="btn"
-              @click="dialog = false"
-            >
-              Negar
-            </v-btn>
-            <v-btn
-              color="green-darken-1"
-              variant="text"
-              class="btn"
-              @click="delegate()"
-            >
-              Aceptar
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-row>
-
   </div>
 </template>
 
 <script>
 import '@/assets/styles/pages/home.scss'
-import ToastTitle from '@/components/toast-content/toast-title.vue';
 import VueApexCharts from "vue3-apexcharts"
 import gql from 'graphql-tag';
 import { useQuery } from '@vue/apollo-composable';
 import WalletP2p from '../services/wallet-p2p';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 // import moment from 'moment';
 // import graphQl from '@/services/graphQl';
 
@@ -260,11 +156,7 @@ export default {
       result,
       loading,
       error,
-      dialog: ref(false),
-      alert: ref(false),
-      required: [v => !!v || 'Ingrese un monto'],
       toggle: ref(0),
-      amount_near: ref(null),
       delegation_near: ref(0),
       delegation_usdt: ref(0),
       series: ref(null),
@@ -370,38 +262,6 @@ export default {
   },
 
   methods: {
-    async openDialog() {
-      console.log(WalletP2p.getAccount().address)
-      if(!WalletP2p.getAccount().address) {
-        this.alert = true;
-        return
-      }
-
-      const { valid } = await this.$refs.form.validate()
-
-      if(Number(this.amount_near) && valid) {
-        this.dialog = true;
-      }
-    },
-
-    delegate(){
-      const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
-      const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
-
-      const json = {
-        contractId: process.env.CONTRACT_DAO,
-        methodName: "delegate",
-        args: {
-          account_id: WalletP2p.getAccount().address,
-          amount: amount
-        },
-        gas: "300000000000000",
-        attachedDeposit: deposit
-      };
-
-      // 1000000000000000000000
-      WalletP2p.call(json);
-    },
 
     loadChart(response) {
       if(response){
@@ -493,33 +353,4 @@ export default {
     }
   },
 }
-
-
-function anything() {
-  toast.success({
-    component: ToastTitle,
-    props: {
-      title: "Do anything",
-      desc: "powered by CR7"
-    }
-  })
-}
 </script>
-<style lang="scss">
-.v-window__controls {
-  margin-top: -50px !important; /* Adjust this value as needed */
-}
-.dialog-dao{
-  .v-card{
-    background-image: linear-gradient(45deg, #7b48ad 30%, #5577c1 80%);
-
-    .v-card-title{
-      color: #fff;
-    }
-
-    .v-card-text{
-      color: #fff;
-    }
-  }
-}
-</style>

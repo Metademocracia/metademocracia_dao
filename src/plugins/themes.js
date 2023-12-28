@@ -22,6 +22,7 @@ const light = {
     'primary-darken-1': '#3700B3',
     secondary: '#02a6d0',
     'secondary-darken-1': '#018786',
+    tertiary: '#8A5FA4',
     accent: '#162c59',
 
     ...defaultColors,

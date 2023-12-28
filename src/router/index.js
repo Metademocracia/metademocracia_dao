@@ -14,61 +14,74 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Home',
-        component: () => import('@/pages/home.vue'),
-        meta: { head: `Home - ${DEFAULT_TITLE}` }
-      },
-    ],
-  },
+        component: () => import('@/layouts/render-layout.vue'),
+        meta: { head: `Home - ${DEFAULT_TITLE}` },
+        children: [  
+          {
+            path: '',
+            name: 'Home',
+            component: () => import('@/pages/home.vue'), 
+            meta: { head: `Home - ${DEFAULT_TITLE}` }
+          },
+          {
+            path: 'members',
+            name: 'Members',
+            component: () => import('@/pages/members.vue'), 
+            meta: { head: `Miembros - ${DEFAULT_TITLE}` }
+          },
+          {
+            path: 'settings',
+            name: 'Settings',
+            component: () => import('@/pages/settings.vue'), 
+            meta: { head: `Configuración - ${DEFAULT_TITLE}` }
+          },
+          // TODO
+          // proposals
 
-  {
-    path: '/proposals',
-    component: () => import('@/layouts/default-layout.vue'),
-    children: [
+          // funds
+        ]
+      },
       {
-        path: '',
+        path: 'proposals',
         name: 'Proposal',
         component: () => import('@/pages/proposals.vue'), 
         meta: { head: `Proposals - ${DEFAULT_TITLE}` }
       },
-    ],
-  },
-
-  {
-    path: '/proposals-details',
-    component: () => import('@/layouts/default-layout.vue'),
-    children: [
       {
-        path: '',
+        path: 'proposals-details',
         name: 'Proposal Details',
         component: () => import('@/pages/proposals-details.vue'), 
         meta: { head: `Proposals Details - ${DEFAULT_TITLE}` }
       },
-    ],
-  },
-
-  {
-    path: '/funds',
-    component: () => import('@/layouts/default-layout.vue'),
-    children: [
       {
-        path: '',
+        path: 'funds',
         name: 'Funds',
         component: () => import('@/pages/funds.vue'), 
         meta: { head: `Funds - ${DEFAULT_TITLE}` }
       },
-    ],
-  },
-
-  {
-    path: '/create-proposals',
-    component: () => import('@/layouts/default-layout.vue'),
-    children: [
       {
-        path: '',
+        path: 'create-proposals',
         name: 'Create Proposal',
         component: () => import('@/pages/create-proposals.vue'), 
         meta: { head: `Create Proposal - ${DEFAULT_TITLE}` }
+      },
+      {
+        path: 'daos',
+        name: 'Daos',
+        component: () => import('@/pages/daos.vue'), 
+        meta: { head: `DAOs - ${DEFAULT_TITLE}` }
+      },
+      {
+        path: 'my-daos',
+        name: 'MyDaos',
+        component: () => import('@/pages/my-daos.vue'), 
+        meta: { head: `Mis DAOs - ${DEFAULT_TITLE}` }
+      },
+      {
+        path: 'create-daos',
+        name: 'CreateDaos',
+        component: () => import('@/pages/create-daos.vue'), 
+        meta: { head: `Crear DAOs - ${DEFAULT_TITLE}` }
       },
     ],
   },
