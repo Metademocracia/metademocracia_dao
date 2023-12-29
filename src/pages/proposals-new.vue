@@ -117,7 +117,15 @@
                   <aside class="flex-grow-1 d-flex flex-space-center" style="gap: clamp(20px, 3vw, 40px);">
                     <div class="flex-column" style="gap: 10px;">
                       <label>Amount</label>
-                      <span>{{ item.amount }}</span>
+                      <span class="flex-center" style="gap: 4px;">
+                        {{ item.amount }}
+                        <img
+                          src="@/assets/sources/logos/near-icon.svg"
+                          alt="near logo"
+                          style="width: 15px; height: 15px; translate: 0 -1px;"
+                        >
+                        NEAR
+                      </span>
                     </div>
 
                     <div class="flex-column" style="gap: 10px;">
@@ -137,7 +145,7 @@
                         <v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />
                       </v-btn>
 
-                      <span>123</span>
+                      <span>{{ item.likes }}</span>
                     </div>
 
                     <div class="flex-center" style="gap: 10px;">
@@ -145,7 +153,7 @@
                         <v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />
                       </v-btn>
 
-                      <span>111</span>
+                      <span>{{ item.dislikes }}</span>
                     </div>
                   </aside>
                 </div>
@@ -230,6 +238,8 @@ export default {
           amount: 7777,
           claims: 280,
           remainingTime: "3 months",
+          likes: 111,
+          dislikes: 112,
         })
       }
     }

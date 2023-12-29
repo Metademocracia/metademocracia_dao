@@ -134,9 +134,9 @@
           span { color: #333 }
 
           .card__bottom {
-            aside:first-of-type {
-              max-width: 400px;
-            }
+            aside:first-of-type { max-width: 400px }
+
+            span { font-weight: 500 !important }
           }
         }
       }
