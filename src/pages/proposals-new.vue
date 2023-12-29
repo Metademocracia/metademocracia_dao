@@ -1,4 +1,3 @@
-<!-- TODO checkout for mobile design, is missing -->
 <template>
   <div id="proposals">
     <aside class="toolbar">
@@ -17,8 +16,19 @@
     <v-divider thickness="1.5" color="#fff" class="my-4" style="opacity: .5 !important;" />
 
     <section id="proposals__content">
-      <!-- controlls -->
-      <aside class="controlls">
+      <!-- controls -->
+      <aside class="controls" :class="{ active: showFilters }">
+        <v-btn
+          class="show-filters-btn"
+          :class="{ active: showFilters }"
+          @click="showFilters = !showFilters"
+        >
+          <v-icon>mdi-filter</v-icon>
+          <v-icon>
+            {{ showFilters ? 'mdi-chevron-left' : 'mdi-chevron-right' }}
+          </v-icon>
+        </v-btn>
+
         <h6 class="mb-3">Choose a filter</h6>
 
         <v-list density="compact">
@@ -79,20 +89,20 @@
                   </v-btn>
                 </div>
 
-                <div class="flex-space-center">
+                <div class="flex-space-center flex-wrap">
                   <v-btn
                     :text="item.title"
                     append-icon="mdi-link"
                     class="title-linked px-0"
                   />
 
-                  <span class="text-tertiary" style="--fs: 14px">Approved at: {{ item.date }}</span>
+                  <span class="text-tertiary ml-auto" style="--fs: 14px">Approved at: {{ item.date }}</span>
                 </div>
               </v-card-title>
               
               <hr class="my-3">
 
-              <v-card-text class="pa-0 d-flex flex-column">
+              <v-card-text class="pa-0 pr-1 d-flex flex-column">
                 <div class="card__content">
                   <img
                     :src="item.approved ? approvedIcon : failedIcon"
@@ -114,7 +124,7 @@
                 </a>
 
                 <div class="card__bottom flex-space-center mt-auto" style="gap: clamp(20px, 3vw, 40px);">
-                  <aside class="flex-grow-1 d-flex flex-space-center" style="gap: clamp(20px, 3vw, 40px);">
+                  <aside class="flex-grow-1 d-flex flex-wrap flex-spacee justify-start" style="gap: clamp(20px, 3vw, 40px);">
                     <div class="flex-column" style="gap: 10px;">
                       <label>Amount</label>
                       <span class="flex-center" style="gap: 4px;">
@@ -189,6 +199,7 @@ export default {
       failedIcon,
       tab: ref(0),
       tabs: ["All", "Function Calls", "Governance", "Transfers", "Bounties", "Members", "Polls"],
+      showFilters: ref(false),
       filter: ref('all'),
       filters: [
         {

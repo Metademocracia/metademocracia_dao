@@ -1,4 +1,4 @@
-@use '@/assets/styles/main.scss';
+@import '@/assets/styles/main.scss';
 
 #proposals {
   width: 100%;
@@ -39,13 +39,52 @@
     display: flex;
     gap: clamp(20px, 3vw, 40px);
 
-    .controlls {
-      position: sticky;
-      top: 100px;
+    .controls {
+      --w: 180px;
       display: flex;
       flex-direction: column;
       height: max-content;
-      min-width: 180px;
+      min-width: var(--w);
+      top: 100px;
+      position: sticky;
+      @include media(max, small) {
+        isolation: isolate;
+        position: fixed;
+        background-color: rgb(var(--v-theme-tertiary));
+        z-index: 99;
+        padding: 10px;
+        border-radius: 10px;
+        transform: translateX(calc(var(--w) * -1 - 30px));
+        transition: .2s ease;
+        &.active { transform: none }
+
+        &:before {
+          content: "";
+          background-color: inherit;
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          translate: -50px 0;
+        }
+      }
+
+      .show-filters-btn {
+        position: absolute;
+        top: 0;
+        right: -40px;
+        padding-inline: 0;
+        translate: 10px 0;
+        transition: .2s ease;
+        @include media(min, small) { display: none !important }
+
+        &.active {
+          translate: -20px 0;
+
+          i:first-of-type {
+            order: 2; + i {  order: 1 }
+          }
+        }
+      }
 
       .v-list {
         background-color: transparent !important;
@@ -101,6 +140,7 @@
       gap: 25px;
 
       .v-sheet {
+        $media: 700px;
         --w-toolbar: 40px;
         --h: 450px;
         --br: 8px;
@@ -133,10 +173,20 @@
           
           span { color: #333 }
 
+          .v-card-text { overflow-y: auto !important }
+
           .card__bottom {
-            aside:first-of-type { max-width: 400px }
+            aside:first-of-type {
+              width: 100%;
+              max-width: 400px;
+            }
 
             span { font-weight: 500 !important }
+
+            @include media(max, $media) {
+              flex-direction: column;
+              aside:first-of-type { max-width: 100% }
+            }
           }
         }
       }
