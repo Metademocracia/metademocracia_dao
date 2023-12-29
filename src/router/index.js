@@ -30,6 +30,30 @@ const routes = [
             meta: { head: `Miembros - ${DEFAULT_TITLE}` }
           },
           {
+            path: 'proposals',
+            name: 'Proposal',
+            component: () => import('@/pages/proposals-new.vue'), 
+            meta: { head: `Propuestas - ${DEFAULT_TITLE}` }
+          },
+          // {
+          //   path: 'proposal-details',
+          //   name: 'ProposalDetails',
+          //   component: () => import('@/pages/proposal-details-new.vue'), 
+          //   meta: { head: `Detalle de propuesta - ${DEFAULT_TITLE}` }
+          // },
+          // {
+          //   path: 'funds',
+          //   name: 'Funds',
+          //   component: () => import('@/pages/funds-new.vue'),
+          //   meta: { head: `Fondos - ${DEFAULT_TITLE}` }
+          // },
+          // {
+          //   path: 'create-proposal',
+          //   name: 'CreateProposal',
+          //   component: () => import('@/pages/create-proposal-new.vue'), 
+          //   meta: { head: `Crear propuesta - ${DEFAULT_TITLE}` }
+          // },
+          {
             path: 'settings',
             name: 'Settings',
             component: () => import('@/pages/settings.vue'), 
@@ -40,30 +64,6 @@ const routes = [
 
           // funds
         ]
-      },
-      {
-        path: 'proposals',
-        name: 'Proposal',
-        component: () => import('@/pages/proposals.vue'), 
-        meta: { head: `Proposals - ${DEFAULT_TITLE}` }
-      },
-      {
-        path: 'proposals-details',
-        name: 'Proposal Details',
-        component: () => import('@/pages/proposals-details.vue'), 
-        meta: { head: `Proposals Details - ${DEFAULT_TITLE}` }
-      },
-      {
-        path: 'funds',
-        name: 'Funds',
-        component: () => import('@/pages/funds.vue'), 
-        meta: { head: `Funds - ${DEFAULT_TITLE}` }
-      },
-      {
-        path: 'create-proposals',
-        name: 'Create Proposal',
-        component: () => import('@/pages/create-proposals.vue'), 
-        meta: { head: `Create Proposal - ${DEFAULT_TITLE}` }
       },
       {
         path: 'daos',

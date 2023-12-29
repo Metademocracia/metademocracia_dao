@@ -83,19 +83,4 @@
       }
     }
   }
-
-  .v-pagination {
-    max-width: 400px;
-    width: max-content;
-    @media (max-width: 390px) { width: 100% }
-    margin-inline: auto;
-    background: rgba(72, 38, 110, 1);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-
-    button {
-      height: 25px;
-      font-size: 13px;
-    }
-  }
 }

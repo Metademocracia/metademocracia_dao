@@ -105,7 +105,7 @@ filters = [
 ],
 dataMembers = ref([]),
 page = ref(1),
-paginatedDataMembers = computed(() => dataMembers.value.length / 12)
+paginatedDataMembers = computed(() => (dataMembers.value.length || 12) / 12)
 
 
 onBeforeMount(getData)

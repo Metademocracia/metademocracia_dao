@@ -1,3 +1,4 @@
+<!-- TODO componente deprecado, pasar funciones al [proposals-new.vue] y renombrar archivos al terminar -->
 <template>
     <div id="proposals" class="center divcol">
 			<section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">

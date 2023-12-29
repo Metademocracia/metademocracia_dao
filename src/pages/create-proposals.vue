@@ -1,3 +1,4 @@
+<!-- TODO componente deprecado, pasar funciones al [create-proposal-new.vue] y renombrar archivos al terminar -->
 <template>
   <v-form ref="formdefault" class="form-align">
     <div id="create-proposal">
