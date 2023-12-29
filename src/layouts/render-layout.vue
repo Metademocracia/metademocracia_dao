@@ -106,8 +106,8 @@
       </div>
 
       <div class="bottom-options">
-        <v-tabs center-active slider-color="transparent">
-          <v-tab v-for="(item, i) in dataTabs" :key="i">
+        <v-tabs v-model="tab" center-active slider-color="transparent">
+          <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: !isHome && i === tab }" :to="item.to">
             <img :src="item.icon" :alt="`${item.name} icon`" class="mr-2" style="width: 20px;">
             {{ item.name }}
           </v-tab>
@@ -147,6 +147,7 @@ import { ref } from 'vue';
 export default {
   setup(){
     return{
+      tab: 0,
       dialog: ref(false),
       alert: ref(false),
       required: [v => !!v || 'Ingrese un monto'],
@@ -155,18 +156,22 @@ export default {
         {
           name: "Propuestas",
           icon: proposalIcon,
+          to: "/proposals"
         },
         {
           name: "Fondos",
           icon: fundsIcon,
+          to: "/funds"
         },
         {
           name: "Miembros",
           icon: membersIcon,
+          to: "/members"
         },
         {
           name: "Configuración",
           icon: settingsIcon,
+          to: "/settings"
         },
       ],
       tokens: [
@@ -177,6 +182,11 @@ export default {
       ],
       selectedToken: "NEAR",
       amount_near: ref(null),
+    }
+  },
+  computed: {
+    isHome() {
+      return this.$route.name == "Home"
     }
   },
 

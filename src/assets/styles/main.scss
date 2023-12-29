@@ -26,3 +26,13 @@
 .disable-title {
   .v-list-item-title { display: none !important }
 }
+
+.clear-pseudo-classes {
+  &::before, &::after,
+  ::before, ::after { display: none !important }
+}
+
+.clear-overlay {
+  [class*=overlay],
+  [class*=underlay] { display: none !important }
+}

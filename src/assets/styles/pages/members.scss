@@ -1,0 +1,101 @@
+#members {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .container-members {
+    max-width: 1000px;
+    width: 100%;
+    margin-inline: auto;
+
+    .v-slide-group {
+      background: rgba(111, 91, 165, .6);
+      border-radius: 5px !important;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+      &__content {
+        display: flex;
+        gap: 20px;
+      }
+
+      .v-btn {
+        border-radius: 5px !important;
+
+        &.active { background: rgba(72, 38, 110, 1) !important }
+      }
+    }
+
+    .filter {
+      width: max-content;
+
+      i { color: rgb(var(--v-theme-primary)) }
+
+      .v-field {
+        padding-inline: 0;
+        background-color: transparent;
+        box-shadow: none !important;
+
+        &__input { padding-inline: 0 }
+      }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+      grid-auto-rows: 200px;
+      gap: 20px;
+
+      .v-sheet {
+        --br: 5px;
+        display: grid;
+        background: rgba(111, 91, 165, .6);
+        border-radius: var(--br);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        padding: 6px;
+
+        .v-card {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          padding: 10px;
+          border-radius: calc(var(--br) - 1px) !important;
+
+          .v-btn {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            .v-icon { font-size: 12px }
+          }
+
+          .v-img {
+            background-color: rgba(215, 120, 167, 1);
+            border-radius: 8px;
+          }
+
+          span, h6, a { color: #333 !important }
+
+          a { font-size: 16px; text-decoration: underline; }
+          h6 { font-size: 14px; }
+          span { font-size: 12px; }
+        }
+      }
+    }
+  }
+
+  .v-pagination {
+    max-width: 400px;
+    width: max-content;
+    @media (max-width: 390px) { width: 100% }
+    margin-inline: auto;
+    background: rgba(72, 38, 110, 1);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+    button {
+      height: 25px;
+      font-size: 13px;
+    }
+  }
+}
