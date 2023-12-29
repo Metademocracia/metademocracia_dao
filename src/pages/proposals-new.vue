@@ -79,11 +79,11 @@
                 <div class="flex-space-center">
                   <label>Proposal type: {{ item.type }}</label>
                   
-                  <v-btn icon color="transparent" elevation="0" size="30" class="relative clear-overlay" :ripple="false">
+                  <v-btn icon color="transparent" elevation="0" size="20px" class="relative clear-overlay" :ripple="false">
                     <v-icon
                       class="text-tertiary"
                       icon="mdi-dots-horizontal"
-                      size="50"
+                      size="40px"
                       style="translate: 0 -10px;"
                     />
                   </v-btn>
@@ -96,7 +96,7 @@
                     class="title-linked px-0"
                   />
 
-                  <span class="text-tertiary ml-auto" style="--fs: 14px">Approved at: {{ item.date }}</span>
+                  <span class="text-tertiary ml-auto" style="--fs: 0.875em">Approved at: {{ item.date }}</span>
                 </div>
               </v-card-title>
               
@@ -108,7 +108,7 @@
                     :src="item.approved ? approvedIcon : failedIcon"
                     :alt="item.approved ? 'proposal approved' : 'proposal failed'"
                     class="mr-5"
-                    style="width: 100px; height: 100px; float: right;"
+                    style="--w: clamp(4em, 12vw, 6.25em); width: var(--w); height: var(--w); float: right;"
                   >
 
                   <p class="label mb-2">Proposer</p>

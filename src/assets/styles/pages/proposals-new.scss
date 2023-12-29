@@ -141,6 +141,7 @@
 
       .v-sheet {
         $media: 700px;
+        $fontSize: var(--resizer);
         --w-toolbar: 40px;
         --h: 450px;
         --br: 8px;
@@ -153,16 +154,15 @@
         label, .label { color: #939393 }
         p { color: #333333 }
         a { color: #61C2D5 }
-        label, a, p { font-size: 14px }
-
-        span { font-size: var(--fs, 16px) }
+        label, a, p { font-size: 0.875em }
 
         .title-linked {
+          font-size: $fontSize;
           background: transparent !important;
           box-shadow: none !important;
           border-radius: 10px !important;
           * { color: #333 !important }
-          span { font-size: 25px }
+          span { font-size: 1.5625em }
           i { rotate: -45deg }
         }
 
@@ -171,7 +171,12 @@
           height: 100%;
           padding: 20px;
           
-          span { color: #333 }
+          span {
+            color: #333;
+            font-size: var(--fs, 1em);
+          }
+
+          .v-card-title { font-size: $fontSize }
 
           .v-card-text { overflow-y: auto !important }
 
