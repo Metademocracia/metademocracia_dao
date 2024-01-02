@@ -1,0 +1,44 @@
+#proposal-details {
+
+  .v-expansion-panels {
+    max-width: 1000px;
+    margin-inline: auto;
+    background-color: transparent !important;
+
+    .v-expansion-panel {
+      background-color: transparent !important;
+
+      &::after { display: none !important }
+
+      span {
+        font-size: 12px;
+      }
+
+      &-title {
+        font-size: var(--resizer);
+        flex-wrap: wrap;
+        gap: clamp(10px, 3vw, 25px);
+        color: rgb(0, 0, 0);
+
+        &__icon {
+          height: 38px;
+          background-color: rgba(0, 0, 0, .2);
+          border-radius: 5px;
+          margin-left: 0;
+          flex-grow: 1;
+          display: flex;
+          align-items: center;
+          padding-inline: 16px 8px;
+        }
+      }
+
+      &-text__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      &__shadow { display: none !important }
+    }
+  }
+}

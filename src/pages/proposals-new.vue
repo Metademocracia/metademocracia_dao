@@ -1,17 +1,13 @@
 <template>
   <div id="proposals">
-    <aside class="toolbar">
-      <div class="toolbar__wrapper">
-        <h5 class="mb-0">Proposals</h5>
-
-        <v-tabs v-model="tab" slider-color="transparent">
-          <v-tab v-for="(item, i) in tabs" :key="i">
-            <div class="custom-checkbox mr-2" :class="{ active: tab == i }" />
-            {{ item }}
-          </v-tab>
-        </v-tabs>
-      </div>
-    </aside>
+    <toolbar title="Proposals">
+      <v-tabs v-model="tab" slider-color="transparent">
+        <v-tab v-for="(item, i) in tabs" :key="i">
+          <div class="custom-checkbox mr-2" :class="{ active: tab == i }" />
+          {{ item }}
+        </v-tab>
+      </v-tabs>
+    </toolbar>
 
     <v-divider thickness="1.5" color="#fff" class="my-4" style="opacity: .5 !important;" />
 
@@ -68,108 +64,10 @@
       <!-- proposals -->
       <section class="flex-grow-1">
         <div class="proposals">
-          <v-sheet v-for="(item, i) in proposals" :key="i" elevation="3">
-            <v-card class="vertical-toolbar clear-overlay" @click="console.log('do anything')">
-              <span>Proposals ID:{{ item.id }}</span>
-              <img src="@/assets/sources/icons/leave.svg" alt="leave icon" style="width: 20px;">
-            </v-card>
-  
-            <v-card class="flex-column" elevation="3" color="#FAFAFA">
-              <v-card-title class="flex-column pa-0" style="gap: 20px; overflow: visible;">
-                <div class="flex-space-center">
-                  <label>Proposal type: {{ item.type }}</label>
-                  
-                  <v-btn icon color="transparent" elevation="0" size="20px" class="relative clear-overlay" :ripple="false">
-                    <v-icon
-                      class="text-tertiary"
-                      icon="mdi-dots-horizontal"
-                      size="40px"
-                      style="translate: 0 -10px;"
-                    />
-                  </v-btn>
-                </div>
-
-                <div class="flex-space-center flex-wrap">
-                  <v-btn
-                    :text="item.title"
-                    append-icon="mdi-link"
-                    class="title-linked px-0"
-                  />
-
-                  <span class="text-tertiary ml-auto" style="--fs: 0.875em">Approved at: {{ item.date }}</span>
-                </div>
-              </v-card-title>
-              
-              <hr class="my-3">
-
-              <v-card-text class="pa-0 pr-1 d-flex flex-column">
-                <div class="card__content">
-                  <img
-                    :src="item.approved ? approvedIcon : failedIcon"
-                    :alt="item.approved ? 'proposal approved' : 'proposal failed'"
-                    class="mr-5"
-                    style="--w: clamp(4em, 12vw, 6.25em); width: var(--w); height: var(--w); float: right;"
-                  >
-
-                  <p class="label mb-2">Proposer</p>
-                  <p>{{ item.proposer }}</p>
-
-                  <p class="label mb-2">Description</p>
-                  <p class="ellipsis-box" style="--lines: 6">{{ item.description }}</p>
-                </div>
-
-                <a href="" target="_blank" class="mb-4">
-                  <v-icon icon="mdi-link" size="20" class="text-secondary" style="rotate: -45deg;" />
-                  gov.near.org
-                </a>
-
-                <div class="card__bottom flex-space-center mt-auto" style="gap: clamp(20px, 3vw, 40px);">
-                  <aside class="flex-grow-1 d-flex flex-wrap flex-spacee justify-start" style="gap: clamp(20px, 3vw, 40px);">
-                    <div class="flex-column" style="gap: 10px;">
-                      <label>Amount</label>
-                      <span class="flex-center" style="gap: 4px;">
-                        {{ item.amount }}
-                        <img
-                          src="@/assets/sources/logos/near-icon.svg"
-                          alt="near logo"
-                          style="width: 15px; height: 15px; translate: 0 -1px;"
-                        >
-                        NEAR
-                      </span>
-                    </div>
-
-                    <div class="flex-column" style="gap: 10px;">
-                      <label>Available Claims</label>
-                      <span>{{ item.claims }}</span>
-                    </div>
-
-                    <div class="flex-column" style="gap: 10px;">
-                      <label>Time to Complete</label>
-                      <span>{{ item.remainingTime }}</span>
-                    </div>
-                  </aside>
-
-                  <aside class="flex-center" style="gap: 20px;">
-                    <div class="flex-center" style="gap: 10px;">
-                      <v-btn icon color="#EEE6F1" elevation="0" size="29">
-                        <v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />
-                      </v-btn>
-
-                      <span>{{ item.likes }}</span>
-                    </div>
-
-                    <div class="flex-center" style="gap: 10px;">
-                      <v-btn icon color="#EEE6F1" elevation="0" size="29">
-                        <v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />
-                      </v-btn>
-
-                      <span>{{ item.dislikes }}</span>
-                    </div>
-                  </aside>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-sheet>
+          <proposal-card
+            v-for="(item, i) in proposals" :key="i" 
+            :proposal="item"
+          />
         </div>
 
         <v-pagination
@@ -184,19 +82,13 @@
 
 <script>
 import '@/assets/styles/pages/proposals-new.scss'
-import ApprovedIcon from '@/assets/sources/images/approved.svg'
-import FailedIcon from '@/assets/sources/images/failed.svg'
+import ProposalCard from '@/components/proposal-card.vue'
 import { ref } from 'vue'
 
 export default {
+  components: { ProposalCard },
   setup() {
-    const
-      approvedIcon = ApprovedIcon,
-      failedIcon = FailedIcon
-
     return {
-      approvedIcon,
-      failedIcon,
       tab: ref(0),
       tabs: ["All", "Function Calls", "Governance", "Transfers", "Bounties", "Members", "Polls"],
       showFilters: ref(false),

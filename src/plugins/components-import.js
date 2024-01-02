@@ -4,6 +4,7 @@ import ModalConfirm from '@/components/modals/modal-confirm.vue'
 import VImgLoad from '@/components/helpers/v-img-load.vue'
 import VImgInput from '@/components/helpers/v-img-input.vue'
 import VAvatarUpload from '@/components/helpers/v-avatar-upload.vue'
+import Toolbar from '@/components/toolbar.vue'
 
 // ? imported from external
 import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
@@ -24,4 +25,5 @@ export default {
   VImgLoad,
   VImgInput,
   VAvatarUpload,
+  Toolbar
 }

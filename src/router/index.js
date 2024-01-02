@@ -35,12 +35,12 @@ const routes = [
             component: () => import('@/pages/proposals-new.vue'), 
             meta: { head: `Propuestas - ${DEFAULT_TITLE}` }
           },
-          // {
-          //   path: 'proposal-details',
-          //   name: 'ProposalDetails',
-          //   component: () => import('@/pages/proposal-details-new.vue'), 
-          //   meta: { head: `Detalle de propuesta - ${DEFAULT_TITLE}` }
-          // },
+          {
+            path: 'proposal-details',
+            name: 'ProposalDetails',
+            component: () => import('@/pages/proposal-details-new.vue'), 
+            meta: { head: `Detalle de propuesta - ${DEFAULT_TITLE}` }
+          },
           // {
           //   path: 'funds',
           //   name: 'Funds',

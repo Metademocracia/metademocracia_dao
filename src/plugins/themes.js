@@ -3,9 +3,11 @@ const defaultColors = {
   black: '#000',
   
   textGrey: '#b9b9b9',
-  error: '#B00020',
+  error: '#DB107C',
+  'error-variant': '#720753',
   info: '#2196F3',
-  success: '#4CAF50',
+  success: '#61D58C',
+  'success-variant': '#33545e',
   warning: '#FB8C00',
 }
 
@@ -23,6 +25,7 @@ const light = {
     secondary: '#02a6d0',
     'secondary-darken-1': '#018786',
     tertiary: '#8A5FA4',
+    'tertiary-variant': '#48266e',
     accent: '#162c59',
 
     ...defaultColors,

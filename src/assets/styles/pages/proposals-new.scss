@@ -14,27 +14,6 @@
     &.active { background: rgb(var(--v-theme-primary)) }
   }
 
-  .toolbar {
-    // position: sticky;
-    // top: 20px;
-    background-color: rgba(0, 0, 0, .05);
-    width: 100vw;
-    margin-inline: calc(50% - 50vw);
-    z-index: 2;
-
-    &__wrapper {
-      @extend .parent;
-      @extend .margin-global;
-      display: flex;
-      align-items: center;
-      gap: clamp(20px, 4vw, 40px);
-
-      .v-tabs {
-        button { min-width: max-content }
-      }
-    }
-  }
-
   &__content {
     display: flex;
     gap: clamp(20px, 3vw, 40px);
@@ -117,85 +96,10 @@
       }
     }
 
-    
-    .vertical-toolbar {
-      --dif: 20px;
-      position: absolute;
-      top: calc(var(--h) / 2 - var(--dif));
-      left: calc(var(--h) / -2 + var(--dif));
-      transform: rotate(-90deg);
-      width: var(--h);
-      height: var(--w-toolbar);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-inline: 20px;
-      
-      border-radius: calc(var(--br) - 2px) !important;
-      background-color: #8A5FA4;
-    }
-
     .proposals {
       display: flex;
       flex-direction: column;
       gap: 25px;
-
-      .v-sheet {
-        $media: 700px;
-        $fontSize: var(--resizer);
-        --w-toolbar: 40px;
-        --h: 450px;
-        --br: 8px;
-        position: relative;
-        height: var(--h);
-        border-radius: var(--br);
-        padding: 20px;
-        padding-left: calc(var(--w-toolbar) + 20px);
-
-        label, .label { color: #939393 }
-        p { color: #333333 }
-        a { color: #61C2D5 }
-        label, a, p { font-size: 0.875em }
-
-        .title-linked {
-          font-size: $fontSize;
-          background: transparent !important;
-          box-shadow: none !important;
-          border-radius: 10px !important;
-          * { color: #333 !important }
-          span { font-size: 1.5625em }
-          i { rotate: -45deg }
-        }
-
-        .v-card:not(.vertical-toolbar) {
-          border-radius: calc(var(--br) - 1px) !important;
-          height: 100%;
-          padding: 20px;
-          
-          span {
-            color: #333;
-            font-size: var(--fs, 1em);
-          }
-
-          .v-card-title { font-size: $fontSize }
-
-          .v-card-text { overflow-y: auto !important }
-
-          .card__bottom {
-            aside:first-of-type {
-              width: 100%;
-              max-width: 400px;
-            }
-
-            span { font-weight: 500 !important }
-
-            @include media(max, $media) {
-              flex-direction: column;
-              aside:first-of-type { max-width: 100% }
-            }
-          }
-        }
-      }
     }
   }
 }
