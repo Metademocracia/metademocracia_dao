@@ -107,7 +107,7 @@
 
       <div class="bottom-options">
         <v-tabs v-model="tab" center-active slider-color="transparent">
-          <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: !isHome && i === tab }" :to="item.to">
+          <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: canActive && i === tab }" :to="item.to">
             <img :src="item.icon" :alt="`${item.name} icon`" class="mr-2" style="width: 20px;">
             {{ item.name }}
           </v-tab>
@@ -118,7 +118,7 @@
           content-class="tooltip"
         >
           <template #activator="{ props }">
-            <v-tab v-bind="props" style="background-color: rgba(50, 92, 151, .8);" min-width="75">
+            <v-tab v-bind="props" style="background-color: rgba(50, 92, 151, .8);" min-width="75" to="/create-proposal">
               <img src="@/assets/sources/icons/plus.svg" alt="create proposal" style="width: 20px;">
             </v-tab>
           </template>
@@ -147,7 +147,7 @@ import { ref } from 'vue';
 export default {
   setup(){
     return{
-      tab: 0,
+      tab: ref(0),
       dialog: ref(false),
       alert: ref(false),
       required: [v => !!v || 'Ingrese un monto'],
@@ -185,8 +185,8 @@ export default {
     }
   },
   computed: {
-    isHome() {
-      return this.$route.name == "Home"
+    canActive() {
+      return this.$route.name != "Home" && this.$route.name != "CreateProposal"
     }
   },
 
