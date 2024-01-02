@@ -48,44 +48,36 @@
 
     &-body {
       font-size: 1.25em;
+      text-align: center;
     }
 
-    // * { color: $foreground }
-
-    // &--default {
-    //   border-color: $accent;
-
-    //   path { fill: $accent }
-    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-accent), $opacity) }
-    // }
-
-    // &--info {
-    //   border-color: $secondary;
+    &--info {
+      &::after { outline: 4px solid $secondary }
       
-    //   path { fill: $secondary }
-    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-secondary), $opacity) }
-    // }
+      path { fill: $secondary }
+      .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-secondary), $opacity) }
+    }
 
-    // &--error {
-    //   border-color: $error;
+    &--error {
+      &::after { outline: 4px solid $error }
       
-    //   path { fill: $error }
-    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-error), $opacity) }
-    // }
+      path { fill: $error }
+      .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-error), $opacity) }
+    }
 
-    // &--success {
-    //   border-color: $success;
+    &--success {
+      &::after { outline: 4px solid $success }
       
-    //   path { fill: $success }
-    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-success), $opacity) }
-    // }
+      path { fill: $success }
+      .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-success), $opacity) }
+    }
 
-    // &--warning {
-    //   border-color: $warning;
+    &--warning {
+      &::after { outline: 4px solid $warning }
       
-    //   path { fill: $warning }
-    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-warning), $opacity) }
-    // }
+      path { fill: $warning }
+      .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-warning), $opacity) }
+    }
   }
 
 

@@ -41,7 +41,10 @@
 
 
 				<v-expansion-panel-text>
+					<p v-if="!item.children.length" class="text-center">No hay registros</p>
+
 					<v-sheet
+						v-else
 						v-for="(item2, i2) in item.children"
 						:key="i2"
 						height="38"

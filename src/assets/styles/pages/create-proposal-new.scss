@@ -1,3 +1,45 @@
 #create-proposal {
-  
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  label, input, textarea, .v-select__selection-text { color: #333 !important }
+  label { font-size: 14px !important }
+  input, textarea { font-size: 13px !important }
+  .v-select__selection-text { font-size: 17px !important }
+  i { color: rgb(var(--v-theme-primary)) }
+
+  .v-messages__message {
+    margin-block: 0 10px;
+  }
+
+  .v-input {
+    &.v-select .v-field {
+      border-bottom: 1px solid #333;
+      &__field {
+        height: 42px;
+      }
+
+      &__input {
+        padding: 0;
+        min-height: 100% !important;
+        height: 100% !important;
+      }
+    }
+
+    .v-field--variant-solo {
+      border-radius: 8px;
+      border: 1px solid hsla(0, 0%, 66%, 0.4);
+      box-shadow: none !important;
+    }
+
+    &:not(.v-textarea) .v-field__field {
+      height: 42px;
+
+      input {
+        min-height: 100% !important;
+        height: 100% !important;
+      }
+    }
+  }
 }
