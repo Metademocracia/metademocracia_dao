@@ -25,20 +25,6 @@
       }
     }
 
-    .filter {
-      width: max-content;
-
-      i { color: rgb(var(--v-theme-primary)) }
-
-      .v-field {
-        padding-inline: 0;
-        background-color: transparent;
-        box-shadow: none !important;
-
-        &__input { padding-inline: 0 }
-      }
-    }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));

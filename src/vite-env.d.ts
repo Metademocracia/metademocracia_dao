@@ -12,6 +12,7 @@ import VImgLoad from '@/components/helpers/v-img-load.vue'
 import VImgInput from '@/components/helpers/v-img-input.vue'
 import VAvatarUpload from '@/components/helpers/v-avatar-upload.vue'
 import Toolbar from '@/components/toolbar.vue'
+import StickyDrawer from '@/components/sticky-drawer.vue'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
@@ -21,5 +22,6 @@ declare module '@vue/runtime-core' {
     VImgInput: typeof VImgInput,
     VAvatarUpload: typeof VAvatarUpload,
     Toolbar: typeof Toolbar,
+    StickyDrawer: typeof StickyDrawer
   }
 }

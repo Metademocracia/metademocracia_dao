@@ -13,18 +13,7 @@
 
     <section id="proposals__content">
       <!-- controls -->
-      <aside class="controls" :class="{ active: showFilters }">
-        <v-btn
-          class="show-filters-btn"
-          :class="{ active: showFilters }"
-          @click="showFilters = !showFilters"
-        >
-          <v-icon>mdi-filter</v-icon>
-          <v-icon>
-            {{ showFilters ? 'mdi-chevron-left' : 'mdi-chevron-right' }}
-          </v-icon>
-        </v-btn>
-
+      <sticky-drawer>
         <h6 class="mb-3">Choose a filter</h6>
 
         <v-list density="compact">
@@ -36,7 +25,7 @@
             :ripple="false"
             @click="filter = item.value"
           >
-            <div class="custom-checkbox mr-2" style="--size: 10px" :class="{ active: filter == item.value }" />
+            <div class="custom-checkbox mr-2" style="--size: 10px" :class="{ active: filter === item.value }" />
             {{ item.name }}
           </v-list-item>
         </v-list>
@@ -58,11 +47,10 @@
           variant="solo"
           hide-details
         ></v-text-field>
-      </aside>
-
+      </sticky-drawer>
 
       <!-- proposals -->
-      <section class="flex-grow-1">
+      <aside class="flex-grow-1">
         <div class="proposals">
           <proposal-card
             v-for="(item, i) in proposals" :key="i" 
@@ -75,7 +63,7 @@
           class="mt-10 mb-16"
           :length="paginatedProposals"
         ></v-pagination>
-      </section>
+      </aside>
     </section>
   </div>
 </template>
@@ -91,7 +79,6 @@ export default {
     return {
       tab: ref(0),
       tabs: ["All", "Function Calls", "Governance", "Transfers", "Bounties", "Members", "Polls"],
-      showFilters: ref(false),
       filter: ref('all'),
       filters: [
         {

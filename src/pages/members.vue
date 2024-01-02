@@ -23,7 +23,7 @@
         item-title="name"
         item-value="value"
         variant="solo"
-        class="filter my-4"
+        class="custom-select my-4"
         hide-details
       ></v-select>
 

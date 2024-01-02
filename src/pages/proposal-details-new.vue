@@ -47,10 +47,7 @@
 						v-else
 						v-for="(item2, i2) in item.children"
 						:key="i2"
-						height="38"
-						color="#8564AB"
-						class="d-flex"
-						style="border-radius: 5px;"
+						class="sheet-flexbar"
 					>
 						<v-btn
 							min-width="38"
@@ -61,7 +58,6 @@
 								: item2.state == false ? 'bg-error-variant'
 								: 'bg-tertiary-variant'
 							]"
-							style="border-radius: 5px !important;"
 						>
 							<v-icon
 								v-if="item2.state == true || item2.state == false"
@@ -69,14 +65,14 @@
 								:class="[item2.state ? 'text-success' : 'text-error' ]"
 							>{{ item2.state ? 'mdi-thumb-up' : 'mdi-thumb-down' }}</v-icon>
 
-							<img v-else :src="voteIcon" style="width: 16px;">
+							<img v-else :src="voteIcon" style="width: 16px; height: 16px;">
 						</v-btn>
 
-						<div class="flex-grow-1 d-flex flex-space-center flex-wrap px-5" style="gap: 20px;">
+						<aside class="sheet-flexbar__wrapper">
 							<span>{{ item2.user }}</span>
-
+	
 							<span>{{ item2.date }}</span>
-						</div>
+						</aside>
 					</v-sheet>
 				</v-expansion-panel-text>
 			</v-expansion-panel>

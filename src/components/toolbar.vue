@@ -1,6 +1,6 @@
 <template>
   <aside class="toolbar">
-    <div class="toolbar__wrapper">
+    <div class="toolbar__wrapper flex-wrap">
       <h5 class="mb-0">{{ title }}</h5>
 
       <slot />
@@ -31,6 +31,7 @@ defineProps({
   &__wrapper {
     @extend .parent;
     @extend .margin-global;
+    padding-block: 10px;
     display: flex;
     align-items: center;
     gap: clamp(20px, 4vw, 40px);

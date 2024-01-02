@@ -47,22 +47,18 @@ const routes = [
             component: () => import('@/pages/create-proposal-new.vue'), 
             meta: { head: `Crear propuesta - ${DEFAULT_TITLE}` }
           },
-          // {
-          //   path: 'funds',
-          //   name: 'Funds',
-          //   component: () => import('@/pages/funds-new.vue'),
-          //   meta: { head: `Fondos - ${DEFAULT_TITLE}` }
-          // },
+          {
+            path: 'funds',
+            name: 'Funds',
+            component: () => import('@/pages/funds-new.vue'),
+            meta: { head: `Fondos - ${DEFAULT_TITLE}` }
+          },
           {
             path: 'settings',
             name: 'Settings',
             component: () => import('@/pages/settings.vue'), 
             meta: { head: `Configuración - ${DEFAULT_TITLE}` }
           },
-          // TODO
-          // proposals
-
-          // funds
         ]
       },
       {
