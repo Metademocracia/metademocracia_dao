@@ -2,56 +2,97 @@
 
 .Vue-Toastification {
   $opacity: .4;
-  $border-radius: 25px;
+  $border-radius: 8px;
+  $distance: 18px;
+  font-size: var(--resizer);
+
+  &__container {
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__close-button {
+    position: absolute;
+    top: $distance;
+    right: calc(#{$distance} + 8px);
+  }
 
   &__toast {
-    background-color: $surface;
+    width: 100%;
+    height: 150px;
     border-radius: $border-radius;
-    border: 1px solid;
+    padding-inline: 30px;
+    display: grid;
+    place-items: center;
+    place-content: center;
+    isolation: isolate;
+    position: relative;
 
-    * { color: $foreground }
-
-    &--default {
-      border-color: $accent;
-
-      path { fill: $accent }
-      .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-accent), $opacity) }
+    &::after {
+      content: "";
+      position: absolute;
+      inset: calc(#{$distance} - 3px) $distance;
+      border-radius: inherit;
+      background-color: rgb(0, 0, 0, .3) !important;
+      z-index: -1;
     }
 
-    &--info {
-      border-color: $secondary;
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #DA157C, #62C3D7) !important;
+      z-index: -1;
+    }
+
+    &-body {
+      font-size: 1.25em;
+    }
+
+    // * { color: $foreground }
+
+    // &--default {
+    //   border-color: $accent;
+
+    //   path { fill: $accent }
+    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-accent), $opacity) }
+    // }
+
+    // &--info {
+    //   border-color: $secondary;
       
-      path { fill: $secondary }
-      .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-secondary), $opacity) }
-    }
+    //   path { fill: $secondary }
+    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-secondary), $opacity) }
+    // }
 
-    &--error {
-      border-color: $error;
+    // &--error {
+    //   border-color: $error;
       
-      path { fill: $error }
-      .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-error), $opacity) }
-    }
+    //   path { fill: $error }
+    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-error), $opacity) }
+    // }
 
-    &--success {
-      border-color: $success;
+    // &--success {
+    //   border-color: $success;
       
-      path { fill: $success }
-      .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-success), $opacity) }
-    }
+    //   path { fill: $success }
+    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-success), $opacity) }
+    // }
 
-    &--warning {
-      border-color: $warning;
+    // &--warning {
+    //   border-color: $warning;
       
-      path { fill: $warning }
-      .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-warning), $opacity) }
-    }
+    //   path { fill: $warning }
+    //   .Vue-Toastification__progress-bar { background-color: rgb(var(--v-theme-warning), $opacity) }
+    // }
   }
 
 
-  &__progress-bar {
-    margin-inline: calc($border-radius / 2);
-    border-radius: 10px;
-  }
+  // &__progress-bar {
+  //   margin-inline: calc($border-radius / 2);
+  //   border-radius: 10px;
+  // }
 }
 
 // $vt-namespace: 'Vue-Toastification' !default;

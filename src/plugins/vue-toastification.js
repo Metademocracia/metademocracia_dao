@@ -9,20 +9,22 @@ export default (app) => {
 
   const options = {
     // You can set your default options here
-    position: POSITION.TOP_RIGHT,
-    toastDefaults: {
-      // ToastOptions object for each type of toast
-      [TYPE.INFO]: {
-        position: POSITION.BOTTOM_RIGHT
-      },
-      [TYPE.ERROR]: {
-        timeout: 10000,
-      },
-      [TYPE.SUCCESS]: {
-        timeout: 5000,
-        hideProgressBar: true,
-      }
-    }
+    position: POSITION.TOP_CENTER,
+    icon: false,
+    timeout: 0,
+    // toastDefaults: {
+    //   // ToastOptions object for each type of toast
+    //   [TYPE.INFO]: {
+    //     timeout: 0
+    //   },
+    //   [TYPE.ERROR]: {
+    //     timeout: 10000,
+    //   },
+    //   [TYPE.SUCCESS]: {
+    //     timeout: 5000,
+    //     hideProgressBar: true,
+    //   }
+    // }
   };
 
   app.use(Toast, options);

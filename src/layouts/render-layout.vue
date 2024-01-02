@@ -1,16 +1,4 @@
 <template>
-  <v-alert
-    v-model="alert"
-    type="error"
-    elevation="3"
-    closable
-    close-label="Close Alert"
-    title="Error"
-    style="width: 40%; margin-left:30%;"
-  >
-    <p class="mt-5">Debe conectar su wallet primero para poder donar</p>
-  </v-alert>
-
   <div id="render-layout" class="center divcol" style="gap: 30px;">
     <section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">
       <v-carousel cycle color="#DB107C" :show-arrows="false">
@@ -149,7 +137,6 @@ export default {
     return{
       tab: ref(0),
       dialog: ref(false),
-      alert: ref(false),
       required: [v => !!v || 'Ingrese un monto'],
       toggle: ref(0),
       dataTabs: [
@@ -194,7 +181,7 @@ export default {
     async openDialog() {
       console.log(WalletP2p.getAccount().address)
       if(!WalletP2p.getAccount().address) {
-        this.alert = true;
+        this.$toast('Debe conectar su wallet primero para poder donar')
         return
       }
 
