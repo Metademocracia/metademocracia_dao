@@ -2,7 +2,20 @@
   <div id="create-dao">
     <toolbar-search />
 
-    create dao
+    <!-- TODO checkout if better use default or stepper -->
+    <!-- <section id="create-dao__content">
+      <sticky-drawer>
+      </sticky-drawer>
+
+      <aside>
+        <v-card>
+        </v-card>
+      </aside>
+    </section> -->
+
+    <!-- TODO checkout if better use default or stepper -->
+    <!-- <v-stepper>
+    </v-stepper> -->
   </div>
 </template>
 
