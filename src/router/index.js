@@ -74,10 +74,10 @@ const routes = [
         meta: { head: `Mis DAOs - ${DEFAULT_TITLE}` }
       },
       {
-        path: 'create-daos',
-        name: 'CreateDaos',
-        component: () => import('@/pages/create-daos.vue'), 
-        meta: { head: `Crear DAOs - ${DEFAULT_TITLE}` }
+        path: 'create-dao',
+        name: 'CreateDao',
+        component: () => import('@/pages/create-dao.vue'), 
+        meta: { head: `Crear DAO - ${DEFAULT_TITLE}` }
       },
     ],
   },

@@ -1,0 +1,13 @@
+@use "@/assets/styles/main.scss" as *;
+
+#create-dao {
+  @extend .parent;
+  @extend .margin-global;
+  padding-bottom: 0px!important;
+  padding-top: 30px;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+}

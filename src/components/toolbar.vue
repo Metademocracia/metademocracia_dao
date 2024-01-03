@@ -1,6 +1,6 @@
 <template>
   <aside class="toolbar">
-    <div class="toolbar__wrapper flex-wrap">
+    <div class="toolbar__wrapper flex-wrap" :class="contentClass" :style="contentStyle">
       <h5 class="mb-0">{{ title }}</h5>
 
       <slot />
@@ -11,6 +11,8 @@
 <script setup>
 defineProps({
   title: String,
+  contentClass: String,
+  contentStyle: String,
 })
 </script>
 
@@ -31,14 +33,22 @@ defineProps({
   &__wrapper {
     @extend .parent;
     @extend .margin-global;
-    padding-block: 10px;
+    padding-block: 20px;
     display: flex;
     align-items: center;
-    gap: clamp(20px, 4vw, 40px);
+    column-gap: clamp(20px, 4vw, 40px);
+    row-gap: 10px;
+  }
 
-    .v-tabs {
-      button { min-width: max-content }
+  .v-tabs {
+    button {
+      min-width: max-content;
+      color: #fff !important;
     }
+  }
+
+  h5 {
+    color: #fff !important;
   }
 }
 </style>
