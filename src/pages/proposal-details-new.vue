@@ -6,7 +6,7 @@
 
 		<slider-liked :data="dataLikes" />
 
-		<v-expansion-panels class="mt-10 mb-6" multiple>
+		<v-expansion-panels v-model="panelsExpanded" class="mt-10 mb-6" multiple>
 			<v-expansion-panel v-for="(item, i) in panels" :key="i">
 				<v-expansion-panel-title class="clear-overlay">
 					<h5 class="mb-0">{{ item.title }}</h5>
@@ -92,7 +92,8 @@ const
 
 proposal = ref(null),
 dataLikes = ref(null),
-panels = ref(null)
+panels = ref(null),
+panelsExpanded = ref([])
 
 
 onBeforeMount(getData)
@@ -153,5 +154,8 @@ function getPanels() {
 			]
 		},
 	]
+
+	// set index of current elements
+	panelsExpanded.value = panels.value.map((panel, index) => index)
 }
 </script>
