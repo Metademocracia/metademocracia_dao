@@ -28,7 +28,10 @@
             :steps="steps"
             required
             title="Nombre y Propósito de DAO"
-            @next="windowStep++"
+            @next="formValid => {
+              if (!formValid) return
+              windowStep++
+            }"
           >
             here
           </form-card>

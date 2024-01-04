@@ -8,7 +8,7 @@
       </v-card-title>
 
       <v-card-text class="pa-0 pt-3">
-        <v-form v-model="formValid" @submit.prevent="emit('next')">
+        <v-form v-model="formValid" @submit.prevent="onNext">
           <slot />
         </v-form>
 
@@ -22,7 +22,7 @@
             v-if="hasNextEmit" class="bg-tertiary"
             :loading="loadingBtn"
             :disabled="disabledBtn || !formValid"
-            @click="emit('next')"
+            @click="onNext"
           >
             {{ nextText }}
             <v-icon icon="mdi-chevron-right" />
@@ -60,6 +60,9 @@ const
 formValid = ref(!props.required),
 hasPrevEmit = !!instance?.vnode.props?.onPrev,
 hasNextEmit = !!instance?.vnode.props?.onNext
+
+
+const onNext = () => emit('next', formValid.value)
 </script>
 
 <style lang="scss">
