@@ -49,7 +49,7 @@
         :loading="isLoading"
         @click="handleLogin()"
       >Iniciar Sesión</v-btn>
-      
+
       <v-btn
         class="bg-secondary"
         @click="handleRegister()"
@@ -66,6 +66,10 @@ import { onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from "vue-toastification";
 import { useStorage } from 'vue3-storage-secure';
+import * as nearAPI from "near-api-js";
+const { keyStores } = nearAPI;
+console.log(keyStores)
+
 const
   toast = useToast(),
   storage = useStorage(),
