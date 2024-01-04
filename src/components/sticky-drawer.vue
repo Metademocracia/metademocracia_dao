@@ -1,11 +1,18 @@
 <template>
-  <aside class="sticky-drawer" :class="{ active: showFilters }">
+  <aside
+    class="sticky-drawer"
+    :class="{ active: showFilters }"
+    :style="`--w: ${width}; --icon-distance: ${iconDistance}`"
+  >
     <v-btn
       class="show-filters-btn"
       :class="{ active: showFilters }"
       @click="showFilters = !showFilters"
     >
-      <v-icon>mdi-filter</v-icon>
+      <slot name="mobile-icon">
+        <v-icon>mdi-filter</v-icon>
+      </slot>
+
       <v-icon>
         {{ showFilters ? 'mdi-chevron-left' : 'mdi-chevron-right' }}
       </v-icon>
@@ -17,6 +24,16 @@
 
 <script setup>
 import { ref } from 'vue';
+defineProps({
+  width: {
+    type: String,
+    default: "180px"
+  },
+  iconDistance: {
+    type: String,
+    default: "-10px"
+  }
+})
 const showFilters = ref(false)
 </script>
 
@@ -24,7 +41,6 @@ const showFilters = ref(false)
 @import '@/assets/styles/main.scss';
 
 .sticky-drawer {
-  --w: 180px;
   display: flex;
   flex-direction: column;
   height: max-content;
@@ -63,7 +79,7 @@ const showFilters = ref(false)
     @include media(min, small) { display: none !important }
 
     &.active {
-      right: -10px;
+      right: var(--icon-distance);
 
       i:first-of-type {
         order: 2; + i {  order: 1 }
