@@ -8,5 +8,58 @@
 
   &__content {
     display: flex;
+    gap: 20px;
+
+    .sticky-drawer {
+      h5 { color: #fff !important }
+    }
+
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 4.1px;
+        top: 3px;
+        border-left: 1px dashed #333 !important;
+        width: 1px;
+        height: calc(100% - 10px);
+      }
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        list-style: none;
+        color: #fff !important;
+
+        &::before {
+          content: "";
+          width: 10px;
+          height: 10px;
+          border: 1px solid $primary;
+          border-radius: 50%;
+          backdrop-filter: blur(100px);
+        }
+        &.active::before {
+          border: none;
+          scale: 1.7;
+          background: center no-repeat url(../../sources/icons/checked-icon.svg);
+          background-size: cover;
+        }
+      }
+    }
+
+
+    .v-window {
+      flex-grow: 1;
+      padding: 10px;
+      padding-top: 30px;
+    }
   }
 }
