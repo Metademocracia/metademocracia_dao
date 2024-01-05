@@ -4,7 +4,9 @@
       <v-card-title class="pa-0 pb-2 d-flex flex-space-center">
         <h6 v-html="title" class="mb-0" />
 
-        <h6 class="mb-0">{{ windowStep + 1 }} / {{ steps.length }}</h6>
+        <slot name="append-title">
+          <h6 v-if="windowStep && steps.length" class="mb-0">{{ windowStep + 1 }} / {{ steps.length }}</h6>
+        </slot>
       </v-card-title>
 
       <v-card-text class="pa-0 pt-3">
