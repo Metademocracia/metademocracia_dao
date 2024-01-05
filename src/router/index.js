@@ -59,6 +59,18 @@ const routes = [
             component: () => import('@/pages/settings.vue'), 
             meta: { head: `Configuración - ${DEFAULT_TITLE}` }
           },
+          {
+            path: 'general-settings',
+            name: 'GeneralSettings',
+            component: () => import('@/pages/general-settings.vue'), 
+            meta: { head: `Configuración general - ${DEFAULT_TITLE}` }
+          },
+          {
+            path: 'policy-settings',
+            name: 'PolicySettings',
+            component: () => import('@/pages/policy-settings.vue'), 
+            meta: { head: `Configuración de políticas - ${DEFAULT_TITLE}` }
+          },
         ]
       },
       {
