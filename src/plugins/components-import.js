@@ -9,22 +9,10 @@ import ToolbarSearch from '@/components/toolbar-search.vue'
 import StickyDrawer from '@/components/sticky-drawer.vue'
 
 // ? imported from external
-/* import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
-import { VOtpInput } from 'vuetify/labs/VOtpInput'
-import { VDataTable, VDataTableServer } from 'vuetify/labs/VDataTable' */
-
-import { VSkeletonLoader } from 'vuetify'
-import { VOtpInput } from 'vuetify'
-import { VDataTable, VDataTableServer } from 'vuetify'
-
 // import VueApexChart from "vue3-apexcharts"
 import VueRecaptcha from 'vue3-recaptcha2'
 
 export default {
-  VSkeletonLoader,
-  VOtpInput,
-  VDataTable,
-  VDataTableServer,
   // VueApexChart,
   VueRecaptcha,
   FullScreen,
