@@ -15,7 +15,7 @@ import { VDataTable, VDataTableServer } from 'vuetify/labs/VDataTable' */
 
 import { VSkeletonLoader } from 'vuetify'
 import { VOtpInput } from 'vuetify'
-import { VDataTable, VDataTableServer } from 'vuetify'
+// import { VDataTable, VDataTableServer } from 'vuetify'
 
 // import VueApexChart from "vue3-apexcharts"
 import VueRecaptcha from 'vue3-recaptcha2'

@@ -293,7 +293,7 @@ export default {
 
 
       const response = await account.functionCall({
-        contractId: process.env.NETWORK == "testnet" ? process.env.NETWORK : "near",
+        contractId: "factory.metademocracia.testnet",
         methodName: "create ",
         args: {
           name: "genesis",
