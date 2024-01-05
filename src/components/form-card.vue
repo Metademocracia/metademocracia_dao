@@ -1,7 +1,7 @@
 <template>
   <v-sheet class="form-card pa-4" elevation="6">
     <v-card class="px-7 py-5" elevation="3">
-      <v-card-title class="pa-0 pb-2 d-flex flex-space-center">
+      <v-card-title class="pa-0 pb-2 d-flex flex-space-center" style="column-gap: 20px; row-gap: 10px;">
         <h6 v-html="title" class="mb-0" />
 
         <slot name="append-title">
@@ -73,14 +73,19 @@ const onNext = () => emit('next', formValid.value)
 .form-card {
   border-radius: 8px !important;
   .v-card {
+    background-color: #FAFAFA !important;
     border-radius: 7px !important;
 
     &-title {
       border-bottom: 1px solid #939393;
 
-      h6 + h6 {
-        color: $tertiary !important;
-        font-size: 16px !important;
+      h6 {
+        color: #333 !important;
+
+        + h6 {
+          color: $tertiary !important;
+          font-size: 16px !important;
+        }
       }
     }
 
@@ -92,7 +97,7 @@ const onNext = () => emit('next', formValid.value)
         color: #939393 !important;
       }
 
-      input, textarea, .v-select__selection-text { color: #333 !important }
+      input, p, textarea, .v-select__selection-text { color: #333 !important }
       label, p { font-size: 14px !important }
       input, textarea, .v-btn { font-size: 13px !important }
       .v-select__selection-text { font-size: 17px !important }
@@ -143,25 +148,6 @@ const onNext = () => emit('next', formValid.value)
             height: 100% !important;
           }
         }
-      }
-
-      .v-data-table {
-        $border: 1px solid rgba(0, 0, 0, .12);
-
-        th:nth-child(3) {
-          max-width: 90px;
-          border-inline: $border;
-        }
-
-        td:nth-child(3) {
-          border-inline: $border;
-        }
-
-        tr:last-child td {
-          border-bottom: $border;
-        }
-
-        &-footer { display: none !important }
       }
     }
   }

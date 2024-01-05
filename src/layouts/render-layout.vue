@@ -135,7 +135,7 @@ import { ref } from 'vue';
 export default {
   setup(){
     return{
-      tab: ref(0),
+      tab: ref(3),
       dialog: ref(false),
       required: [v => !!v || 'Ingrese un monto'],
       toggle: ref(0),

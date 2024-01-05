@@ -1,34 +1,51 @@
 #policy-settings {
   width: 100%;
   display: flex;
-  gap: 20px;
+  flex-direction: column;
 
-  .tabs {
-    .v-slide-group__content {
-      position: relative;
 
-      &:before {
-        content: "";
-        position: absolute;
-        background-color: rgba(51, 51, 51, 0.5);
-        margin-block: auto;
-        top: 0;
-        bottom: 0;
-        left: .5px;
-        width: 1px;
-        height: calc(100% - 10px);
-        border-radius: 10px;
+  &__editable {
+  }
+
+
+  &__content {
+    width: 100%;
+    display: flex;
+    gap: 20px;
+
+    .tabs {
+      .v-slide-group__content {
+        position: relative;
+
+        &:before {
+          content: "";
+          position: absolute;
+          background-color: rgba(51, 51, 51, 0.5);
+          margin-block: auto;
+          top: 0;
+          bottom: 0;
+          left: .5px;
+          width: 1px;
+          height: calc(100% - 10px);
+          border-radius: 10px;
+        }
+
+        .v-tab__slider {
+          margin-block: auto;
+          height: 20px !important;
+        }
+
+        .v-btn {
+          border-radius: 0 10px 10px 0 !important;
+          height: 30px;
+        }
       }
+    }
 
-      .v-tab__slider {
-        margin-block: auto;
-        height: 20px !important;
-      }
-
-      .v-btn {
-        border-radius: 0 10px 10px 0 !important;
-        height: 30px;
-      }
+    .v-window {
+      flex-grow: 1;
+      padding: 10px;
+      padding-top: 30px;
     }
   }
 }
