@@ -1,6 +1,7 @@
 // Plugins
 import vue from '@vitejs/plugin-vue'
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import inject from '@rollup/plugin-inject'
 
 // Utilities
 import { defineConfig, loadEnv } from 'vite'
@@ -16,6 +17,7 @@ export default defineConfig((userConfig) => {
   return {
     base: baseUrl,
     plugins: [
+      inject({ Buffer: ['buffer', 'Buffer'] }),
       vue({
         template: { transformAssetUrls }
       }),
