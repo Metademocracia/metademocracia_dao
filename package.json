@@ -34,12 +34,14 @@
     "vue3-recaptcha2": "^1.8.0",
     "vue3-storage-secure": "^0.1.1",
     "vuefire": "^3.1.13",
-    "vuetify": "3.0.0",
+    "vuetify": "3.4.9",
     "vuex": "^4.0.2",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
+    "@rollup/plugin-inject": "^5.0.5",
     "@vitejs/plugin-vue": "^4.0.0",
+    "buffer": "^6.0.3",
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",
     "font-awesome": "^4.7.0",
