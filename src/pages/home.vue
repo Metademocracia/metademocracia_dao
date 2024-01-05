@@ -120,6 +120,10 @@ import WalletP2p from '../services/wallet-p2p';
 import { ref } from 'vue';
 // import moment from 'moment';
 // import graphQl from '@/services/graphQl';
+import * as nearAPI from "near-api-js";
+const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
+import {configNear} from '../services/nearConfig';
+
 
 const QUERY = gql`
   query MyQuery {
@@ -259,9 +263,51 @@ export default {
         this.loadChart(this.result);
       }
     }
+
+
   },
 
   methods: {
+    async crearDao(){
+      const privateKey = 'hrpalencia.testnet';
+      const address =  'ed25519:37ZTUen2sqCeqk2gxZFDSxF1FHUNqdfUxXhuPbmJnjiQdAxGe79XqZfbAGfjjeCfcT5JSgWGC2Q7JipuWCEPTgaw';
+
+
+      // creates a public / private key pair using the provided private key
+      // adds the keyPair you created to keyStore
+      const myKeyStore = new keyStores.InMemoryKeyStore();
+      const keyPairOld = KeyPair.fromString(privateKey);
+      await myKeyStore.setKey(process.env.NETWORK, address, keyPairOld);
+
+
+
+
+      const nearConnection = await connect(configNear(myKeyStore));
+      const account = await nearConnection.account(address);
+
+      // const creatorAccount = await nearConnection.account(address);
+      const {seedPhrase, secretKey} = nearSeedPhrase.generateSeedPhrase();
+      const keyPairNew = KeyPair.fromString(secretKey);// KeyPair.fromRandom("ed25519");
+      // const publicKey = keyPairNew.publicKey.toString();
+      await myKeyStore.setKey(process.env.NETWORK, nickname, keyPairNew);
+
+
+      const response = await account.functionCall({
+        contractId: process.env.NETWORK == "testnet" ? process.env.NETWORK : "near",
+        methodName: "create ",
+        args: {
+          name: "genesis",
+          args: {
+            "config": {"name": "genesis", "purpose": "Genesis DAO", "metadata":""},
+            "policy": ["prueba1.testnet", "prueba2.testnet"]
+          },
+        },
+        gas: "150000000000000",
+        attachedDeposit: "10000000000000000000000000",
+      });
+
+      console.log(response)
+    },
 
     loadChart(response) {
       if(response){
