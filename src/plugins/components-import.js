@@ -13,8 +13,8 @@ import StickyDrawer from '@/components/sticky-drawer.vue'
 import { VOtpInput } from 'vuetify/labs/VOtpInput'
 import { VDataTable, VDataTableServer } from 'vuetify/labs/VDataTable' */
 
-import { VSkeletonLoader } from 'vuetify'
-import { VOtpInput } from 'vuetify'
+// import { VSkeletonLoader } from 'vuetify'
+// import { VOtpInput } from 'vuetify'
 // import { VDataTable, VDataTableServer } from 'vuetify'
 
 // import VueApexChart from "vue3-apexcharts"
