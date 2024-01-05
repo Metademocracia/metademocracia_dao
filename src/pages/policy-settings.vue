@@ -6,7 +6,7 @@
         :proposal="tabs[tab].name"
         required
         @completed="onCompleted"
-        @close="tabs[0].editing = false"
+        @close="tabs[tab].editing = false"
       >
         <label for="proponent">Proponente</label>
         <v-text-field

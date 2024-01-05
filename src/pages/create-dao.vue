@@ -273,10 +273,7 @@
                 stop-loading
                 cover
               />
-              <v-btn
-                class="bg-tertiary"
-                @click="fileRef.click()"
-              >
+              <v-btn class="bg-tertiary" @click="fileRef.click()">
                 Subir Logo
                 <v-icon icon="mdi-chevron-right" />
               </v-btn>

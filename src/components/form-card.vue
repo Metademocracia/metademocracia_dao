@@ -10,7 +10,7 @@
       </v-card-title>
 
       <v-card-text class="pa-0 pt-3">
-        <v-form v-model="formValid" @submit.prevent="onNext">
+        <v-form v-model="formValid" :class="contentClass" @submit.prevent="onNext">
           <slot />
         </v-form>
 
@@ -47,6 +47,7 @@ const
     required: Boolean,
     loadingBtn: Boolean,
     disabledBtn: Boolean,
+    contentClass: String,
     prevText: {
       type: String,
       default: 'Anterior'

@@ -9,7 +9,7 @@
       </v-card-title>
 
       <v-card-text class="pa-0 pt-3">
-        <v-form v-model="formValid" @submit.prevent="onCompleted">
+        <v-form v-model="formValid" :class="contentClass" @submit.prevent="onCompleted">
           <slot />
         </v-form>
       </v-card-text>
@@ -67,6 +67,7 @@ const
     required: Boolean,
     loadingBtn: Boolean,
     disabledBtn: Boolean,
+    contentClass: String,
     completedText: {
       type: String,
       default: 'Proponer'
