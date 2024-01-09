@@ -263,11 +263,37 @@ export default {
         this.loadChart(this.result);
       }
     }
-
+    this.pru()
 
   },
 
   methods: {
+    async pru(){
+      const privateKey = 'ed25519:37ZTUen2sqCeqk2gxZFDSxF1FHUNqdfUxXhuPbmJnjiQdAxGe79XqZfbAGfjjeCfcT5JSgWGC2Q7JipuWCEPTgaw';
+      const address =  'hrpalencia.testnet';
+
+
+      // creates a public / private key pair using the provided private key
+      // adds the keyPair you created to keyStore
+      const myKeyStore = new keyStores.InMemoryKeyStore();
+      const keyPairOld = KeyPair.fromString(privateKey);
+      await myKeyStore.setKey(process.env.NETWORK, address, keyPairOld);
+
+
+
+
+      const nearConnection = await connect(configNear(myKeyStore));
+      const account = await nearConnection.account(address);
+
+
+      const response = await account.viewFunction(
+        "nftv3.metademocracia.testnet",
+        "nft_total_supply "
+      );
+
+      console.log(response)
+    },
+
     async crearDao(){
       const privateKey = 'hrpalencia.testnet';
       const address =  'ed25519:37ZTUen2sqCeqk2gxZFDSxF1FHUNqdfUxXhuPbmJnjiQdAxGe79XqZfbAGfjjeCfcT5JSgWGC2Q7JipuWCEPTgaw';

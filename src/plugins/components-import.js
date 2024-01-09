@@ -21,10 +21,10 @@ import { VDataTable, VDataTableServer } from 'vuetify/labs/VDataTable' */
 import VueRecaptcha from 'vue3-recaptcha2'
 
 export default {
-  VSkeletonLoader,
-  VOtpInput,
-  VDataTable,
-  VDataTableServer,
+  // VSkeletonLoader,
+  // VOtpInput,
+  // VDataTable,
+  // VDataTableServer,
   // VueApexChart,
   VueRecaptcha,
   FullScreen,
