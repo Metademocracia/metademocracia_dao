@@ -229,50 +229,7 @@
           >
             <p class="d-block mb-10">Elija qué derechos de creación le otorga a los grupos DAO. Esto se puede cambiar en la configuración más adelante</p>
 
-            <v-data-table
-              density="compact"
-              class="mb-4"
-              :headers="[
-                { key: 'name', sortable: false },
-                { key: 'all', title: 'Todos', align: 'center', sortable: false },
-                { key: 'group', title: 'Grupo Personalizado', align: 'center', sortable: false },
-                { key: 'council', title: 'Council', align: 'center', sortable: false },
-              ]"
-              :items="proposals"
-            >
-              <template #item.all="{ item }">
-                <v-checkbox
-                  v-model="item.all"
-                  density="compact"
-                  color="rgb(var(--v-theme-tertiary))"
-                  class="text-tertiary flex-center"
-                  true-icon="mdi-checkbox-outline"
-                  hide-details
-                />
-              </template>
-
-              <template #item.group="{ item }">
-                <v-checkbox
-                  v-model="item.group"
-                  density="compact"
-                  color="rgb(var(--v-theme-tertiary))"
-                  class="text-tertiary flex-center"
-                  true-icon="mdi-checkbox-outline"
-                  hide-details
-                />
-              </template>
-
-              <template #item.council="{ item }">
-                <v-checkbox
-                  v-model="item.council"
-                  density="compact"
-                  color="rgb(var(--v-theme-tertiary))"
-                  class="text-tertiary flex-center"
-                  true-icon="mdi-checkbox-outline"
-                  hide-details
-                />
-              </template>
-            </v-data-table>
+            <table-rights :items="proposals" />
           </form-card>
         </v-window-item>
 
@@ -288,50 +245,7 @@
           >
             <p class="d-block mb-10">Elija qué derechos de voto le otorga a los grupos DAO</p>
 
-            <v-data-table
-              density="compact"
-              class="mb-4"
-              :headers="[
-                { key: 'name', sortable: false },
-                { key: 'all', title: 'Todos', align: 'center', sortable: false },
-                { key: 'group', title: 'Grupo Personalizado', align: 'center', sortable: false },
-                { key: 'council', title: 'Council', align: 'center', sortable: false },
-              ]"
-              :items="permissions"
-            >
-              <template #item.all="{ item }">
-                <v-checkbox
-                  v-model="item.all"
-                  density="compact"
-                  color="rgb(var(--v-theme-tertiary))"
-                  class="text-tertiary flex-center"
-                  true-icon="mdi-checkbox-outline"
-                  hide-details
-                />
-              </template>
-
-              <template #item.group="{ item }">
-                <v-checkbox
-                  v-model="item.group"
-                  density="compact"
-                  color="rgb(var(--v-theme-tertiary))"
-                  class="text-tertiary flex-center"
-                  true-icon="mdi-checkbox-outline"
-                  hide-details
-                />
-              </template>
-
-              <template #item.council="{ item }">
-                <v-checkbox
-                  v-model="item.council"
-                  density="compact"
-                  color="rgb(var(--v-theme-tertiary))"
-                  class="text-tertiary flex-center"
-                  true-icon="mdi-checkbox-outline"
-                  hide-details
-                />
-              </template>
-            </v-data-table>
+            <table-rights :items="permissions" />
           </form-card>
         </v-window-item>
 
@@ -359,10 +273,7 @@
                 stop-loading
                 cover
               />
-              <v-btn
-                class="bg-tertiary"
-                @click="fileRef.click()"
-              >
+              <v-btn class="bg-tertiary" @click="fileRef.click()">
                 Subir Logo
                 <v-icon icon="mdi-chevron-right" />
               </v-btn>
@@ -398,6 +309,7 @@
 <script setup>
 import '@/assets/styles/pages/create-dao.scss'
 import FormCard from '@/components/form-card.vue'
+import TableRights from '@/components/table-rights.vue'
 import variables from '@/mixins/variables';
 import { getUrlFromFile } from '@/plugins/functions';
 import { onBeforeMount } from 'vue';

@@ -67,9 +67,10 @@ defineExpose({ model })
 
 
   &__wrapper {
-    max-width: 700px;
+    max-width: calc(880px + var(--margin-global));
     width: 100%;
     margin-inline: auto;
+    padding-inline: var(--margin-global);
     padding-block: 10px;
     display: flex;
     align-items: center;
