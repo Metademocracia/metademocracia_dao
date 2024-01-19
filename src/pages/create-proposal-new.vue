@@ -82,7 +82,7 @@
             </span>
 
             <span v-if="typeSelect === 'Transferencia'">
-              <label for="tokenId">Seleccione el Token</label>
+              
               <v-select
                 id="tokenId"
                 :items="itemsTokens"
@@ -90,10 +90,26 @@
                 item-value="id"
               />
 
+              <label for="receiverId">ID de Receptor</label>
               <v-text-field
-                id="member"
+                id="receiverId"
                 variant="solo"
                 placeholder="member.testnet"
+              />
+
+              <label for="amount">Monto</label>
+              <v-text-field
+                id="amount"
+                type="number"
+                variant="solo"
+                placeholder="0.0"
+              />
+
+              <label for="msg">Mensaje (opcional)</label>
+              <v-text-field
+                id="msg"
+                variant="solo"
+                placeholder="Mensaje (opcional)"
               />
               
             </span>
