@@ -16,35 +16,35 @@ const routes = [
         path: '',
         component: () => import('@/layouts/render-layout.vue'),
         meta: { head: `Home - ${DEFAULT_TITLE}` },
-        children: [  
+        children: [
           {
             path: '',
             name: 'Home',
-            component: () => import('@/pages/home.vue'), 
+            component: () => import('@/pages/home.vue'),
             meta: { head: `Home - ${DEFAULT_TITLE}` }
           },
           {
             path: 'members',
             name: 'Members',
-            component: () => import('@/pages/members.vue'), 
+            component: () => import('@/pages/members.vue'),
             meta: { head: `Miembros - ${DEFAULT_TITLE}` }
           },
           {
             path: 'proposals',
             name: 'Proposal',
-            component: () => import('@/pages/proposals-new.vue'), 
+            component: () => import('@/pages/proposals-new.vue'),
             meta: { head: `Propuestas - ${DEFAULT_TITLE}` }
           },
           {
             path: 'proposal-details',
             name: 'ProposalDetails',
-            component: () => import('@/pages/proposal-details-new.vue'), 
+            component: () => import('@/pages/proposal-details-new.vue'),
             meta: { head: `Detalle de propuesta - ${DEFAULT_TITLE}` }
           },
           {
             path: 'create-proposal',
             name: 'CreateProposal',
-            component: () => import('@/pages/create-proposal-new.vue'), 
+            component: () => import('@/pages/create-proposal-new.vue'),
             meta: { head: `Crear propuesta - ${DEFAULT_TITLE}` }
           },
           {
@@ -56,19 +56,19 @@ const routes = [
           {
             path: 'settings',
             name: 'Settings',
-            component: () => import('@/pages/settings.vue'), 
+            component: () => import('@/pages/settings.vue'),
             meta: { head: `Configuración - ${DEFAULT_TITLE}` }
           },
           {
             path: 'general-settings',
             name: 'GeneralSettings',
-            component: () => import('@/pages/general-settings.vue'), 
+            component: () => import('@/pages/general-settings.vue'),
             meta: { head: `Configuración general - ${DEFAULT_TITLE}` }
           },
           {
             path: 'policy-settings',
             name: 'PolicySettings',
-            component: () => import('@/pages/policy-settings.vue'), 
+            component: () => import('@/pages/policy-settings.vue'),
             meta: { head: `Configuración de políticas - ${DEFAULT_TITLE}` }
           },
         ]
@@ -76,19 +76,19 @@ const routes = [
       {
         path: 'daos',
         name: 'Daos',
-        component: () => import('@/pages/daos.vue'), 
+        component: () => import('@/pages/daos.vue'),
         meta: { head: `DAOs - ${DEFAULT_TITLE}` }
       },
       {
         path: 'my-daos',
         name: 'MyDaos',
-        component: () => import('@/pages/my-daos.vue'), 
+        component: () => import('@/pages/my-daos.vue'),
         meta: { head: `Mis DAOs - ${DEFAULT_TITLE}` }
       },
       {
         path: 'create-dao',
         name: 'CreateDao',
-        component: () => import('@/pages/create-dao.vue'), 
+        component: () => import('@/pages/create-dao.vue'),
         meta: { head: `Crear DAO - ${DEFAULT_TITLE}` }
       },
     ],

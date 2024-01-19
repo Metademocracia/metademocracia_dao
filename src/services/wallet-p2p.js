@@ -4,6 +4,9 @@ import graphQl from '@/services/graphQl';
 //import * as nearAPI from "near-api-js";
 //const { KeyPair, keyStores, connect } = nearAPI;
 import encryp from './encryp';
+import * as nearAPI from "near-api-js";
+const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
+import {configNear} from '../services/nearConfig';
 
 const _routeWallet = process.env.ROUTER_WALLET
 const _routeRpc = process.env.ROUTER_RPC
@@ -22,7 +25,7 @@ function login (contract) {
   window.open(route, "_self");
 }
 
-function call (json, ruta) {
+function call (json, ruta, param_ruta) {
   /*
     JSON EXAMPLE:
       {
@@ -36,8 +39,13 @@ function call (json, ruta) {
         attachedDeposit: "10000000000000000000",
       }
   */
+ console.log("json: ", json)
   const dataWallet = JSON.parse(localStorage.getItem("session"))
   const wallet = dataWallet ? dataWallet.wallet : undefined;
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.delete("response");
+  urlParams.delete("token");
+
   const token = /*window.btoa(*/encryp.encryp(JSON.stringify({
     action: "call",
     domain: window.location.host,
@@ -45,9 +53,11 @@ function call (json, ruta) {
     from: wallet,
     json: json,
     success: ruta ? window.location.origin + process.env.BASE_URL + ruta : window.location.origin + window.location.pathname,
+    search: ruta ? param_ruta : "?"+urlParams.toString(),
     error: window.location.origin + window.location.pathname,
+    searchError: "?"+urlParams.toString(),
   })/*)*/);
-
+  
   // console.log(JSON.parse(window.atob(token)));
   window.open(_routeWallet+"/execute?token="+token, "_self");
 }
@@ -55,15 +65,38 @@ function call (json, ruta) {
 function getAccount() {
   const dataWallet = JSON.parse(localStorage.getItem("session"))
   const wallet = dataWallet ? dataWallet.wallet : undefined;
+  const privateKey = dataWallet ? dataWallet.privateKey : undefined;
 
   const account = {
     address: wallet,
     publicKey: '',
-    privateKey: '',
+    privateKey: privateKey,
   };
   // console.log("esta es la session: ", localStorage.getItem("session"))
 
   return account
+}
+
+async function view(json) {
+  const privateKey = getAccount().privateKey;
+  const address =  getAccount().address;
+
+
+  // creates a public / private key pair using the provided private key
+  // adds the keyPair you created to keyStore
+  const myKeyStore = new keyStores.InMemoryKeyStore();
+  const keyPairOld = KeyPair.fromString(privateKey);
+  await myKeyStore.setKey(process.env.NETWORK, address, keyPairOld);
+
+
+
+
+  const nearConnection = await connect(configNear(myKeyStore));
+  const account = await nearConnection.account(address);
+
+  const response = await account.viewFunction(json);
+
+  return response
 }
 
 
@@ -88,6 +121,7 @@ function getTransaction(hash, account_id) {
 export default {
   login,
   call,
+  view,
   getAccount,
   getTransaction
 }

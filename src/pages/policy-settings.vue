@@ -10,10 +10,10 @@
       >
         <label for="proponent">Proponente</label>
         <v-text-field
+          v-model="proponen"
           id="proponent"
           variant="solo"
-          placeholder="andresdom.near"
-          :rules="[globalRules.required]"
+          read-only
         />
 
         <label for="description">Descripción</label>
@@ -33,7 +33,7 @@
         />
 
         <label style="text-decoration: underline !important;">Cambios que se proponen:</label>
-        <table-rights :items="tabs[0].editing ? proposals : permissions" />
+        <table-rights :headers="headerRights" :items="tabs[0].editing ? proposals : permissions" />
       </form-card-editable>
 
       <v-divider thickness="1" class="my-10" />
@@ -82,7 +82,7 @@
 
         <p class="d-block mb-10">Elija qué derechos de creación le otorga a los grupos DAO. Esto se puede cambiar en la configuración más adelante</p>
 
-        <table-rights :items="proposals" read-only />
+        <table-rights :headers="headerRights" :items="proposalsView" read-only />
       </form-card>
 
 
@@ -105,7 +105,7 @@
 
         <p class="d-block mb-10">Elija qué derechos de voto le otorga a los grupos DAO</p>
 
-        <table-rights :items="permissions" read-only />
+        <table-rights :headers="headerRights" :items="permissionsView" read-only />
       </form-card>
     </section>
   </div>
@@ -116,12 +116,17 @@ import '@/assets/styles/pages/policy-settings.scss'
 import FormCard from '@/components/form-card.vue'
 import FormCardEditable from '@/components/form-card-editable.vue'
 import TableRights from '@/components/table-rights.vue'
-import { ref, onBeforeMount, watch } from 'vue';
+import { ref, onBeforeMount, watch,  } from 'vue';
 import { useToast } from 'vue-toastification';
 import variables from '@/mixins/variables';
+import { useRouter, useRoute } from 'vue-router';
+import WalletP2p from '../services/wallet-p2p';
+
 const
   toast = useToast(),
   { globalRules } = variables,
+  router = useRouter(),
+  route = useRoute(),
 
 tab = ref(0),
 tabs = ref([
@@ -134,86 +139,130 @@ tabs = ref([
     editing: false
   }
 ]),
+proponen = WalletP2p.getAccount().address,
+proposalsView = ref([]),
+permissionsView = ref([]),
 proposals = ref([]),
-permissions = ref([])
+permissions = ref([]),
+rights = ref([
+  { name: "Cambiar configuración de DAO", key: "ChangeConfig"},
+  { name: "Cambiar la política de DAO", key: "ChangePolicy"},
+  // { name: "Recompensa", key: ""},
+  { name: "Transferencia", key: "Transfer"},
+  { name: "Encuestas", key: "Vote"},
+  { name: "Eliminar miembros", key: "RemoveMemberFromRole"},
+  { name: "Agregar miembros", key: "AddMemberToRole"},
+  { name: "Llamada de función", key: "FunctionCall"},
+  /* { name: "Actualizar auto", key: ""},
+  { name: "Actualizar remoto", key: ""},
+  { name: "Establecer token de voto", key: ""}, */
+]),
+headerRights = ref([])
+
 
 watch(tab, clearEditing)
 
 onBeforeMount(getData)
 
-function getData() {
-  const rights = [
-    {
-      name: "Cambiar configuración de DAO",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Cambiar la política de DAO",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Recompensa",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Transferencia",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Encuestas",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Eliminar miembros",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Agregar miembros",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Llamada de función",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Actualizar auto",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Actualizar remoto",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Establecer token de voto",
-      all: false,
-      group: true,
-      council: true
-    },
-  ]
+async function getData() {
+  const responsePolicy = await WalletP2p.view({
+    contractId: route.query?.dao,
+    methodName: "get_policy"
+  });
 
-  proposals.value = rights
-  permissions.value = rights
+  const groups = responsePolicy.roles.map((items) => {return items.name});
+
+  console.log("ajajaja: ", groups, responsePolicy)
+
+  const header = [{ key: 'name', sortable: false },];
+  for(let i=0; i<groups.length; i++){
+    header.push({ key: groups[i], title: groups[i], align: 'center', sortable: false });
+  }
+
+  headerRights.value = header;
+
+  const rights1 = [];
+  const rights2 = [];
+  const rights3 = [];
+  const rights4 = [];
+
+  /*
+  {
+    "name": "all",
+    "kind": "Everyone",
+    "permissions": [
+        "RemoveMemberFromRole:AddProposal",
+        "ChangeConfig:AddProposal",
+        "ChangePolicy:AddProposal",
+        "AddMemberToRole:AddProposal",
+        "Transfer:AddProposal",
+        "Vote:AddProposal",
+        "FunctionCall:AddProposal"
+    ],
+    "vote_policy": {}
+} 
+
+  {
+    "name": "pruebas",
+    "kind": {
+        "Group": [
+            "metademocracia.testnet"
+        ]
+    },
+    "permissions": [
+        "ChangePolicy:AddProposal",
+        "RemoveMemberFromRole:VoteApprove",
+        "RemoveMemberFromRole:VoteReject",
+        "Transfer:*",
+        "RemoveMemberFromRole:VoteRemove"
+    ],
+    "vote_policy": {}
 }
+  */
+
+  for(const items of rights.value){
+    
+    const permissionsGroupA = responsePolicy.roles.map((elm) => {
+      const value = elm.permissions.includes(elm.permissions.find((search) => search.split(':')[0] == items.key || search.split(':')[0] == '*'))
+      return {name: elm.name, value: value}
+    });
+
+    const permissionsGroupB = responsePolicy.roles.map((elm) => {
+      const value = elm.permissions.includes(elm.permissions.find((search) => 
+        (search.split(':')[0] == items.key && (search.split(':')[1] == 'VoteApprove' || search.split(':')[1] == 'VoteReject' || search.split(':')[1] == 'VoteRemove')) 
+        || (search.split(':')[0] == items.key && search.split(':')[1] == '*')
+      ))
+      return {name: elm.name, value: value}
+    });
+
+    rights1.push({
+      name: items.name,
+      key: items.key,
+      group: permissionsGroupA,
+    });
+    rights2.push({
+      name: items.name,
+      key: items.key,
+      group: permissionsGroupB,
+    });
+    rights3.push({
+      name: items.name,
+      key: items.key,
+      group: permissionsGroupA,
+    });
+    rights4.push({
+      name: items.name,
+      key: items.key,
+      group: permissionsGroupB,
+    });
+  }
+
+  proposalsView.value = rights1;
+  permissionsView.value = rights2;
+  proposals.value = rights3;
+  permissions.value = rights4;
+}
+
 
 
 function onCompleted({ formValid, bond, tgas }) {
@@ -235,6 +284,32 @@ function onCompleted({ formValid, bond, tgas }) {
   clearEditing()
   toast('¡Tu propuesta ha sido enviada\n con éxito!')
 }
+
+function addProposal(bounty_bond, title, description, link) {
+  const json = {
+    contractId: walletDao.value,
+    methodName: "add_proposal",
+    args: {
+      proposal: {
+        title: title,
+        description: description,
+        kind: {
+          ChangePolicy: {policy: dataConfig._rawValue}
+        },
+        link: link,
+      }
+    },
+    gas: "200000000000000",
+    attachedDeposit: bounty_bond.toString()
+  };
+
+  console.log("json", json);
+
+  WalletP2p.call(json, "proposals", ("?dao="+walletDao.value));
+
+  // clearEditing();
+}
+
 
 function clearEditing() {
   tabs.value.forEach(e => e.editing = false)

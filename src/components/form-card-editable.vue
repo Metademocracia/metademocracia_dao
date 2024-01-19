@@ -17,7 +17,7 @@
 
     <aside class="form-card-editable__footer d-flex flex-space-center mt-6">
       <div class="flex-center" style="gap: 20px;">
-        <div class="flex-column" style="gap: 5px;">
+        <!-- <div class="flex-column" style="gap: 5px;">
           <label for="tgas">TGas</label>
           <v-text-field
             id="tgas"
@@ -41,7 +41,7 @@
               <span style="color: #333 !important; font-size: 11px !important;">NEAR</span>
             </template>
           </v-text-field>
-        </div>
+        </div>-->
       </div>
 
       <v-btn
@@ -77,15 +77,15 @@ const
   instance = getCurrentInstance(),
 
 formValid = ref(!props.required),
-hasCompletedEmit = !!instance?.vnode.props?.onCompleted,
-tgas = ref(150),
-bond = ref(0.1)
+hasCompletedEmit = !!instance?.vnode.props?.onCompleted
+// tgas = ref(150),
+// bond = ref(0.1)
 
 
 const onCompleted = () => emit('completed', {
   formValid: formValid.value,
-  bond: bond.value,
-  tgas: tgas.value
+  // bond: bond.value,
+  // tgas: tgas.value
 })
 </script>
 

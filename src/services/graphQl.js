@@ -42,6 +42,22 @@ function getQuery(query, variables) {
     });
 }
 
+function getQueryDaoV2(query, variables) {
+  return axios.post(process.env.ROUTER_GRAPH_DAOS,
+    {
+      "extensions":{"headers":null},
+      "operationName": "MyQuery",
+      "query": query,
+      "variables": variables,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+}
+
 export default {
-  getQuery
+  getQuery,
+  getQueryDaoV2
 }

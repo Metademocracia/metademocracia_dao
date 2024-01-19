@@ -24,6 +24,7 @@
           v-for="(item, i) in daos"
           :key="i"
           :dao="item"
+          @click="view(item)"
         />
       </div>
 
@@ -42,6 +43,9 @@ import DaoCard from '@/components/dao-card.vue'
 import MetademocraciaImage from '@/assets/sources/images/metademocracia-image.png'
 import { ref, computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
+import graphQl from '@/services/graphQl';
+import WalletP2p from '../services/wallet-p2p';
+
 const
   router = useRouter(),
 
@@ -54,20 +58,65 @@ paginatedDaos = computed(() => (daos.value.length || 9) / 9)
 
 onBeforeMount(getData)
 
+function view(item) {
+  router.push({ path: 'Proposals', query: {dao: item.wallet_dao}  })
+}
 
-function getData() {
-  for (let i = 0; i < 9; i++) {
-    daos.value.push({
-      image: MetademocraciaImage,
-      name: "Metademocracia",
-      account: "nombredeldao.sputnik-dao.near",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu lacus vel urna aliquam malesuada. Suspendisse fermentum enim in urna porta cursus. Nunc eget imperdiet arcu",
-      funds: 125972.35,
-      members: 3,
-      groups: 1,
-      activeProposals: 5,
-      totalProposals: 11,
-    })
-  }
+async function getData() {
+  console.log(WalletP2p.getAccount())
+  const query = `query dao {
+    daos {
+      owner_id
+      wallet_dao
+    }
+  }`;
+
+  await graphQl.getQueryDaoV2(query).then(async response => {
+
+    const data = response.data.data.daos
+
+    for(let i = 0; i < data.length; i++) {
+      const responseConfig = await WalletP2p.view({
+        contractId: data[i].wallet_dao,
+        methodName: "get_config"
+      });
+
+      const responsePolicy = await WalletP2p.view({
+        contractId: data[i].wallet_dao,
+        methodName: "get_policy"
+      });
+
+      const responseSupply = await WalletP2p.view({
+        contractId: data[i].wallet_dao,
+        methodName: "get_supply"
+      });
+
+      let members = 0;
+      for(let j=0; j < responsePolicy.roles.length; j++) {
+        if(responsePolicy.roles[j].kind?.Group) {
+          members += responsePolicy.roles[j].kind?.Group.length;
+        }
+      }
+
+      const metadata = JSON.parse(atob(responseConfig.metadata))
+      console.log(metadata.img)
+
+      daos.value.push({
+        wallet_dao: data[i].wallet_dao,
+        image: metadata?.img ? metadata.img : MetademocraciaImage,
+        name: responseConfig.name,
+        account: response[i],
+        description: responseConfig.purpose.split(" ").length > 0 ? responseConfig.purpose : atob(responseConfig.purpose),
+        funds: 0,
+        members: members,
+        groups: responsePolicy.roles.length,
+        activeProposals: responseSupply ? responseSupply[1] : 0,
+        totalProposals: responseSupply ? responseSupply[0] : 0,
+      })
+    }
+  });
+
+
+
 }
 </script>

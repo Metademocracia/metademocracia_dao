@@ -247,18 +247,6 @@
       </v-card>
     </v-dialog>
   </nav>
-  <v-alert
-    v-model="alert"
-    :type="colorAlert"
-    elevation="3"
-    closable
-    close-label="Close Alert"
-    :title="titleAlert"
-  >
-    <p class="mt-5">Hash: <a :href="hashRouteAlert" target="_blank"> {{ hashAlert }}</a></p>
-
-    <p v-if="errorAlert"> {{ errorAlert }} </p>
-  </v-alert>
 
   <v-row justify="center">
     <v-dialog
@@ -327,21 +315,20 @@
 <script>
 
 import { useWindowScroll } from '@vueuse/core';
-import { ref } from 'vue';
+import { ref, compile, h} from 'vue';
 import WalletP2p from '../services/wallet-p2p';
+import formatHtml from "../components/format-html.vue";
 import moment from 'moment';
 import utilsDAO from '@/services/utils-dao';
+import { useToast } from 'vue-toastification';
+//import { Link } from '@inertiajs/inertia-vue3';
 
 export default {
   setup(){
+    const toast = useToast();
     return{
-      alert: ref(false),
+      toast,
       dialog: ref(false),
-      colorAlert: ref("success"),
-      titleAlert: ref("Success"),
-      hashAlert: ref(""),
-      hashRouteAlert: ref(""),
-      errorAlert: ref(null),
       menuToggle: ref(false),
       selectedLang: 'ES',
       dialogConnect: ref(false),
@@ -392,9 +379,11 @@ export default {
     },
     verifyResponse(){
       try {
-        const valores = window.location.search;
+        /*const valores = window.location.search;
         const urlParams = new URLSearchParams(valores);
-        var response = urlParams.get('response');
+        var response = urlParams.get('response');*/
+
+        const response = this.$route.query?.response;
 
         if(!response) return
 
@@ -407,20 +396,47 @@ export default {
         const duration = moment.duration(now.diff(end));
         const minutes = duration.asMinutes();
 
-        if(minutes > 0.7) return
+        // if(minutes > 0.7) return
 
         WalletP2p.getTransaction(response_json?.hash).then(response => {
           const response_json = response.data.result;
           const hash = response_json?.transaction.hash;
-          const status_json = response_json?.receipts_outcome[3]?.outcome?.status;
-          const status = status_json?.Failure != undefined ? "Failure" : status_json?.SuccessValue  != undefined ? "Success" : "";
+          const status_json = response_json?.receipts_outcome[0]?.outcome?.status;
+          const receipts_outcome = !response_json?.receipts_outcome ? [] : response_json?.receipts_outcome;
+          
+          let error = undefined;
+          for(const item of receipts_outcome) {
+            if(item?.outcome?.status?.Failure){
+              error = item?.outcome?.status
+              break
+            }
+          }
+        
+          let status = status_json?.SuccessValue != undefined ? "Success" : "Failure";
+            
+          if(status == "Success") {
+            const dataAlert = '<p class="mt-5"> <span style="color: black" ><b>Hash:</b></span> <a href="'+ process.env.ROUTER_EXPLORER_NEAR_HASH + hash +'" target="_blank"> '+ hash +' </a></p>';
+            this.toast.success({component: formatHtml,
+              props:  {
+                  html: dataAlert
+              }
+            });
+          } else {
+            const dataAlert = '<p class="mt-5"> <span style="color: black" ><b>Error:</b></span> '+ status_json?.Failure?.ActionError?.kind?.FunctionCallError?.ExecutionError +' </p>';
+            this.toast.error({component: formatHtml,
+              props:  {
+                  html: dataAlert
+              }
+            });
+          }
+          
+          const urlParams = new URLSearchParams(window.location.search);
+          urlParams.delete("response");
+          
+          //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
+          
+          history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
 
-          this.alert = true;
-          this.colorAlert = status == "Failure" ? "error" : this.colorAlert;
-          this.titleAlert = status == "Failure" ? "Failure" : this.titleAlert;
-          this.hashAlert = hash;
-          this.hashRouteAlert = process.env.ROUTER_EXPLORER_NEAR_HASH + hash;
-          this.errorAlert = status_json?.Failure?.ActionError?.kind?.FunctionCallError?.ExecutionError;
         });
 
 
@@ -443,9 +459,11 @@ export default {
         return
       }
 
-      const valores = window.location.search;
+      /*const valores = window.location.search;
       const urlParams = new URLSearchParams(valores);
-      var token = urlParams.get('token');
+      var token = urlParams.get('token');*/
+
+      const token = this.$route.query?.token
 
       if(!token) return
 
@@ -453,8 +471,13 @@ export default {
 
       localStorage.setItem("session", dataSession)
       const dataSessionJson = JSON.parse(dataSession);
-      const wallet = dataSessionJson.email || dataSessionJson.wallet
+      const wallet = dataSessionJson.email || dataSessionJson.wallet || dataSessionJson.privateKey
       this.initSession(wallet)
+
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.delete("token");
+
+      history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
     },
 
     initSession(wallet) {
@@ -480,6 +503,8 @@ export default {
       localStorage.removeItem("session")
       this.titleBtnLogin = "Conectar Wallet";
       this.dialogConnect = false;
+
+      this.$router.push({path: ''})
 
       window.open(window.location.origin + window.location.pathname, "_self");
     }

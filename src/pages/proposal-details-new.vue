@@ -70,7 +70,7 @@
 
 						<aside class="sheet-flexbar__wrapper">
 							<span>{{ item2.user }}</span>
-	
+
 							<span>{{ item2.date }}</span>
 						</aside>
 					</v-sheet>
@@ -87,6 +87,8 @@ import ProposalCard from '@/components/proposal-card.vue'
 import SliderLiked from '@/components/slider-liked.vue'
 import { ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
+import WalletP2p from '../services/wallet-p2p';
+
 const
 	route = useRoute(),
 
@@ -101,24 +103,159 @@ onBeforeMount(getData)
 
 function getData() {
 	getProposal()
-	getPanels()
+	// getPanels()
 }
 
-function getProposal() {
-	proposal.value = {
-		id: route.query.id,
-		type: "AddBounty",
-		title: "Create a Bounty",
-		date: "32 August 2023",
-		proposer: "andresdom.near\n BGeam",
-		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis accumsan urna ac placerat. Ut scelerisque eu ligula ac rhoncus. Aliquam sagittis sapien sit amet libero ultricies varius. Curabitur ac ligula ultricies, semper ipsum nec, auctor sapien. Etiam nec sem ac mauris imperdiet rutrum. Sed mi dui, mattis vel ipsum eget, dictum interdum augue. Donec mollis congue enim quis dignissim. Ut egestas dolor at mauris suscipit dictum. Quisque at sollicitudin dolor. Mauris id auctor dui. Duis velit ante, hendrerit in diam vel, tincidunt rutrum lacus. Morbi pulvinar efficitur efficitur. Quisque faucibus purus nec dolor convallis scelerisque. Mauris vitae viverra quam.",
-		approved: true,
-		amount: 7777,
-		claims: 280,
-		remainingTime: "3 months",
-		likes: 111,
-		dislikes: 112,
-	}
+async function getProposal() {
+	const response = await WalletP2p.view({
+    contractId: route.query.dao,
+    methodName: "get_proposal",
+    args: {
+      id: Number(route.query.id)
+    }
+  });
+
+  const responsePolicy = await WalletP2p.view({
+    contractId: route.query.dao,
+    methodName: "get_policy",
+  });
+
+  console.log(response)
+
+  console.log(responsePolicy.roles.filter((search) => search.name == 'all')[0])
+
+  const item = response;
+
+  const votes = Object.keys(item.vote_counts).map((map) => {return item.vote_counts[map]})
+  let votesup = 0
+  let votesdown = 0
+
+  for(const vote of votes){
+    console.log(vote[0])
+    votesup += vote[0]
+    votesdown += vote[1]
+  }
+
+  const type = typeof item.kind === "object" ? Object.keys(item.kind)[0] : item.kind;
+  const objectProposal = typeof item.kind === "object" ? item.kind[type] : undefined;
+  const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+
+  proposal.value = {
+    id: item.id,
+    contractId: route.query.dao,
+    type,
+    objectProposal,
+    configMetadata,
+    title: atob(item.title),
+    date: null/*item.submission_time*/,
+    proposer: item.proposer,
+    description: atob(item.description),
+    approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
+    link: item.link,
+    amount: null,
+    claims: null,
+    remainingTime: "una semana",
+    likes: votesup,
+    dislikes: votesdown,
+  };
+
+
+  /////////////////data panel/////////////////////////////////////////
+  function formatChildrens(data) {
+    return data.map((mapChild) => {
+      return {
+        user: mapChild.wallet,
+        state: mapChild.action == "Approve"  /*"Reject"*/,
+        /* date: "02 May 2023 22:56:28" */
+      }
+    });
+  }
+
+  panels.value = Object.keys(item.vote_counts).map((map) => {
+    const walletVote = Object.keys(item.votes).map((mapWallet) => { return {wallet: mapWallet, action: item.votes[mapWallet] }})
+
+    let childrens = [];
+    let voices = "0/0";
+		let percent = 0;
+    if(map == "all") {
+      const group = [];
+      for(const role of responsePolicy.roles) {
+        if(typeof role.kind === "object") {
+          for(const itemGroup of role.kind.Group) {
+            group.push(itemGroup)
+          }
+        }
+      }
+      const walletsGroup = group
+      console.log("all: ", walletsGroup)
+
+      const noMembers = walletVote.filter((itemMember) => !walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
+      const members = walletVote.filter((itemMember) => walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
+      const countVotes = item.vote_counts[map][0] + item.vote_counts[map][1] + item.vote_counts[map][2]
+
+      if(noMembers.length < countVotes) {
+        childrens = formatChildrens(members);
+        voices = members.length + "/" + walletsGroup.length
+        percent = members.length / walletsGroup.length
+      } else {
+        childrens = formatChildrens(noMembers);
+        voices = noMembers.length + "/" + walletsGroup.length
+        percent = noMembers.length / walletsGroup.length
+      }
+    } else {
+      const walletsGroup = responsePolicy.roles.filter((search) => search.name == map)[0].kind.Group
+
+      const members = walletVote.filter((itemMember) => walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
+
+      childrens = formatChildrens(members);
+      voices = members.length + "/" + walletsGroup.length
+      percent = members.length / walletsGroup.length
+
+    }
+
+    return {
+			title: map,
+			voices,
+			percent,
+			children: childrens
+		} // item.vote_counts[map]
+  })
+
+  /* panels.value = [
+		{
+			title: "Non DAO members",
+			voices: "0/1",
+			percent: 0,
+			children: [
+				{ user: "pruebavotar.near" },
+				{
+					user: "pruebavotar.near",
+					state: false,
+					date: "02 May 2023 22:56:28"
+				},
+			]
+		},
+		{
+			title: "Council",
+			voices: "3/4",
+			percent: 75,
+			children: [
+				{
+					user: "pruebavotar.near",
+					state: true,
+					date: "02 May 2023 22:56:28"
+				},
+				{
+					user: "pruebavotar.near",
+					state: false,
+					date: "02 May 2023 22:56:28"
+				},
+			]
+		},
+	]*/
+
+	// set index of current elements
+	panelsExpanded.value = panels.value.map((panel, index) => index)
 }
 
 function getPanels() {

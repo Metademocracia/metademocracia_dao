@@ -3,70 +3,223 @@
     <!-- editable -->
     <form-card-editable
       v-if="tabs[0].editing"
-      :proposal="tabs[0].name"
+      :proposal="'Cambiar configuración de DAO'"
       required
       @completed="onCompleted"
       @close="tabs[0].editing = false"
     >
       <label for="proponent">Proponente</label>
       <v-text-field
+        v-model="address"
         id="proponent"
         variant="solo"
         placeholder="andresdom.near"
-        :rules="[globalRules.required]"
+        readonly
       />
 
-      <label for="description">Descripción</label>
+      <label for="reasonName">Motivo del cambio</label>
       <v-textarea
-        id="description"
+        ref="reasonName"
+        id="reasonName"
         variant="solo"
-        placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis accumsan urna ac placerat. Ut scelerisque eu ligula ac rhoncus. Aliquam sagittis sapien sit amet libero ultricies varius. Curabitur ac ligula ultricies, semper ipsum nec, auctor sapien. Etiam nec sem ac mauris imperdiet rutrum. Sed mi dui, mattis vel ipsum eget, dictum interdum augue. Donec mollis congue enim quis dignissim. Ut egestas dolor at mauris suscipit dictum. Quisque at sollicitudin dolor. Mauris id auctor dui. Duis velit ante, hendrerit in diam vel, tincidunt rutrum lacus. Morbi pulvinar efficitur efficitur. Quisque faucibus purus nec dolor convallis scelerisque. Mauris vitae viverra quam."
+        placeholder="Motivo del cambio"
         :rules="[globalRules.required]"
       />
 
-      <label for="link">Link</label>
+      <label for="linkName">Link</label>
       <v-text-field
-        id="link"
+        ref="linkName"
+        id="linkName"
         variant="solo"
         placeholder="Link_de_prueba.com"
         :rules="[globalRules.required]"
       />
+
+      <label for="nameDao">Nombre</label>
+      <v-text-field
+        ref="nameDao"
+        id="nameDao"
+        variant="solo"
+        placeholder="Nombre"
+        :rules="[globalRules.required]"
+      />
+
+      <label for="purposeDao">Propósito</label>
+      <v-textarea
+        ref="purposeDao"
+        id="purposeDao"
+        variant="solo"
+        placeholder="Propósito"
+        :rules="[globalRules.required]"
+      />
+
+    </form-card-editable>
+
+    <form-card-editable
+      v-if="tabs[1].editing"
+      :proposal="'Cambiar configuración de DAO'"
+      required
+      @completed="onCompleted"
+      @close="tabs[1].editing = false"
+    >
+      <label for="proponent">Proponente</label>
+      <v-text-field
+        v-model="address"
+        id="proponent"
+        variant="solo"
+        placeholder="andresdom.near"
+        readonly
+      />
+
+      <label for="reasonState">Motivo del cambio</label>
+      <v-textarea
+        ref="reasonState"
+        id="reasonState"
+        variant="solo"
+        placeholder="Motivo del cambio"
+        :rules="[globalRules.required]"
+      />
+
+      <label for="linkState">Link</label>
+      <v-text-field
+        ref="linkState"
+        id="linkState"
+        variant="solo"
+        placeholder="Link_de_prueba.com"
+        :rules="[globalRules.required]"
+      />
+
+      <label for="legacy-state">Explique el estado legal y la jurisdicción de su DAO ( si se conoce) :</label>
+      <v-text-field
+        ref="legacy-state"
+        id="legacy-state"
+        placeholder="Estado legal del DAO"
+        variant="solo"
+        class="mb-1"
+        :rules="[globalRules.required]"
+      />
+
+      <label for="proposal-kyc">Propósito</label>
+      <v-text-field
+        ref="proposal-kyc"
+        id="proposal-kyc"
+        placeholder="https:// Documento_Legal"
+        variant="solo"
+        class="mb-1"
+        :rules="[globalRules.required]"
+      />
+
+    </form-card-editable>
+
+
+    <form-card-editable
+      v-if="tabs[2].editing"
+      :proposal="'Cambiar configuración de DAO'"
+      required
+      @completed="onCompleted"
+      @close="tabs[2].editing = false"
+    >
+
+      <label for="proponent">Proponente</label>
+      <v-text-field
+        v-model="address"
+        id="proponent"
+        variant="solo"
+        placeholder="andresdom.near"
+        readonly
+      />
+
+      <label for="reasonSocial">Motivo del cambio</label>
+      <v-textarea
+        ref="reasonSocial"
+        id="reasonSocial"
+        variant="solo"
+        placeholder="Motivo del cambio"
+        :rules="[globalRules.required]"
+      />
+
+      <label for="linkSocial">Link</label>
+      <v-text-field
+        ref="linkSocial"
+        id="linkSocial"
+        variant="solo"
+        placeholder="Link_de_prueba.com"
+        :rules="[globalRules.required]"
+      />
+
+      <p class="mb-8">Indique los nuevos links para las redes sociales:</p>
+
+      <v-text-field
+        v-for="(item, i) in daoLinks"
+        v-model="item.model"
+        :key="i"
+        placeholder="https://"
+        class="appened"
+        variant="solo"
+        :rules="[globalRules.required]"
+      >
+        <template #append-inner>
+          <v-btn
+            min-width="70"
+            height="42"
+            :color="i == daoLinks.length - 1 ? '#61C2D5' : '#505050'"
+            style="border-radius: 8px !important;"
+            @click="() => {
+              if (i == daoLinks.length - 1) return daoLinks.push({ model: undefined })
+              daoLinks.splice(i, 1)
+            }"
+          >
+            <v-icon :icon="i == daoLinks.length - 1 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+          </v-btn>
+        </template>
+      </v-text-field>
     </form-card-editable>
 
 
     <form-card-editable
       v-else-if="tabs[3].editing"
-      :proposal="tabs[3].name"
+      :proposal="'Cambiar configuración de DAO'"
       required
       @completed="onCompleted"
       @close="tabs[3].editing = false"
     >
       <label for="proponent">Proponente</label>
       <v-text-field
+        v-model="address"
         id="proponent"
         variant="solo"
         placeholder="andresdom.near"
-        :rules="[globalRules.required]"
+        readonly
       />
 
-      <label for="description">Descripción</label>
+      <label for="reasonLogo">Motivo del cambio</label>
       <v-textarea
-        id="description"
+        ref="reasonLogo"
+        id="reasonLogo"
         variant="solo"
-        placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis accumsan urna ac placerat. Ut scelerisque eu ligula ac rhoncus. Aliquam sagittis sapien sit amet libero ultricies varius. Curabitur ac ligula ultricies, semper ipsum nec, auctor sapien. Etiam nec sem ac mauris imperdiet rutrum. Sed mi dui, mattis vel ipsum eget, dictum interdum augue. Donec mollis congue enim quis dignissim. Ut egestas dolor at mauris suscipit dictum. Quisque at sollicitudin dolor. Mauris id auctor dui. Duis velit ante, hendrerit in diam vel, tincidunt rutrum lacus. Morbi pulvinar efficitur efficitur. Quisque faucibus purus nec dolor convallis scelerisque. Mauris vitae viverra quam."
+        placeholder="Motivo del cambio"
         :rules="[globalRules.required]"
       />
 
-      <label for="link">Link</label>
+      <label for="linkLogo">Link</label>
       <v-text-field
-        id="link"
+        ref="linkLogo"
+        id="linkLogo"
         variant="solo"
         placeholder="Link_de_prueba.com"
         :rules="[globalRules.required]"
       />
 
       <div class="flex-column-center mr-auto" style="gap: 20px; max-width: max-content;">
-        <input ref="fileRef" type="file" accept="image/*" class="d-none" @change="handleLoadFile">
+        <v-file-input
+          id="fileRef"
+          ref="fileRef"
+          v-model="logoUpload"
+          type="file"
+          accept="image/*"
+          class="d-none"
+          @change="handleLoadFile"
+        ></v-file-input>
         <v-img-load
           :src="daoLogoPreview"
           width="110"
@@ -130,13 +283,13 @@
 
 
         <label>Nombre del DAO:</label>
-        <p class="mt-1" style="font-size: 16px !important;">DAO de Prueba</p>
+        <p class="mt-1" style="font-size: 16px !important;">{{ dataConfig?.name }}</p>
 
-        <label>Dirección DAO (auto llenado):</label>
-        <p class="mt-1">prueba-de-dao.sputnikv2.testnet</p>
-        
+        <label>Dirección DAO:</label>
+        <p class="mt-1">{{ walletDao }}</p>
+
         <label>Propósito:</label>
-        <p class="mt-1 mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis accumsan urna ac placerat. Ut scelerisque eu ligula ac rhoncus. Aliquam sagittis sapien sit amet libero ultricies varius. Curabitur ac ligula ultricies, semper ipsum nec, auctor sapien. Etiam nec sem ac mauris imperdiet rutrum. Sed mi dui, mattis vel ipsum eget, dictum interdum augue. Donec mollis congue enim quis dignissim. Ut egestas dolor at mauris suscipit dictum. Quisque at sollicitudin dolor. Mauris id auctor dui. Duis velit ante, hendrerit in diam vel, tincidunt rutrum lacus. Morbi pulvinar efficitur efficitur. Quisque faucibus purus nec dolor convallis scelerisque. Mauris vitae viverra quam.</p>
+        <p class="mt-1 mb-0">{{ dataConfig?.purpose }}</p>
       </form-card>
 
 
@@ -156,17 +309,22 @@
             <v-icon icon="mdi-chevron-right" />
           </v-btn>
         </template>
-        
 
-        <v-btn variant="text" class="pa-0">
-          <span style="color: #333 !important;">Sociedad Anonima</span>
+          <label>Estado legal y jurisdicción del DAO:</label>
+          <p class="mt-1" style="font-size: 16px !important;">{{ !metadataDao?.kyc?.legacyState ? "No cuenta con un estado legal" : metadataDao?.kyc?.legacyState }}</p>
+
+          <label>Documento Legal:</label>
+          <p class="mt-1" style="font-size: 16px !important;">{{ !metadataDao?.kyc?.proposalKyc ? "No cuenta con un documento legal" : metadataDao?.kyc?.proposalKyc }}</p>
+
+          <!--<v-btn variant="text" class="pa-0">
+            <span style="color: #333 !important;">Documento Legal</span>
 
           <sup class="ml-1">
             <v-btn icon color="rgba(111, 91, 165, 1)" size="15" >
               <v-icon icon="mdi-open-in-new" size="10" />
             </v-btn>
           </sup>
-        </v-btn>
+        </v-btn>-->
       </form-card>
 
 
@@ -187,7 +345,7 @@
             <v-icon icon="mdi-chevron-right" />
           </v-btn>
         </template>
-        
+
 
         <v-btn
           v-for="(item, i) in links"
@@ -203,6 +361,7 @@
           <span class="text-primary">{{ item.text }}</span>
         </v-btn>
       </form-card>
+
 
 
       <!-- Logo -->
@@ -243,14 +402,19 @@
 import '@/assets/styles/pages/general-settings.scss'
 import FormCard from '@/components/form-card.vue'
 import FormCardEditable from '@/components/form-card-editable.vue'
-import { ref, watch } from 'vue';
+import MetademocraciaImage from '@/assets/sources/images/metademocracia-image.png'
+import { ref, watch, onBeforeMount } from 'vue';
 import { useToast } from 'vue-toastification';
 import variables from '@/mixins/variables';
 import { getUrlFromFile } from '@/plugins/functions';
+import WalletP2p from '../services/wallet-p2p';
+import axios from 'axios';
+
 const
   toast = useToast(),
   { globalRules } = variables,
 
+address = WalletP2p.getAccount().address,
 tab = ref(0),
 tabs = ref([
   {
@@ -269,51 +433,178 @@ tabs = ref([
     name: "Logo",
     editing: false
   },
-  {
+  /* {
     name: "Nombres de grupo",
     editing: false,
     disabled: true
-  }
+  } */
 ]),
-links = ref([
-  {
-    text: "https://pruebaweb.io",
-    href: ""
-  },
-  {
-    text: "https://instagram.com",
-    href: ""
-  },
-  {
-    text: "https://appmeta.io",
-    href: ""
-  }
-]),
+links = ref([]),
+daoLinks = ref([ { model: undefined } ]),
 fileRef = ref(),
+logoUpload = ref(null),
 daoLogoPreview = ref(null),
-daoLogo = ref(null)
+daoLogo = ref(null),
+walletDao = ref(null),
+metadataDao = ref(null),
+dataConfig = ref(null)
 
 watch(tab, clearEditing)
+onBeforeMount(getData)
+
+async function getData() {
+  const valores = window.location.search;
+  const urlParams = new URLSearchParams(valores);
+  walletDao.value = urlParams.get('dao');
+
+  console.log(walletDao.value)
+  const responseConfig = await WalletP2p.view({
+    contractId: walletDao.value,
+    methodName: "get_config"
+  });
+
+  const metadata = JSON.parse(atob(responseConfig.metadata))
+  metadataDao.value = metadata;
+  dataConfig.value = responseConfig;
+  links.value = metadataDao.value.social.map((item) => {return {text: item, href: item}});
+  daoLogo.value = !metadataDao.value?.img ? MetademocraciaImage : metadataDao.value?.img
+
+  console.log("links: ", metadataDao.value.social.map((item) => {return {text: item, href: item}}))
 
 
-function onCompleted({ formValid, bond, tgas }) {
+  console.log(metadataDao.value)
+}
+
+async function uploadImgIpfs() {
+  const imgDao = logoUpload.value;
+
+  if(!imgDao) return null
+
+  console.log("file print 1 ", imgDao)
+  const resp = await axios.post('https://api.nft.storage/upload', imgDao[0], {
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'image/*',
+      Authorization: 'Bearer ' + process.env.KEY_IPFS, // Reemplaza con tu clave de API de nft.storage
+    },
+    maxContentLength: 100 * 1024 * 1024, // Tamaño máximo de la respuesta en bytes (100MB)
+    maxBodyLength: 100 * 1024 * 1024, // Tamaño máximo del cuerpo de la solicitud en bytes (100MB)
+  })/* .then((response) => {
+    console.log(response);
+  }) */
+
+  return {
+    hash: resp.data.value.cid,
+    url: "https://"+resp.data.value.cid+".ipfs.nftstorage.link/"
+  };
+
+}
+
+async function onCompleted({ formValid }) {
   if (!formValid) return
 
-  console.log('here', bond, tgas)
-  switch (tab) {
+  console.log('here', tab.value)
+  const responsePolicy = await WalletP2p.view({
+    contractId: walletDao.value,
+    methodName: "get_policy"
+  });
+
+  const bond = responsePolicy?.bounty_bond;
+
+  if(!bond) return;
+
+  switch (tab.value) {
     // Name and proposal about DAO
-    case 0: {
-      console.log('Name and proposal about DAO');
+    case 0:  {
+      dataConfig.value.name = document.getElementById("nameDao").value;
+      dataConfig.value.purpose = document.getElementById("purposeDao").value;
+
+      const link = document.getElementById("linkName").value;
+      const title = btoa("Cambio de nombre y propósito del dao");
+      const description = btoa(document.getElementById("reasonName").value);
+
+      addProposal(bond, title, description, link);
+    } break;
+
+     // Estado Legal y Doc
+    case 1: {
+      metadataDao.value.kyc.legacyState = document.getElementById("legacy-state").value;
+      metadataDao.value.kyc.proposalKyc = document.getElementById("proposal-kyc").value;
+
+      const metadata = btoa(JSON.stringify(metadataDao.value));
+      dataConfig.value.metadata = metadata
+
+      const link = document.getElementById("linkState").value;
+      const title = btoa("Cambio Estado legal y Documento");
+      const description = btoa(document.getElementById("reasonState").value);
+
+      addProposal(bond, title, description, link);
+    } break;
+
+    // Enlaces
+    case 2: {
+      const social = [];
+      for(let i = 0; i < daoLinks._rawValue.length; i++) {
+        if(daoLinks._rawValue[i].model) {
+          if(daoLinks._rawValue[i].model.trim() !== '') {
+            social.push(daoLinks._rawValue[i].model.trim());
+          }
+        }
+      }
+
+      metadataDao.value.social = social;
+
+      const metadata = btoa(JSON.stringify(metadataDao.value));
+      dataConfig.value.metadata = metadata
+
+      const link = document.getElementById("linkSocial").value;
+      const title = btoa("Cambio de redes sociales");
+      const description = btoa(document.getElementById("reasonSocial").value);
+
+      addProposal(bond, title, description, link);
     } break;
 
     // Logo change
     case 3: {
-      console.log('Logo change');
+      const responseIpfs = await uploadImgIpfs();
+
+      metadataDao.value.img = responseIpfs?.url;
+
+      const metadata = btoa(JSON.stringify(metadataDao.value));
+      dataConfig.value.metadata = metadata
+      
+      const link = document.getElementById("linkLogo").value;
+      const title = btoa("Cambio de logo");
+      const description = btoa(document.getElementById("reasonLogo").value);
+
+      addProposal(bond, title, description, link);
     } break;
   }
+}
 
-  clearEditing()
-  toast('¡Tu propuesta ha sido enviada\n con éxito!')
+function addProposal(bounty_bond, title, description, link) {
+  const json = {
+    contractId: walletDao.value,
+    methodName: "add_proposal",
+    args: {
+      proposal: {
+        title: title,
+        description: description,
+        kind: {
+          ChangeConfig: {config: dataConfig._rawValue}
+        },
+        link: link,
+      }
+    },
+    gas: "200000000000000",
+    attachedDeposit: bounty_bond.toString()
+  };
+
+  console.log("json", json);
+
+  WalletP2p.call(json, "proposals", ("?dao="+walletDao.value));
+
+  // clearEditing();
 }
 
 function handleLoadFile(event) {

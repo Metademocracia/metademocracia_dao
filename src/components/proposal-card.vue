@@ -9,7 +9,7 @@
       <v-card-title class="flex-column pa-0" style="gap: 20px; overflow: visible;">
         <div class="flex-space-center">
           <label>Proposal type: {{ proposal?.type }}</label>
-          
+
           <v-btn icon color="transparent" elevation="0" size="20px" class="relative clear-overlay" :ripple="false">
             <v-icon
               class="text-tertiary"
@@ -22,20 +22,22 @@
 
         <div class="flex-space-center flex-wrap">
           <v-btn
+            v-if="proposal?.title"
             :text="proposal?.title"
             append-icon="mdi-link"
             class="title-linked px-0"
           />
 
-          <span class="text-tertiary ml-auto" style="--fs: 0.875em">Approved at: {{ proposal?.date }}</span>
+          <span v-if="proposal?.date" class="text-tertiary ml-auto" style="--fs: 0.875em">Approved at: {{ proposal?.date }}</span>
         </div>
       </v-card-title>
-      
+
       <hr class="my-3">
 
       <v-card-text class="pa-0 pr-1 d-flex flex-column">
         <div class="card__content">
           <img
+            v-if="proposal?.approved !==null"
             :src="proposal?.approved ? ApprovedIcon : FailedIcon"
             :alt="proposal?.approved ? 'proposal approved' : 'proposal failed'"
             class="mr-5"
@@ -45,18 +47,67 @@
           <p class="label mb-2">Proposer</p>
           <p>{{ proposal?.proposer }}</p>
 
-          <p class="label mb-2">Description</p>
-          <p class="ellipsis-box" style="--lines: 6">{{ proposal?.description }}</p>
+          
+          <span v-if="proposal?.type == 'ChangeConfig'">
+            <p class="label mb-2">Motivo</p>
+            <p class="ellipsis-box" style="--lines: 6; color: black !important;"> {{ proposal?.description }}</p>
+            <!--<p class="ellipsis-box" style="--lines: 6; color: black !important;"> el motivo es</p>-->
+
+            <span v-if="proposal?.title == 'Cambio de nombre y proposito del dao' || proposal?.title == 'Cambio de nombre y propósito del dao'">
+              <p class="label mb-2">Nuevo nombre</p>
+              <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal?.config?.name }}</p>
+
+              <p class="label mb-2">Nuevo propósito</p>
+              <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal?.config?.purpose }}</p>
+            </span>
+
+            <span v-if="proposal?.title == 'Cambio Estado legal y Documento'">
+              <p class="label mb-2">Nuevo estado legal</p>
+              <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.configMetadata?.kyc?.legacyState }}</p>
+
+              <p class="label mb-2">Nuevo documento</p>
+              <a :href="proposal?.configMetadata?.kyc?.proposalKyc" class="ellipsis-box" style="--lines: 6;" target="_blank"> {{ proposal?.configMetadata?.kyc?.proposalKyc }}</a>
+            </span>
+            
+            <span v-if="proposal?.title == 'Cambio de redes sociales'">
+              <p class="label mb-2">Nuevas redes sociales</p>
+              <span v-if="proposal?.configMetadata?.social"  v-for="(item, i) in proposal?.configMetadata?.social" :key="i">
+                <a :href="item" class="ellipsis-box" style="--lines: 6;" target="_blank"> {{ item }}</a>
+              </span>
+            </span>
+            
+            <span v-if="proposal?.title == 'Cambio de logo'">
+              <p class="label mb-2">Nuevo logo</p>
+              <a :href="proposal?.configMetadata.img" class="ellipsis-box" style="--lines: 6;" target="_blank"> {{ proposal?.configMetadata.img }}</a>
+            </span>
+
+          </span>
+
+          <span v-else-if="proposal?.type == 'AddMemberToRole' || proposal?.type == 'RemoveMemberFromRole'">
+            <p class="label mb-2">Description</p>
+            <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.description }} </p>
+
+            <p class="label mb-2">Usuario</p>
+            <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal?.member_id }} </p>
+
+            <p class="label mb-2">Rol</p>
+            <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal?.role }} </p>
+          </span>
+
+          <span v-else>
+            <p class="label mb-2">Description</p>
+            <v-div id="description" class="ellipsis-box" style="--lines: 6; color: black !important;" v-html="proposal?.description"></v-div>
+          </span>
         </div>
 
-        <a href="" target="_blank" class="mb-4">
+        <a :href="proposal?.link" target="_blank" class="mb-4 mt-5">
           <v-icon icon="mdi-link" size="20" class="text-secondary" style="rotate: -45deg;" />
-          gov.near.org
+          {{ proposal?.link }}
         </a>
 
         <div class="card__bottom flex-space-center mt-auto" style="gap: clamp(20px, 3vw, 40px);">
           <aside class="flex-grow-1 d-flex flex-wrap flex-spacee justify-start" style="gap: clamp(20px, 3vw, 40px);">
-            <div class="flex-column" style="gap: 10px;">
+            <div v-if="proposal?.claims" class="flex-column" style="gap: 10px;">
               <label>Amount</label>
               <span class="flex-center" style="gap: 4px;">
                 {{ proposal?.amount }}
@@ -69,7 +120,7 @@
               </span>
             </div>
 
-            <div class="flex-column" style="gap: 10px;">
+            <div v-if="proposal?.claims" class="flex-column" style="gap: 10px;">
               <label>Available Claims</label>
               <span>{{ proposal?.claims }}</span>
             </div>
@@ -82,7 +133,7 @@
 
           <aside class="flex-center" style="gap: 20px;">
             <div class="flex-center" style="gap: 10px;">
-              <v-btn icon color="#EEE6F1" elevation="0" size="29">
+              <v-btn icon color="#EEE6F1" elevation="0" size="29" @click="upvote(proposal?.id, proposal?.contractId)">
                 <v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />
               </v-btn>
 
@@ -90,7 +141,7 @@
             </div>
 
             <div class="flex-center" style="gap: 10px;">
-              <v-btn icon color="#EEE6F1" elevation="0" size="29">
+              <v-btn icon color="#EEE6F1" elevation="0" size="29" @click="downvote(proposal?.id, proposal?.contractId)">
                 <v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />
               </v-btn>
 
@@ -107,6 +158,8 @@
 import ApprovedIcon from '@/assets/sources/images/approved.svg'
 import FailedIcon from '@/assets/sources/images/failed.svg'
 import { useRouter } from 'vue-router';
+import WalletP2p from '../services/wallet-p2p';
+
 const
   router = useRouter(),
   props = defineProps({
@@ -116,13 +169,59 @@ const
     }
   })
 
+
+
 function onPressProposal() {
-  router.push({ name: 'ProposalDetails', query: { id: props.proposal.id } })
+  router.push({ name: 'ProposalDetails', query: { dao: props.proposal.contractId, id: props.proposal.id } })
 }
+
+async function upvote(id, contractId) {
+  if(!id && !contractId) return
+
+  const json = {
+    contractId: contractId,
+    methodName: "act_proposal",
+    args: {
+      id: Number(id),
+      action: "VoteApprove"
+    },
+    // gas: "36000000000000",
+    // attachedDeposit: "1000000000000000000"
+  };
+
+  WalletP2p.call(json);
+
+}
+
+
+async function downvote(id, contractId) {
+  if(!id && !contractId) return
+
+  const json = {
+    contractId: contractId,
+    methodName: "act_proposal",
+    args: {
+      id: Number(id),
+      action: "VoteReject"
+    },
+    // gas: "36000000000000"
+    // attachedDeposit: "100000000000000000000"
+  };
+
+  WalletP2p.call(json);
+
+}
+
 </script>
 
 <style lang="scss">
 @import '@/assets/styles/main.scss';
+
+#description {
+  b {
+    color: black !important;
+  }
+}
 
 .proposal-card {
   $media: 700px;
@@ -155,7 +254,7 @@ function onPressProposal() {
     border-radius: calc(var(--br) - 1px) !important;
     height: 100%;
     padding: 20px;
-    
+
     span {
       color: #333 !important;
       font-size: var(--fs, 1em) !important;
@@ -194,7 +293,7 @@ function onPressProposal() {
   align-items: center;
   justify-content: space-between;
   padding-inline: 20px;
-  
+
   border-radius: calc(var(--br) - 2px) !important;
   background-color: #8A5FA4;
 }

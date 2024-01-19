@@ -286,54 +286,15 @@ export default {
       const account = await nearConnection.account(address);
 
 
-      const response = await account.viewFunction(
-        "nftv3.metademocracia.testnet",
-        "nft_total_supply "
-      );
-
-      console.log(response)
-    },
-
-    async crearDao(){
-      const privateKey = 'hrpalencia.testnet';
-      const address =  'ed25519:37ZTUen2sqCeqk2gxZFDSxF1FHUNqdfUxXhuPbmJnjiQdAxGe79XqZfbAGfjjeCfcT5JSgWGC2Q7JipuWCEPTgaw';
-
-
-      // creates a public / private key pair using the provided private key
-      // adds the keyPair you created to keyStore
-      const myKeyStore = new keyStores.InMemoryKeyStore();
-      const keyPairOld = KeyPair.fromString(privateKey);
-      await myKeyStore.setKey(process.env.NETWORK, address, keyPairOld);
-
-
-
-
-      const nearConnection = await connect(configNear(myKeyStore));
-      const account = await nearConnection.account(address);
-
-      // const creatorAccount = await nearConnection.account(address);
-      const {seedPhrase, secretKey} = nearSeedPhrase.generateSeedPhrase();
-      const keyPairNew = KeyPair.fromString(secretKey);// KeyPair.fromRandom("ed25519");
-      // const publicKey = keyPairNew.publicKey.toString();
-      await myKeyStore.setKey(process.env.NETWORK, nickname, keyPairNew);
-
-
-      const response = await account.functionCall({
-        contractId: "factory.metademocracia.testnet",
-        methodName: "create ",
-        args: {
-          name: "genesis",
-          args: {
-            "config": {"name": "genesis", "purpose": "Genesis DAO", "metadata":""},
-            "policy": ["prueba1.testnet", "prueba2.testnet"]
-          },
-        },
-        gas: "150000000000000",
-        attachedDeposit: "10000000000000000000000000",
+      const response = await account.viewFunction({
+        contractId: "nftv3.metademocracia.testnet",
+        methodName: "nft_total_supply"
       });
 
       console.log(response)
     },
+
+
 
     loadChart(response) {
       if(response){

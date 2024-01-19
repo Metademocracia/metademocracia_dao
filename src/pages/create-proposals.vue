@@ -500,7 +500,7 @@ export default{
       };
 
       WalletP2p.call(json, "proposals");
-    }
+    },
 
 
   },

@@ -10,18 +10,23 @@
     ]"
     :items="items"
   >
-    <template #item.all="{ item }">
-      <v-checkbox
-        v-model="item.all"
-        density="compact"
-        class="flex-center"
-        true-icon="mdi-checkbox-outline"
-        :readonly="readOnly"
-        hide-details
-      />
+    <template #item="{ item }">
+      <tr>
+        <td>{{ item.name }}</td>
+        <td v-for="(data, j) in item.group" :key="j">
+          <v-checkbox
+            v-model="data.value"
+            density="compact"
+            class="flex-center"
+            true-icon="mdi-checkbox-outline"
+            :readonly="readOnly"
+            hide-details
+          />
+        </td>
+      </tr>
     </template>
 
-    <template #item.group="{ item }">
+    <!--<template #item.group="{ item }">
       <v-checkbox
         v-model="item.group"
         density="compact"
@@ -41,7 +46,7 @@
         :readonly="readOnly"
         hide-details
       />
-    </template>
+    </template>-->
   </v-data-table>
 </template>
 

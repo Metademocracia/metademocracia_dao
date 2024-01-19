@@ -22,7 +22,7 @@
           <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;" class="member-img">
           <span style="font-weight: 700!important; line-height: 1.6ch;">
             Nombre de la Dao <br>
-            <span style="font-size: 11px; font-weight: 400 !important;">daoname.sputnik-dao.near</span>
+            <span style="font-size: 11px; font-weight: 400 !important;">{{ walletDao }}</span>
             <!-- <span style="font-size: 1.5rem;" v-if="result">{{ result?.serie?.supply }}</span> -->
           </span>
         </div>
@@ -93,20 +93,24 @@
         </div>
       </div>
 
-      <div class="bottom-options">
+      <div
+        v-if="daoActive"
+        class="bottom-options"
+      >
         <v-tabs v-model="tab" center-active slider-color="transparent">
-          <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: canActive && i === tab }" :to="item.to">
+          <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: canActive && i === tab }" @click="routeRedirect(item.to)" >
             <img :src="item.icon" :alt="`${item.name} icon`" class="mr-2" style="width: 20px;">
             {{ item.name }}
           </v-tab>
         </v-tabs>
-        
+
         <v-tooltip
+          v-if="create_proposal"
           location="top center"
           content-class="tooltip"
         >
           <template #activator="{ props }">
-            <v-tab v-bind="props" style="background-color: rgba(50, 92, 151, .8);" min-width="75" to="/create-proposal">
+            <v-tab v-bind="props" style="background-color: rgba(50, 92, 151, .8);" min-width="75" @click="createProposal()">
               <img src="@/assets/sources/icons/plus.svg" alt="create proposal" style="width: 20px;">
             </v-tab>
           </template>
@@ -135,6 +139,18 @@ import { ref } from 'vue';
 export default {
   setup(){
     return{
+      route: "",
+      routes: [
+        'Proposals',
+        'proposals',
+        'proposal-details',
+        'create-proposal',
+        'members',
+        'funds',
+        'settings',
+        'general-settings',
+        'policy-settings',
+      ],
       tab: ref(3),
       dialog: ref(false),
       required: [v => !!v || 'Ingrese un monto'],
@@ -143,22 +159,22 @@ export default {
         {
           name: "Propuestas",
           icon: proposalIcon,
-          to: "/proposals"
+          to: "proposals"
         },
         {
           name: "Fondos",
           icon: fundsIcon,
-          to: "/funds"
+          to: "funds"
         },
         {
           name: "Miembros",
           icon: membersIcon,
-          to: "/members"
+          to: "members"
         },
         {
           name: "Configuración",
           icon: settingsIcon,
-          to: "/settings"
+          to: "settings"
         },
       ],
       tokens: [
@@ -169,15 +185,66 @@ export default {
       ],
       selectedToken: "NEAR",
       amount_near: ref(null),
+      create_proposal: ref(false),
+      create_proposal_route: ref(null),
+      walletDao: ref(""),
     }
   },
   computed: {
     canActive() {
       return this.$route.name != "Home" && this.$route.name != "CreateProposal"
+    },
+    
+    daoActive() {
+      this.route = this.$route.path.replace("/", "");
+      const dao = this.$route.query?.dao
+
+      // this.routes.find((route) => route === route)
+
+      if(dao) {
+        this.walletDao = dao;
+        const result = this.routes.find((routeFind) => routeFind === this.route)
+
+        if(!result) return false
+
+        this.create_proposal_route = dao
+        this.create_proposal = true;
+        
+        return true
+      }
+
+      this.walletDao = process.env.CONTRACT_DAO;
+      return false
     }
   },
 
+  beforeMount() {
+    /* this.route = window.location.pathname.split('/').at(-1);
+    
+    //console.log("query: ", this.$route.query.dao)
+    const dao = this.$route.query?.dao
+    
+    if(dao) {
+      this.create_proposal_route = dao
+      this.create_proposal = true;
+    } */
+  },
+
+
   methods: {
+    /* isRouteValid() {
+      return this.routes.find((route) => route === this.route)
+    }, */
+
+    routeRedirect(route){
+      if(!this.create_proposal_route) return
+
+      this.$router.push({ path: route, query: {dao: this.create_proposal_route}  })
+    },
+
+    createProposal() {
+      this.$router.push({ path: 'create-proposal', query: {dao: this.create_proposal_route}  })
+    },
     async openDialog() {
       console.log(WalletP2p.getAccount().address)
       if(!WalletP2p.getAccount().address) {
@@ -191,7 +258,7 @@ export default {
         this.dialog = true;
       }
     },
-    
+
     delegate(){
       const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
       const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()

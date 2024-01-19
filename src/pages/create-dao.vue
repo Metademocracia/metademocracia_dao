@@ -24,6 +24,7 @@
         <!-- STEP 1 -->
         <v-window-item :value="0">
           <form-card
+            v-model="formulario"
             :window-step="windowStep"
             :steps="steps"
             required
@@ -35,25 +36,27 @@
           >
             <label for="name">Nombre del DAO:</label>
             <v-text-field
+              v-model="nameDao"
               id="name"
               placeholder="Nombre del DAO"
               variant="solo"
               class="mb-1"
               :rules="[globalRules.required]"
+              @change="funAddress()"
             />
 
             <label for="address">Dirección DAO (auto llenado):</label>
-            <v-autocomplete
+            <v-text-field
               id="address"
-              placeholder="prueba-de-dao.sputnikv2.testnet"
+              v-model="addressDao"
               variant="solo"
               class="mb-1"
-              :items="['prueba-de-dao.sputnikv2.testnet']"
-              :rules="[globalRules.required]"
+              readOnly
             />
 
             <label for="proposal-dao">Propósito</label>
             <v-textarea
+              v-model="formItems.purpose"
               id="proposal-dao"
               placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis accumsan urna ac placerat. Ut scelerisque eu ligula ac rhoncus. Aliquam sagittis sapien sit amet libero ultricies varius. Curabitur ac ligula ultricies, semper ipsum nec, auctor sapien. Etiam nec sem ac mauris imperdiet rutrum. Sed mi dui, mattis vel ipsum eget, dictum interdum augue. Donec mollis congue enim quis dignissim. Ut egestas dolor at mauris suscipit dictum. Quisque at sollicitudin"
               variant="solo"
@@ -75,14 +78,16 @@
           >
             <label for="legacy-state">Explique el estado legal y la jurisdicción de su DAO ( si se conoce) :</label>
             <v-text-field
+              v-model="formItems.legacyState"
               id="legacy-state"
               placeholder="Estado legal del DAO"
               variant="solo"
               class="mb-1"
             />
 
-            <label for="proposal-kyc">Propósito</label>
+            <label for="proposal-kyc">Documento Legal</label>
             <v-text-field
+              v-model="formItems.proposalKyc"
               id="proposal-kyc"
               placeholder="https:// Documento_Legal"
               variant="solo"
@@ -139,13 +144,21 @@
             @prev="windowStep--"
             @next="windowStep++"
           >
-            <label for="default-groups" style="color: #333 !important;">Grupos predeterminados</label>
+            <label style="color: #333 !important;">Grupos predeterminados</label>
             <span class="d-block mb-3" style="color: #939393 !important;">No puedes eliminarlos</span>
             <v-text-field
-              id="default-groups"
+              value="all"
+              placeholder="all"
+              variant="solo"
+              class="mb-1"
+              readOnly
+            />
+            <v-text-field
+              value="council"
               placeholder="council"
               variant="solo"
               class="mb-1"
+              readOnly
             />
 
             <p class="d-block mb-3">Grupos personalizados</p>
@@ -183,7 +196,7 @@
             :steps="steps"
             title="Agregar Miembros (Opcional)"
             @prev="windowStep--"
-            @next="windowStep++"
+            @next="() => {windowStep++; getData()}"
           >
             <p class="d-block mb-3">Agregue miembros a su DAO.</p>
 
@@ -196,8 +209,8 @@
 
               <v-autocomplete
                 v-model="item.type"
-                placeholder="Council"
-                :items="['Council']"
+                placeholder="council"
+                :items="getGroups(['council'])"
                 variant="solo"
               />
 
@@ -207,7 +220,7 @@
                 :color="i == daoMembers.length - 1 ? '#61C2D5' : '#505050'"
                 style="border-radius: 8px !important;"
                 @click="() => {
-                  if (i == daoMembers.length - 1) return daoMembers.push({ model: undefined })
+                  if (i == daoMembers.length - 1) return daoMembers.push({  member: undefined, type: undefined })
                   daoMembers.splice(i, 1)
                 }"
               >
@@ -229,7 +242,9 @@
           >
             <p class="d-block mb-10">Elija qué derechos de creación le otorga a los grupos DAO. Esto se puede cambiar en la configuración más adelante</p>
 
-            <table-rights :items="proposals" />
+            <table-rights :headers="headerRights" :items="proposals">
+
+            </table-rights>
           </form-card>
         </v-window-item>
 
@@ -245,7 +260,7 @@
           >
             <p class="d-block mb-10">Elija qué derechos de voto le otorga a los grupos DAO</p>
 
-            <table-rights :items="permissions" />
+            <table-rights :headers="headerRights" :items="permissions" />
           </form-card>
         </v-window-item>
 
@@ -263,7 +278,15 @@
             <p class="d-block mb-6">Coloca el logo de tu DAO es opcional. Si omite, se utilizará la imagen predeterminada</p>
 
             <div class="flex-column-center mx-auto" style="gap: 20px;">
-              <input ref="fileRef" type="file" accept="image/*" class="d-none" @change="handleLoadFile">
+              <v-file-input
+                id="fileRef"
+                ref="fileRef"
+                v-model="imgDao"
+                type="file"
+                accept="image/*"
+                class="d-none"
+                @change="handleLoadFile"
+              ></v-file-input>
               <v-img-load
                 :src="daoLogoPreview"
                 width="110"
@@ -290,9 +313,9 @@
               <div class="flex-center text-end ml-auto" style="gap: 20px;">
                 <div class="flex-column" style="gap: 5px;">
                   <label>Costo</label>
-                  <span style="font-size: var(--value-fs) !important;">6 NEAR</span>
+                  <span style="font-size: var(--value-fs) !important;">10 NEAR</span>
                 </div>
-                
+
                 <div class="flex-column" style="gap: 5px;">
                   <label>TGas</label>
                   <span style="font-size: var(--value-fs) !important;">300</span>
@@ -313,11 +336,15 @@ import TableRights from '@/components/table-rights.vue'
 import variables from '@/mixins/variables';
 import { getUrlFromFile } from '@/plugins/functions';
 import { onBeforeMount } from 'vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
+import axios from 'axios';
+import WalletP2p from '../services/wallet-p2p';
+
 const
   toast = useToast(),
   { globalRules } = variables,
+
 
 windowStep = ref(0),
 steps = [
@@ -335,84 +362,97 @@ customGroups = ref([ { model: undefined } ]),
 daoMembers = ref([ { member: undefined, type: undefined } ]),
 proposals = ref([]),
 permissions = ref([]),
+rights = ref([
+  { name: "Cambiar configuración de DAO", key: "ChangeConfig"},
+  { name: "Cambiar la política de DAO", key: "ChangePolicy"},
+  // { name: "Recompensa", key: ""},
+  { name: "Transferencia", key: "Transfer"},
+  { name: "Encuestas", key: "Vote"},
+  { name: "Eliminar miembros", key: "RemoveMemberFromRole"},
+  { name: "Agregar miembros", key: "AddMemberToRole"},
+  { name: "Llamada de función", key: "FunctionCall"},
+  /* { name: "Actualizar auto", key: ""},
+  { name: "Actualizar remoto", key: ""},
+  { name: "Establecer token de voto", key: ""}, */
+]),
+headerRights = ref([]),
 fileRef = ref(),
-daoLogoPreview = ref(null)
+daoLogoPreview = ref(null),
+formulario = ref(undefined),
+formItems = ref({}),
+imgDao = ref(null),
+nameDao = ref(null),
+addressDao = ref(process.env.CONTRACT_FACTORY)
 
+watch(nameDao, async (newName, oldName) => {
+  if(newName){
+    nameDao.value = newName.replace(" ", "-").replace(/[^a-z-0-9]/,'')
+  }
+})
+//this.value.replace(/[^a-zA-Z0-9]/,'')"
 
-onBeforeMount(getData)
+// onBeforeMount(getData)
+
+function getGroups(groups=['all', 'council']) {
+  for(let i = 0; i< customGroups.value.length; i++) {
+    if(customGroups.value[i].model) {
+      if(customGroups.value[i].model.trim() !== '') {
+        groups.push(customGroups.value[i].model.trim());
+      }
+    }
+
+  }
+
+  return groups
+}
 
 function getData() {
-  const rights = [
-    {
-      name: "Cambiar configuración de DAO",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Cambiar la política de DAO",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Recompensa",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Transferencia",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Encuestas",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Eliminar miembros",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Agregar miembros",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Llamada de función",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Actualizar auto",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Actualizar remoto",
-      all: false,
-      group: true,
-      council: true
-    },
-    {
-      name: "Establecer token de voto",
-      all: false,
-      group: true,
-      council: true
-    },
-  ]
 
-  proposals.value = rights
-  permissions.value = rights
+  if(proposals.value.length > 0) return
+
+  const groups = getGroups()
+
+  const header = [
+    { key: 'name', sortable: false },
+    // { key: 'all', title: 'Todos', align: 'center', sortable: false },
+    // { key: 'council', title: 'Council', align: 'center', sortable: false },
+  ];
+
+  for(let i=0; i<groups.length; i++){
+    header.push({ key: groups[i], title: groups[i], align: 'center', sortable: false })
+  }
+
+  headerRights.value = header;
+
+
+  const rights3 = [];
+
+  const rights4 = [];
+
+  for(const items of rights.value){
+    rights3.push({
+      name: items.name,
+      key: items.key,
+      group: groups.map((item) => {
+        return {
+          name: item, value: item === 'council'
+        }
+      }),
+    });
+
+    rights4.push({
+      name: items.name,
+      key: items.key,
+      group: groups.map((item) => {
+        return {
+          name: item, value: item === 'council'
+        }
+      }),
+    });
+  }
+
+  proposals.value = rights3;
+  permissions.value = rights4;
 }
 
 function handleLoadFile(event) {
@@ -421,10 +461,160 @@ function handleLoadFile(event) {
   daoLogoPreview.value = getUrlFromFile(file)
 }
 
-function createDao(formValid) {
+function funAddress() {
+  const address = process.env.CONTRACT_FACTORY;
+  if(nameDao.value) {
+    addressDao.value = nameDao.value.replace(" ", "-") + '.' + address;
+  } else {
+    addressDao.value = address
+  }
+
+}
+
+async function uploadImgIpfs() {
+  if(!imgDao._rawValue) return null
+  console.log("file print 1 ", imgDao._rawValue[0])
+  const resp = await axios.post('https://api.nft.storage/upload', imgDao._rawValue[0], {
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'image/*',
+      Authorization: 'Bearer ' + process.env.KEY_IPFS, // Reemplaza con tu clave de API de nft.storage
+    },
+    maxContentLength: 100 * 1024 * 1024, // Tamaño máximo de la respuesta en bytes (100MB)
+    maxBodyLength: 100 * 1024 * 1024, // Tamaño máximo del cuerpo de la solicitud en bytes (100MB)
+  })/* .then((response) => {
+    console.log(response);
+  }) */
+
+  return {
+    hash: resp.data.value.cid,
+    url: "https://"+resp.data.value.cid+".ipfs.nftstorage.link/"
+  };
+
+}
+
+function getRoles(){
+  const roles = [];
+  for(const group of getGroups()){
+    let rol = [];
+
+    console.log(proposals._rawValue)
+    console.log(proposals.value)
+
+    let countPermision = 0;
+    for(let index=0; index < proposals.value.length; index++) {
+      const proposalKey = proposals.value[index].key;
+      const proposal = proposals.value[index].group.filter((search) => search.name == group )
+      const action = permissions.value[index].group.filter((search) => search.name == group)
+
+
+      if(proposal.length <= 0 || action.length <= 0) continue
+
+      if(proposal[0].value && action[0].value) {
+        rol.push(proposalKey+":*")
+        countPermision +=1;
+      } else if(!proposal[0].value && action[0].value) {
+        rol.push(proposalKey+":VoteApprove")
+        rol.push(proposalKey+":VoteReject")
+        rol.push(proposalKey+":VoteRemove")
+      } else if(proposal[0].value && !action[0].value) {
+        rol.push(proposalKey+":AddProposal")
+      }
+    }
+
+    if(rol.length == countPermision && rol.length > 0) {
+      rol = ["*:*"]
+    }
+
+    if(group == 'all') {
+      roles.push({
+        name: "all",
+        permissions: rol,
+        kind: "Everyone",
+        vote_policy: {}
+      })
+    } else {
+      const members = daoMembers.value.filter((search) => search.type == group).map((data) => {return data.member})
+      roles.push({
+        name: group,
+        kind: {
+            Group: group == 'council' ? [WalletP2p.getAccount().address].concat(members) : members
+        },
+        permissions: rol,
+        vote_policy: {}
+      })
+    }
+
+    console.log("members: ", daoMembers.value.filter((search) => search.type == group).map((data) => {return data.member}))
+  }
+
+  return roles
+}
+
+
+async function createDao(formValid) {
+  console.log(getRoles())
   if (!formValid) return
 
-  console.log('create dao function here');
-  toast('¡Felicidades la DAO ha sido creada\n con éxito!')
+  let img = undefined;
+  if(imgDao._rawValue) {
+    const resulIpfs = await uploadImgIpfs();
+    img = resulIpfs.url;
+  }
+  console.log(await uploadImgIpfs())
+
+  const social = [];
+  for(let i = 0; i< daoLinks._rawValue.length; i++) {
+    if(daoLinks._rawValue[i].model) {
+      if(daoLinks._rawValue[i].model.trim() !== '') {
+        social.push(daoLinks._rawValue[i].model.trim());
+      }
+    }
+  }
+
+  const metadata = btoa(JSON.stringify({
+    kyc: {
+      legacyState: !formItems.legacyState ? null : formItems.legacyState,
+      proposalKyc: !formItems.proposalKyc ? null : formItems.proposalKyc
+    },
+    social: social.length > 0 ? social  : null,
+    img: img ? img : null
+  }));
+
+  const objectJson = {
+    contractId: process.env.CONTRACT_FACTORY,
+    methodName: "create",
+    args: {
+      name: nameDao.value,
+      args: btoa(JSON.stringify({
+        config: {name: nameDao.value, purpose: btoa(formItems._rawValue.purpose), metadata: metadata},
+        //policy: [WalletP2p.getAccount().address, "prueba1.testnet", "prueba2.testnet", "hrpalencia.testnet"],
+        policy: {
+            roles: getRoles(),
+            default_vote_policy: {
+                weight_kind: "RoleWeight",
+                quorum: "0",
+                threshold: [1,2]
+            },
+            proposal_bond: "100000000000000000000000",
+            proposal_period: "604800000000000",
+            bounty_bond: "100000000000000000000000",
+            bounty_forgiveness_period: "604800000000000"
+        },
+      })),
+    },
+    gas: "150000000000000",
+    attachedDeposit: "10000000000000000000000000",
+  };
+
+ // 21b85007de8967c3ec3dd51060bef1a31f5f7d5cd1da82c5765c1966f286ecd7
+  console.log(objectJson)
+
+  WalletP2p.call(objectJson, "daos")
+
+  // toast('¡Felicidades la DAO ha sido creada\n con éxito!')
+
+
+
 }
 </script>

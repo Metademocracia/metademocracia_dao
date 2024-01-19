@@ -53,7 +53,7 @@
       <aside class="flex-grow-1">
         <div class="proposals">
           <proposal-card
-            v-for="(item, i) in proposals" :key="i" 
+            v-for="(item, i) in proposals" :key="i"
             :proposal="item"
           />
         </div>
@@ -71,6 +71,7 @@
 <script>
 import '@/assets/styles/pages/proposals-new.scss'
 import ProposalCard from '@/components/proposal-card.vue'
+import WalletP2p from '../services/wallet-p2p';
 import { ref } from 'vue'
 
 export default {
@@ -78,7 +79,7 @@ export default {
   setup() {
     return {
       tab: ref(0),
-      tabs: ["All", "Function Calls", "Governance", "Transfers", "Bounties", "Members", "Polls"],
+      tabs: ["All", "Function Calls", "Transfers", "Bounties", "Members"],
       filter: ref('all'),
       filters: [
         {
@@ -94,16 +95,13 @@ export default {
           value: "approved"
         },
         {
-          name: "Popular",
-          value: "popular"
-        },
-        {
           name: "Failed",
           value: "failed"
         }
       ],
       proposals: ref([]),
       page: ref(1),
+      wallet_dao: ref(null),
     }
   },
   computed: {
@@ -112,25 +110,64 @@ export default {
     }
   },
   beforeMount() {
+    console.log(window.location.pathname.split('/').at(-1))
+    const valores = window.location.search;
+    const urlParams = new URLSearchParams(valores);
+    var id = urlParams.get('dao');
+    this.wallet_dao = id;
     this.getData()
   },
+
+
   methods: {
-    getData() {
-      for (let i = 0; i < 3; i++) {
+    async getData() {
+      const response = await WalletP2p.view({
+        contractId: this.wallet_dao,
+        methodName: "get_proposals",
+        args: {
+          from_index: 0,
+          limit: 15
+        }
+      });
+      
+      response.reverse()
+
+      for (let i = 0; i < response.length; i++) {
+        const item = response[i];
+
+        const votes = Object.keys(item.vote_counts).map((map) => {return item.vote_counts[map]})
+        console.log(votes)
+
+        let votesup = 0
+        let votesdown = 0
+        for(const vote of votes){
+          console.log(vote[0])
+          votesup += vote[0]
+          votesdown += vote[1]
+        }
+
+        const type = typeof item.kind === "object" ? Object.keys(item.kind)[0] : item.kind;
+        const objectProposal = typeof item.kind === "object" ? item.kind[type] : undefined;
+        const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+        
         this.proposals.push({
-          id: 324,
-          type: "AddBounty",
-          title: "Create a Bounty",
-          date: "32 August 2023",
-          proposer: "andresdom.near\n BGeam",
-          description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis accumsan urna ac placerat. Ut scelerisque eu ligula ac rhoncus. Aliquam sagittis sapien sit amet libero ultricies varius. Curabitur ac ligula ultricies, semper ipsum nec, auctor sapien. Etiam nec sem ac mauris imperdiet rutrum. Sed mi dui, mattis vel ipsum eget, dictum interdum augue. Donec mollis congue enim quis dignissim. Ut egestas dolor at mauris suscipit dictum. Quisque at sollicitudin dolor. Mauris id auctor dui. Duis velit ante, hendrerit in diam vel, tincidunt rutrum lacus. Morbi pulvinar efficitur efficitur. Quisque faucibus purus nec dolor convallis scelerisque. Mauris vitae viverra quam.",
-          approved: true,
-          amount: 7777,
-          claims: 280,
-          remainingTime: "3 months",
-          likes: 111,
-          dislikes: 112,
-        })
+          id: item.id,
+          contractId: this.wallet_dao,
+          type,
+          objectProposal,
+          configMetadata,
+          title: atob(item.title),
+          date: null/*item.submission_time*/,
+          proposer: item.proposer,
+          description: atob(item.description),
+          approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
+          link: item.link,
+          amount: null,
+          claims: null,
+          remainingTime: "una semana",
+          likes: votesup,
+          dislikes: votesdown,
+        });
       }
     }
   }

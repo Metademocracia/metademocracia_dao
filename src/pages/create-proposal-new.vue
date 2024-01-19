@@ -7,79 +7,313 @@
         <v-form v-model="formValid" @submit.prevent="onSubmit">
           <label for="type">Tipo de Propuesta</label>
           <v-select
+            v-model="typeSelect"
             id="type"
             :items="proposalTypes"
           />
 
-          <div class="d-flex" style="gap: 20px;">
-            <div class="flex-grow-1">
-              <label for="title">Título de la propuesta</label>
-              <v-text-field
-                id="title"
-                variant="solo"
-                placeholder="Nombre de la propuesta"
-              />
+          <span v-if="typeSelect">
+            <div class="d-flex" style="gap: 20px;">
+              <div class="flex-grow-1">
+                <label for="title">Título de la propuesta</label>
+                <v-text-field
+                  id="title"
+                  variant="solo"
+                  placeholder="Nombre de la propuesta"
+                />
+              </div>
+
+              <div class="flex-grow-1">
+                <label for="proponent">Proponente</label>
+                <v-text-field
+                  id="proponent"
+                  variant="solo"
+                  disabled
+                  :placeholder="address"
+                />
+              </div>
             </div>
-            
-            <div class="flex-grow-1">
-              <label for="proponent">Proponente</label>
+
+            <label for="description">Descripción</label>
+            <v-textarea
+              id="description"
+              variant="solo"
+              placeholder="Descripción"
+            />
+
+            <label for="link">Link</label>
+            <v-text-field
+              id="link"
+              variant="solo"
+              placeholder="Link_de_prueba.com"
+            />
+
+            <span v-if="typeSelect === 'Agregar miembros'">
+              <label for="member">Member</label>
               <v-text-field
-                id="proponent"
+                id="member"
                 variant="solo"
-                placeholder="andresdom.near"
+                placeholder="member.testnet"
               />
-            </div>
-          </div>
 
-          <label for="description">Descripción</label>
-          <v-textarea
-            id="description"
-            variant="solo"
-            placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis accumsan urna ac placerat. Ut scelerisque eu ligula ac rhoncus. Aliquam sagittis sapien sit amet libero ultricies varius. Curabitur ac ligula ultricies, semper ipsum nec, auctor sapien. Etiam nec sem ac mauris imperdiet rutrum. Sed mi dui, mattis vel ipsum eget, dictum interdum augue. Donec mollis congue enim quis dignissim. Ut egestas dolor at mauris suscipit dictum. Quisque at sollicitudin dolor. Mauris id auctor dui. Duis velit ante, hendrerit in diam vel, tincidunt rutrum lacus. Morbi pulvinar efficitur efficitur. Quisque faucibus purus nec dolor convallis scelerisque. Mauris vitae viverra quam."
-          />
+              <label for="roles">Rol</label>
+              <v-select
+                id="roles"
+                :items="roles"
+              />
+            </span>
 
-          <label for="link">Link</label>
-          <v-text-field
-            id="link"
-            variant="solo"
-            placeholder="Link_de_prueba.com"
-          />
+            <span v-if="typeSelect === 'Eliminar miembros'">
+              <label for="roles">Rol</label>
+              <v-select
+                v-model="roleSelect"
+                id="roles"
+                :items="rolesMembers"
+                item-title="group"
+                item-value="group"
+              />
+              
+              <label for="member">Member</label>
+              <v-select
+                id="member"
+                :items="menbersForRoles"
+              />
+              
+            </span>
 
-          <v-btn
-            class="bg-tertiary"
-            :disabled="!formValid"
-            :loading="loadingBtn"
-            @click="onSubmit"
-          >Crear Propuesta</v-btn>
+            <span v-if="typeSelect === 'Transferencia'">
+              <label for="tokenId">Seleccione el Token</label>
+              <v-select
+                id="tokenId"
+                :items="itemsTokens"
+                item-title="desc"
+                item-value="id"
+              />
+
+              <v-text-field
+                id="member"
+                variant="solo"
+                placeholder="member.testnet"
+              />
+              
+            </span>
+
+            <v-btn
+              class="bg-tertiary"
+              :disabled="!formValid"
+              :loading="loadingBtn"
+              @click="onSubmit"
+            >Crear Propuesta</v-btn>
+          </span>
         </v-form>
       </v-card>
     </v-sheet>
   </div>
 </template>
 
-<script setup>
+<script>
 import '@/assets/styles/pages/create-proposal-new.scss'
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
-const
-  toast = useToast(),
+import WalletP2p from '../services/wallet-p2p';
 
-proposalTypes = ref(["Votación"]),
-formValid = ref(false),
-loadingBtn = ref(false)
+export default {
+  setup() {
+    return {
+      proposalTypes: ref([
+        "Encuestas",
+        "Agregar miembros",
+        "Eliminar miembros",
+        "Transferencia"
+      ]),
+      typeSelect: ref(null),
+      roles: ref([]),
+      formValid: ref(false),
+      loadingBtn: ref(false),
+      address: WalletP2p.getAccount().address,
+      walletDao: ref(""),
+      roleSelect: ref(null),
+      rolesMembers: ref([]),
+      menbersForRoles: ref([]),
+      itemsTokens: [
+        {id: null, desc: "Near"},
+        {id: process.env.CONTRACT_USDT, desc: "USDT"},
+      ]
+    }
+  },
+
+  watch: {
+    roleSelect: function (val) {
+      
+      const result = this.rolesMembers.filter((search) => search.group == val);
+      console.log(val, result.length)
+
+      if(result.length <= 0) {
+        this.menbersForRoles = [];
+        return
+      }
+
+      this.menbersForRoles = result[0].members;
+    }
+  },
+
+  mounted(){
+    const valores = window.location.search;
+    const urlParams = new URLSearchParams(valores);
+    this.walletDao = urlParams.get('dao');
+
+    WalletP2p.view({
+      contractId: this.walletDao,
+      methodName: "get_policy"
+    }).then((response) => {
+      const indexDelete = response.roles.indexOf(response.roles.find((element) => element.name === "all"))
+      if(indexDelete >= 0) {
+        response.roles.splice(indexDelete, 1);
+      }
+
+      this.rolesMembers = response.roles.map((items) => {return { group: items.name, members: items.kind.Group }});
+      this.roles = response.roles.map((items) => {return items.name});
+
+    });
+  },
+
+  methods: {
+    async onSubmit() {
+      const toast = useToast();
+      if (this.loadingBtn.value) return
+      this.loadingBtn = true
+
+      try {
+        console.log(this.typeSelect)
+
+        const responsePolicy = await WalletP2p.view({
+          contractId: this.walletDao,
+          methodName: "get_policy"
+        });
 
 
-async function onSubmit() {
-  if (loadingBtn.value) return
-  loadingBtn.value = true
+        switch (this.typeSelect) {
+          case "Encuestas": this.addVote(responsePolicy?.bounty_bond);
+            break;
 
-  try {
-    // <---- await fetch
-    toast('¡Tu propuesta ha sido creada\n con éxito!')
-  } catch (error) {
-    toast.error(error)
-  }
+          case "Agregar miembros": this.addMembers(responsePolicy?.bounty_bond);
+            break;
+          
+          case "Eliminar miembros": this.deleteMembers(responsePolicy?.bounty_bond);
+            break;
+          
+          case "Transferencia": this.addTransfer(responsePolicy?.bounty_bond);
+            break;
+        }
 
-  loadingBtn.value = false
+        // <---- await fetch
+        // this.addVote();
+        // toast('¡Tu propuesta ha sido creada\n con éxito!')
+      } catch (error) {
+        toast.error(error.toString())
+      }
+
+      this.loadingBtn = false
+    },
+
+    addVote(bounty_bond) {
+      const json = {
+        contractId: this.walletDao,
+        methodName: "add_proposal",
+        args: {
+          proposal: {
+            title: btoa(document.getElementById("title").value),
+            description: btoa(document.getElementById("description").value),
+            kind: "Vote",
+            link: document.getElementById("link").value,
+          }
+        },
+        gas: "200000000000000",
+        attachedDeposit: bounty_bond.toString()
+      };
+
+      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+    },
+
+    addMembers(bounty_bond) {
+      const json = {
+        contractId: this.walletDao,
+        methodName: "add_proposal",
+        args: {
+          proposal: {
+            title: btoa(document.getElementById("title").value),
+            description: btoa(document.getElementById("description").value),
+            kind: {
+              AddMemberToRole: {
+                member_id: document.getElementById("member").value,
+                role: document.getElementById("roles").value,
+              }
+            },
+            link: document.getElementById("link").value,
+          }
+        },
+        gas: "200000000000000",
+        attachedDeposit: bounty_bond.toString()
+      };
+
+      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+    },
+
+    deleteMembers(bounty_bond) {
+      const json = {
+        contractId: this.walletDao,
+        methodName: "add_proposal",
+        args: {
+          proposal: {
+            title: btoa(document.getElementById("title").value),
+            description: btoa(document.getElementById("description").value),
+            kind: {
+              RemoveMemberFromRole: {
+                member_id: document.getElementById("member").value,
+                role: document.getElementById("roles").value,
+              }
+            },
+            link: document.getElementById("link").value,
+          }
+        },
+        gas: "200000000000000",
+        attachedDeposit: bounty_bond.toString()
+      };
+
+      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+    },
+
+    addTransfer(bounty_bond) {
+      const tokenId = document.getElementById("receiverId").value;
+      const amount = document.getElementById("amount").value;
+      const msg = document.getElementById("msg").value;
+
+      const json = {
+        contractId: this.walletDao,
+        methodName: "add_proposal",
+        args: {
+          proposal: {
+            title: btoa(document.getElementById("title").value),
+            description: btoa(document.getElementById("description").value),
+            kind: {
+              Transfer: {
+                token_id: document.getElementById("tokenId").value,
+                receiver_id: document.getElementById("receiverId").value,
+                amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
+                msg: msg ? msg.lenght > 0 ? msg.length : null : null,
+              }
+            },
+            link: document.getElementById("link").value,
+          }
+        },
+        gas: "200000000000000",
+        attachedDeposit: bounty_bond.toString()
+      };
+      console.log("json transfer: ", json)
+      // WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+    },
+
+
+  },
 }
 </script>
