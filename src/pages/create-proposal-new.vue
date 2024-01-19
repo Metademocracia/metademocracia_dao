@@ -20,6 +20,7 @@
                   id="title"
                   variant="solo"
                   placeholder="Nombre de la propuesta"
+                  :rules="[globalRules.required]"
                 />
               </div>
 
@@ -39,6 +40,7 @@
               id="description"
               variant="solo"
               placeholder="Descripción"
+              :rules="[globalRules.required]"
             />
 
             <label for="link">Link</label>
@@ -46,6 +48,7 @@
               id="link"
               variant="solo"
               placeholder="Link_de_prueba.com"
+              :rules="[globalRules.required]"
             />
 
             <span v-if="typeSelect === 'Agregar miembros'">
@@ -54,6 +57,7 @@
                 id="member"
                 variant="solo"
                 placeholder="member.testnet"
+                :rules="[globalRules.required]"
               />
 
               <label for="roles">Rol</label>
@@ -95,6 +99,7 @@
                 id="receiverId"
                 variant="solo"
                 placeholder="member.testnet"
+                :rules="[globalRules.required]"
               />
 
               <label for="amount">Monto</label>
@@ -103,6 +108,7 @@
                 type="number"
                 variant="solo"
                 placeholder="0.0"
+                :rules="[globalRules.required]"
               />
 
               <label for="msg">Mensaje (opcional)</label>
@@ -132,10 +138,13 @@ import '@/assets/styles/pages/create-proposal-new.scss'
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import WalletP2p from '../services/wallet-p2p';
+import variables from '@/mixins/variables';
 
 export default {
   setup() {
+    const  { globalRules } = variables
     return {
+      globalRules,
       proposalTypes: ref([
         "Encuestas",
         "Agregar miembros",
@@ -195,6 +204,9 @@ export default {
 
   methods: {
     async onSubmit() {
+
+      if (!formValid) return
+
       const toast = useToast();
       if (this.loadingBtn.value) return
       this.loadingBtn = true
