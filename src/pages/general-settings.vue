@@ -37,6 +37,7 @@
 
       <label for="nameDao">Nombre</label>
       <v-text-field
+        v-model="nameDao"
         ref="nameDao"
         id="nameDao"
         variant="solo"
@@ -447,9 +448,16 @@ daoLogoPreview = ref(null),
 daoLogo = ref(null),
 walletDao = ref(null),
 metadataDao = ref(null),
-dataConfig = ref(null)
+dataConfig = ref(null),
+nameDao = ref(null)
 
 watch(tab, clearEditing)
+watch(nameDao, async (newName, oldName) => {
+  if(newName){
+    nameDao.value = newName.replace(" ", "-").replace(/[^a-z-0-9]/,'')
+  }
+})
+
 onBeforeMount(getData)
 
 async function getData() {
@@ -516,7 +524,7 @@ async function onCompleted({ formValid }) {
   switch (tab.value) {
     // Name and proposal about DAO
     case 0:  {
-      dataConfig.value.name = document.getElementById("nameDao").value;
+      dataConfig.value.name = nameDao.value;
       dataConfig.value.purpose = document.getElementById("purposeDao").value;
 
       const link = document.getElementById("linkName").value;
