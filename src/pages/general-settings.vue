@@ -38,7 +38,6 @@
       <label for="nameDao">Nombre</label>
       <v-text-field
         v-model="nameDao"
-        ref="nameDao"
         id="nameDao"
         variant="solo"
         placeholder="Nombre"
@@ -457,6 +456,13 @@ watch(nameDao, async (newName, oldName) => {
     nameDao.value = newName.replace(" ", "-").replace(/[^a-z-0-9]/,'')
   }
 })
+/*watch([nameDao, tap], async ([newName, oldName], [tapNew, tapOld]) => {
+    tabs.value.forEach(e => e.editing = false)
+
+  if(newName){
+    nameDao.value = newName.replace(" ", "-").replace(/[^a-z-0-9]/,'')
+  }
+})*/
 
 onBeforeMount(getData)
 
