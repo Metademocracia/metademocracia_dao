@@ -338,7 +338,7 @@ export default {
         attachedDeposit: bounty_bond.toString()
       };
       console.log("json transfer: ", json)
-      // WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
     },
 
 
