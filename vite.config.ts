@@ -17,7 +17,7 @@ export default defineConfig((userConfig) => {
   return {
     base: baseUrl,
     plugins: [
-      inject({ Buffer: ['buffer', 'Buffer'] }),
+      isProduction ? null : inject({ Buffer: ['buffer', 'Buffer'] }),
       vue({
         template: { transformAssetUrls }
       }),
@@ -65,6 +65,9 @@ export default defineConfig((userConfig) => {
     },
     server: {
       port: 3002,
+    },
+    optimizeDeps: {
+      include: ['buffer']
     },
   }
 })

@@ -11,15 +11,20 @@ import '@/assets/styles/main.scss'
 import App from './App.vue'
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
 import { DefaultApolloClient } from '@vue/apollo-composable'
-
-window.global = window;
-// Fix for Buffer not defined
 import { Buffer } from 'buffer'
-if (typeof window !== 'undefined') {
-    window.Buffer = Buffer;
-} else if (typeof global !== 'undefined') {
-    global.Buffer = Buffer;
+window.global = window;
+window.Buffer = Buffer;
+const isProduction = process.env.NODE_ENV === 'production'
+
+if (isProduction) {
+    // Fix for Buffer not defined
+    if (typeof window !== 'undefined') {
+        window.Buffer = Buffer;
+    } else if (typeof global !== 'undefined') {
+        global.Buffer = Buffer;
+    }
 }
+
 
 const httpLink = createHttpLink({
     uri: process.env.ROUTER_GRAPH,
