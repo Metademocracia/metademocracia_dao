@@ -16,7 +16,7 @@ window.global = window;
 window.Buffer = Buffer;
 const isProduction = process.env.NODE_ENV === 'production'
 
-if (isProduction) {
+if (!isProduction) {
     // Fix for Buffer not defined
     if (typeof window !== 'undefined') {
         window.Buffer = Buffer;
