@@ -208,7 +208,7 @@ export default {
 
       const toast = useToast();
       //if (this.loadingBtn.value) return
-      loadingBtn.value = true;
+      this.loadingBtn = true;
 
 
       try {
@@ -223,7 +223,6 @@ export default {
         });
 
         const bounty_bond = (BigInt(responsePolicy?.bounty_bond.toString()) + BigInt(response)).toString()
-        console.log(bounty_bond, response, responsePolicy?.bounty_bond.toString())
 
         switch (this.typeSelect) {
           case "Encuestas": this.addVote(bounty_bond);
@@ -343,7 +342,7 @@ export default {
         gas: "200000000000000",
         attachedDeposit: bounty_bond
       };
-      console.log("json transfer: ", json)
+
       WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
     },
 
