@@ -270,6 +270,8 @@
           <form-card
             :window-step="windowStep"
             :steps="steps"
+            :disabledBtn="loadingBtn"
+            :loadingBtn="loadingBtn"
             title="Crear activos DAO"
             next-text="Crear DAO"
             @prev="windowStep--"
@@ -388,7 +390,8 @@ addressDao = ref(process.env.CONTRACT_FACTORY),
 feeMetadao = ref(null),
 costDeploy = ref("8000000000000000000000000"),
 contractCost = ref(""),
-contractCostNear = ref("")
+contractCostNear = ref(""),
+loadingBtn = ref(false)
 
 watch(nameDao, async (newName, oldName) => {
   if(newName){
@@ -562,7 +565,7 @@ function getRoles(){
       })
     }
 
-    console.log("members: ", daoMembers.value.filter((search) => search.type == group).map((data) => {return data.member}))
+    //console.log("members: ", daoMembers.value.filter((search) => search.type == group).map((data) => {return data.member}))
   }
 
   return roles
@@ -570,15 +573,17 @@ function getRoles(){
 
 
 async function createDao(formValid) {
-  console.log(getRoles())
+  //console.log(getRoles())
   if (!formValid) return
+
+  loadingBtn.value = true;
 
   let img = undefined;
   if(imgDao._rawValue) {
     const resulIpfs = await uploadImgIpfs();
     img = resulIpfs.url;
   }
-  console.log(await uploadImgIpfs())
+  //console.log(await uploadImgIpfs())
 
   const social = [];
   for(let i = 0; i< daoLinks._rawValue.length; i++) {
@@ -627,6 +632,7 @@ async function createDao(formValid) {
  // 21b85007de8967c3ec3dd51060bef1a31f5f7d5cd1da82c5765c1966f286ecd7
   console.log(objectJson)
 
+  loadingBtn.value = false;
   WalletP2p.call(objectJson, "daos")
 
   // toast('¡Felicidades la DAO ha sido creada\n con éxito!')

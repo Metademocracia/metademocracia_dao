@@ -12,7 +12,7 @@
           thickness="1"
           style="height: 40px; opacity: .5; margin-block: auto;"
         />
-        
+
         <div class="flex-column">
           <span>Total Value Locked</span>
           <span>{{ total_value_computed }} USD</span>
@@ -40,7 +40,7 @@
             :alt="item.icon_alt"
             style="--size: 25px; width: var(--size); height: var(--size);"
           >
-  
+
           <div class="flex-column">
             <h5 class="mb-0">{{ item.amount ?? 0.00 }} {{ item.currency }}</h5>
             <span>{{ item.amount_usd }} USD</span>
@@ -50,7 +50,7 @@
     </aside>
 
 
-    <v-window v-model="windowStep" class="container-chart mt-7">
+    <!--<v-window v-model="windowStep" class="container-chart mt-7">
       <div class="flex-space-center">
         <h6 class="mb-0">Actividad</h6>
 
@@ -73,12 +73,12 @@
       </v-window-item>
 
       <v-window-item class="mt-5" :value="1">
-        <VueApexchart type="area" :height="chartHeight" :options="chartOptionsUsdt" :series="seriesUsdt" />
+      <VueApexchart type="area" :height="chartHeight" :options="chartOptionsUsdt" :series="seriesUsdt" />
       </v-window-item>
-    </v-window>
-    
+    </v-window>-->
+
     <v-divider thickness="1" class="my-6" style="opacity: .5;" />
-    
+
     <div class="flex-space-center mb-3">
       <h5 class="mb-0">Transactions</h5>
 
@@ -179,50 +179,12 @@ import { useQuery } from '@vue/apollo-composable';
 import axios from 'axios';
 import gql from 'graphql-tag';
 import graphQl from '@/services/graphQl';
+import WalletP2p from '../services/wallet-p2p';
 
 export default {
   components: { VueApexchart },
   setup() {
-    const QUERY = gql`
-      query MyQuery {
-        serie(id: "1") {
-          supply
-        }
-
-        delegations {
-          total_amount
-          id
-        }
-
-        delegationhists(where: {delegation_: {id: "NEAR"}}, orderBy: date_time, orderDirection: desc) {
-          delegator
-          amount
-          date_time
-        }
-
-        proposaldata(id: "1") {
-          proposal_actives
-          proposal_total
-        }
-      }
-    `,
-    QUERY_USDT = gql`
-      query MyQuery {
-        delegationhists(where: {delegation_: {id: "USDT"}}, orderBy: date_time, orderDirection: desc) {
-          delegator
-          amount
-          date_time
-        }
-      }
-    `,
-    resultChartNear = useQuery(QUERY),
-    resultChartUsdt = useQuery(QUERY_USDT)
-
     return {
-      resultChartNear,
-      resultNear: ref(resultChartNear.result),
-      resultChartUsdt,
-      resultUsdt: ref(resultChartUsdt.result),
 			dao_account_name: process.env.CONTRACT_DAO,
 			total_value: ref(0),
       iconMap: { near, stnear, usdc, usdt },
@@ -285,34 +247,50 @@ export default {
     chartHeight() {
       return window.innerWidth < 690 ? '250px' : '450px'
     },
-    total_value_computed() {
-      if(this.resultChartNear.result) {
-        const balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
-        const balanceNear = this.resultChartNear.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
+    async total_value_computed() {
 
-        this.tokenCards[0].amount = balanceNear.toFixed(5);
-        this.tokenCards[1].amount = balanceUsdt.toFixed(2);
+      const responseNearAmount = await WalletP2p.view({
+        contractId: this.$route.query.dao,
+        methodName: "get_available_amount"
+      });
 
-        axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"})
-        .then((response) => {
-          // console.log("balance: ", response)
-          this.tokenCards[0].amount_usd = Number((balanceNear * response.data[0].value).toFixed(2))
-        }).catch((error) => {
-          console.log("error balane: ", error)
-        })
+      const responseUsdtAmount = await WalletP2p.view({
+        contractId: process.env.CONTRACT_USDT,
+        methodName: "ft_balance_of",
+        args: {account_id: this.$route.query.dao }
+      });
 
-        axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"})
-        .then((response) => {
-          this.tokenCards[1].amount_usd = Number((balanceUsdt * response.data[0].value).toFixed(2))
-        }).catch((error) => {
-          console.log("error balane: ", error)
-        })
+      console.log("aqui: ",responseUsdtAmount)
 
-      }
+      const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
+      const balanceNear = responseNearAmount ? (Number(responseNearAmount) / 1000000000000000000000000) : 0;
+
+      //const balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
+      // const balanceNear = this.resultChartNear.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
+
+      this.tokenCards[0].amount = balanceNear.toFixed(5);
+      this.tokenCards[1].amount = balanceUsdt.toFixed(2);
+
+      axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"})
+      .then((response) => {
+        // console.log("balance: ", response)
+        this.tokenCards[0].amount_usd = Number((balanceNear * response.data[0].value).toFixed(2))
+      }).catch((error) => {
+        console.log("error balane: ", error)
+      })
+
+      axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"})
+      .then((response) => {
+        this.tokenCards[1].amount_usd = Number((balanceUsdt * response.data[0].value).toFixed(2))
+      }).catch((error) => {
+        console.log("error balane: ", error)
+      })
+
+
       return (this.tokenCards[0].amount_usd + this.tokenCards[1].amount_usd).toFixed(2)
     }
   },
-  watch: {
+  /*watch: {
     resultNear(response) {
       this.loadChartNear(response);
     },
@@ -322,13 +300,12 @@ export default {
   },
   beforeMount() {
     this.getData()
-  },
+  },*/
   methods: {
-    getData() {
+    async getData() {
       if(this.resultChartNear.result){
         if(this.resultChartNear.result.delegationhists) {
           this.loadChartNear(this.resultChartNear.result);
-          console.log('here');
         }
       }
       if(this.resultChartUsdt.result){

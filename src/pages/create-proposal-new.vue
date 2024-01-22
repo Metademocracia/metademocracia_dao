@@ -122,7 +122,7 @@
 
             <v-btn
               class="bg-tertiary"
-              :disabled="!formValid"
+              :disabled="!formValid || loadingBtn"
               :loading="loadingBtn"
               @click="onSubmit"
             >Crear Propuesta</v-btn>
@@ -171,7 +171,6 @@ export default {
     roleSelect: function (val) {
 
       const result = this.rolesMembers.filter((search) => search.group == val);
-      console.log(val, result.length)
 
       if(result.length <= 0) {
         this.menbersForRoles = [];
@@ -208,12 +207,11 @@ export default {
       if (!this.formValid) return
 
       const toast = useToast();
-      if (this.loadingBtn.value) return
-      this.loadingBtn = true
+      //if (this.loadingBtn.value) return
+      loadingBtn.value = true;
+
 
       try {
-        console.log(this.typeSelect)
-
         const responsePolicy = await WalletP2p.view({
           contractId: this.walletDao,
           methodName: "get_policy"
@@ -245,6 +243,7 @@ export default {
         // this.addVote();
         // toast('¡Tu propuesta ha sido creada\n con éxito!')
       } catch (error) {
+        loadingBtn.value = false;
         toast.error(error.toString())
       }
 
