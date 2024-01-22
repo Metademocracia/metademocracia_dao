@@ -84,12 +84,12 @@
         <div class="center" style="gap: 10px;">
           <v-icon color="#fff">mdi-instagram</v-icon>
           <v-icon color="#fff">mdi-share-variant</v-icon>
-          <v-btn
+          <!-- <v-btn
             color="rgb(var(--v-theme-tertiary))"
           >
             <img src="@/assets/sources/icons/plus.svg" alt="plus icon" class="mr-1" style="width: 10px;">
             Follow
-          </v-btn>
+          </v-btn> -->
         </div>
       </div>
 
