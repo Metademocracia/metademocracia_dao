@@ -63,7 +63,6 @@ function view(item) {
 }
 
 async function getData() {
-  console.log(WalletP2p.getAccount())
   const query = `query dao {
     daos {
       owner_id
@@ -72,7 +71,7 @@ async function getData() {
   }`;
 
   await graphQl.getQueryDaoV2(query).then(async response => {
-
+    console.log(response)
     const data = response.data.data.daos
 
     for(let i = 0; i < data.length; i++) {

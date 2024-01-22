@@ -7,6 +7,7 @@ import encryp from './encryp';
 import * as nearAPI from "near-api-js";
 const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
 import {configNear} from '../services/nearConfig';
+import nearSeedPhrase from 'near-seed-phrase';
 
 const _routeWallet = process.env.ROUTER_WALLET
 const _routeRpc = process.env.ROUTER_RPC
@@ -57,7 +58,7 @@ function call (json, ruta, param_ruta) {
     error: window.location.origin + window.location.pathname,
     searchError: "?"+urlParams.toString(),
   })/*)*/);
-  
+
   // console.log(JSON.parse(window.atob(token)));
   window.open(_routeWallet+"/execute?token="+token, "_self");
 }
@@ -78,10 +79,19 @@ function getAccount() {
 }
 
 async function view(json) {
-  const privateKey = getAccount().privateKey;
-  const address =  getAccount().address;
+  let privateKey = getAccount().privateKey;
+  let address =  getAccount().address;
 
+  if(!privateKey && !address) {
+    const {secretKey} = await nearSeedPhrase.generateSeedPhrase();
+    const keyPair = KeyPair.fromString(secretKey);
+    const implicitAccountId = Buffer.from(keyPair.getPublicKey().data).toString("hex");
 
+    privateKey = secretKey;
+    address = implicitAccountId;
+  }
+
+  console.log("-*-*-**: ",privateKey, address)
   // creates a public / private key pair using the provided private key
   // adds the keyPair you created to keyStore
   const myKeyStore = new keyStores.InMemoryKeyStore();

@@ -391,7 +391,16 @@ watch(nameDao, async (newName, oldName) => {
 })
 //this.value.replace(/[^a-zA-Z0-9]/,'')"
 
-// onBeforeMount(getData)
+onBeforeMount(getFee)
+
+async function getFee() {
+  const response = await WalletP2p.view({
+    contractId: WalletP2p.getAccount().address,
+    methodName: "get_fee_metadao",
+  });
+
+  console.log("fee: ", response)
+}
 
 function getGroups(groups=['all', 'council']) {
   for(let i = 0; i< customGroups.value.length; i++) {
@@ -407,7 +416,6 @@ function getGroups(groups=['all', 'council']) {
 }
 
 function getData() {
-
   if(proposals.value.length > 0) return
 
   const groups = getGroups()
