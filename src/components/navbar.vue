@@ -106,7 +106,7 @@
         <v-card class="divcol card-menu">
           <a @click="$router.push('/daos')">DAOs</a>
           <a @click="$router.push('/my-daos')">Mis DAOs</a>
-          <a class="d-flex" @click="$router.push('/create-dao')">
+          <a class="d-flex" style="white-space: nowrap;" @click="$router.push('/create-dao')">
             Crear DAOs
             <img class="ml-2" src="@/assets/sources/icons/plus.svg" alt="plus icon">
           </a>
