@@ -95,7 +95,7 @@ async function getData() {
         image: MetademocraciaImage,
         name: responseConfig.name,
         account: response[i],
-        description: responseConfig.purpose.split(" ").length > 0 ? responseConfig.purpose : atob(responseConfig.purpose),
+        description: atob(responseConfig.purpose), // responseConfig.purpose.split(" ").length > 0 ? responseConfig.purpose : atob(responseConfig.purpose),
         funds: 0,
         members: members,
         groups: responsePolicy.roles.length,

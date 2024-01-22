@@ -76,17 +76,17 @@
                 item-title="group"
                 item-value="group"
               />
-              
+
               <label for="member">Member</label>
               <v-select
                 id="member"
                 :items="menbersForRoles"
               />
-              
+
             </span>
 
             <span v-if="typeSelect === 'Transferencia'">
-              
+
               <v-select
                 id="tokenId"
                 :items="itemsTokens"
@@ -117,7 +117,7 @@
                 variant="solo"
                 placeholder="Mensaje (opcional)"
               />
-              
+
             </span>
 
             <v-btn
@@ -169,7 +169,7 @@ export default {
 
   watch: {
     roleSelect: function (val) {
-      
+
       const result = this.rolesMembers.filter((search) => search.group == val);
       console.log(val, result.length)
 
@@ -205,7 +205,7 @@ export default {
   methods: {
     async onSubmit() {
 
-      if (!formValid) return
+      if (!this.formValid) return
 
       const toast = useToast();
       if (this.loadingBtn.value) return
@@ -219,18 +219,25 @@ export default {
           methodName: "get_policy"
         });
 
+        const response = await WalletP2p.view({
+          contractId: this.walletDao,
+          methodName: "get_fee_metadao",
+        });
+
+        const bounty_bond = (BigInt(responsePolicy?.bounty_bond.toString()) + BigInt(response)).toString()
+        console.log(bounty_bond, response, responsePolicy?.bounty_bond.toString())
 
         switch (this.typeSelect) {
-          case "Encuestas": this.addVote(responsePolicy?.bounty_bond);
+          case "Encuestas": this.addVote(bounty_bond);
             break;
 
-          case "Agregar miembros": this.addMembers(responsePolicy?.bounty_bond);
+          case "Agregar miembros": this.addMembers(bounty_bond);
             break;
-          
-          case "Eliminar miembros": this.deleteMembers(responsePolicy?.bounty_bond);
+
+          case "Eliminar miembros": this.deleteMembers(bounty_bond);
             break;
-          
-          case "Transferencia": this.addTransfer(responsePolicy?.bounty_bond);
+
+          case "Transferencia": this.addTransfer(bounty_bond);
             break;
         }
 
@@ -257,7 +264,7 @@ export default {
           }
         },
         gas: "200000000000000",
-        attachedDeposit: bounty_bond.toString()
+        attachedDeposit: bounty_bond
       };
 
       WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
@@ -281,7 +288,7 @@ export default {
           }
         },
         gas: "200000000000000",
-        attachedDeposit: bounty_bond.toString()
+        attachedDeposit: bounty_bond
       };
 
       WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
@@ -305,7 +312,7 @@ export default {
           }
         },
         gas: "200000000000000",
-        attachedDeposit: bounty_bond.toString()
+        attachedDeposit: bounty_bond
       };
 
       WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
@@ -335,7 +342,7 @@ export default {
           }
         },
         gas: "200000000000000",
-        attachedDeposit: bounty_bond.toString()
+        attachedDeposit: bounty_bond
       };
       console.log("json transfer: ", json)
       WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));

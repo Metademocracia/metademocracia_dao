@@ -313,12 +313,12 @@
               <div class="flex-center text-end ml-auto" style="gap: 20px;">
                 <div class="flex-column" style="gap: 5px;">
                   <label>Costo</label>
-                  <span style="font-size: var(--value-fs) !important;">10 NEAR</span>
+                  <span style="font-size: var(--value-fs) !important;">{{ contractCostNear }} NEAR</span>
                 </div>
 
                 <div class="flex-column" style="gap: 5px;">
                   <label>TGas</label>
-                  <span style="font-size: var(--value-fs) !important;">300</span>
+                  <span style="font-size: var(--value-fs) !important;">150</span>
                 </div>
               </div>
             </aside>
@@ -337,6 +337,7 @@ import variables from '@/mixins/variables';
 import { getUrlFromFile } from '@/plugins/functions';
 import { onBeforeMount } from 'vue';
 import { ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import axios from 'axios';
 import WalletP2p from '../services/wallet-p2p';
@@ -344,7 +345,8 @@ import WalletP2p from '../services/wallet-p2p';
 const
   toast = useToast(),
   { globalRules } = variables,
-
+  router = useRouter(),
+  route = useRoute(),
 
 windowStep = ref(0),
 steps = [
@@ -382,7 +384,11 @@ formulario = ref(undefined),
 formItems = ref({}),
 imgDao = ref(null),
 nameDao = ref(null),
-addressDao = ref(process.env.CONTRACT_FACTORY)
+addressDao = ref(process.env.CONTRACT_FACTORY),
+feeMetadao = ref(null),
+costDeploy = ref("8000000000000000000000000"),
+contractCost = ref(""),
+contractCostNear = ref("")
 
 watch(nameDao, async (newName, oldName) => {
   if(newName){
@@ -395,11 +401,14 @@ onBeforeMount(getFee)
 
 async function getFee() {
   const response = await WalletP2p.view({
-    contractId: WalletP2p.getAccount().address,
+    contractId: process.env.CONTRACT_FACTORY,
     methodName: "get_fee_metadao",
   });
 
-  console.log("fee: ", response)
+  feeMetadao.value = response
+  contractCost.value = (BigInt(response) + BigInt(costDeploy.value)).toString()
+  contractCostNear.value = (BigInt(contractCost.value) / BigInt("1000000000000000000000000")).toString()
+
 }
 
 function getGroups(groups=['all', 'council']) {
@@ -612,7 +621,7 @@ async function createDao(formValid) {
       })),
     },
     gas: "150000000000000",
-    attachedDeposit: "10000000000000000000000000",
+    attachedDeposit: contractCost.value, //"10000000000000000000000000",
   };
 
  // 21b85007de8967c3ec3dd51060bef1a31f5f7d5cd1da82c5765c1966f286ecd7

@@ -403,7 +403,7 @@ export default {
           const hash = response_json?.transaction.hash;
           const status_json = response_json?.receipts_outcome[0]?.outcome?.status;
           const receipts_outcome = !response_json?.receipts_outcome ? [] : response_json?.receipts_outcome;
-          
+
           let error = undefined;
           for(const item of receipts_outcome) {
             if(item?.outcome?.status?.Failure){
@@ -411,9 +411,9 @@ export default {
               break
             }
           }
-        
-          let status = status_json?.SuccessValue != undefined ? "Success" : "Failure";
-            
+
+          let status = status_json?.SuccessValue != undefined || status_json?.SuccessReceiptId != undefined ? "Success" : "Failure";
+
           if(status == "Success") {
             const dataAlert = '<p class="mt-5"> <span style="color: black" ><b>Hash:</b></span> <a href="'+ process.env.ROUTER_EXPLORER_NEAR_HASH + hash +'" target="_blank"> '+ hash +' </a></p>';
             this.toast.success({component: formatHtml,
@@ -429,12 +429,12 @@ export default {
               }
             });
           }
-          
+
           const urlParams = new URLSearchParams(window.location.search);
           urlParams.delete("response");
-          
+
           //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
-          
+
           history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
 
         });

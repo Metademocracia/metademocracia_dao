@@ -54,9 +54,9 @@ function call (json, ruta, param_ruta) {
     from: wallet,
     json: json,
     success: ruta ? window.location.origin + process.env.BASE_URL + ruta : window.location.origin + window.location.pathname,
-    search: ruta ? param_ruta : "?"+urlParams.toString(),
+    search: ruta ? param_ruta : urlParams.toString() != "" ? "?"+urlParams.toString() : undefined,
     error: window.location.origin + window.location.pathname,
-    searchError: "?"+urlParams.toString(),
+    searchError: urlParams.toString() != "" ? "?"+urlParams.toString() : undefined,
   })/*)*/);
 
   // console.log(JSON.parse(window.atob(token)));

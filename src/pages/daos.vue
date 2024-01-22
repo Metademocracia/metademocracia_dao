@@ -71,7 +71,6 @@ async function getData() {
   }`;
 
   await graphQl.getQueryDaoV2(query).then(async response => {
-    console.log(response)
     const data = response.data.data.daos
 
     for(let i = 0; i < data.length; i++) {
@@ -105,7 +104,7 @@ async function getData() {
         image: metadata?.img ? metadata.img : MetademocraciaImage,
         name: responseConfig.name,
         account: response[i],
-        description: responseConfig.purpose.split(" ").length > 0 ? responseConfig.purpose : atob(responseConfig.purpose),
+        description: atob(responseConfig.purpose),
         funds: 0,
         members: members,
         groups: responsePolicy.roles.length,
