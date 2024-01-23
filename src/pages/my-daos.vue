@@ -15,6 +15,7 @@
           v-for="(item, i) in daos"
           :key="i"
           :dao="item"
+          :class="{ limited: daos.length <= 2 }"
           @click="view(item)"
         />
       </div>

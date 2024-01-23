@@ -123,6 +123,7 @@
       .v-field__input { padding-right: 0 }
 
       &::after {
+        @media (max-width: 880px) { display: none }
         content: "";
         position: absolute;
         top: 0;
