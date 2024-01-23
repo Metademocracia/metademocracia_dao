@@ -151,7 +151,8 @@ export default {
         'settings',
         'general-settings',
         'policy-settings',
-        'proposals-meta'
+        'proposals-meta',
+        'create-proposal-meta'
       ],
       tab: ref(0),
       dialog: ref(false),
@@ -281,11 +282,19 @@ export default {
     routeRedirect(route){
       if(!this.create_proposal_route) return
 
-      this.$router.push({ path: route, query: {dao: this.create_proposal_route}  })
+      if(process.env.CONTRACT_DAO == this.$route.query?.dao) {
+        this.$router.push({ path: route+'-meta', query: {dao: this.$route.query?.dao}  })
+      } else {
+        this.$router.push({ path: route, query: {dao: this.$route.query?.dao}  })
+      }
     },
 
     createProposal() {
-      this.$router.push({ path: 'create-proposal', query: {dao: this.create_proposal_route}  })
+      if(process.env.CONTRACT_DAO == this.$route.query?.dao) {
+        this.$router.push({ path: 'create-proposal-meta', query: {dao: this.$route.query?.dao}  })
+      } else {
+        this.$router.push({ path: 'create-proposal', query: {dao: this.$route.query?.dao}  })
+      }
     },
     async openDialog() {
       console.log(WalletP2p.getAccount().address)

@@ -1,352 +1,140 @@
-<!-- TODO componente deprecado, pasar funciones al [create-proposal-new.vue] y renombrar archivos al terminar -->
 <template>
-  <v-form ref="formdefault" class="form-align">
-    <div id="create-proposal">
-      <section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">
-        <v-carousel cycle color="#DB107C" :show-arrows="false">
-          <v-carousel-item>
-          <img src="@/assets/sources/images/banner-3.svg" alt="Banner" class="banner-img">
-          </v-carousel-item>
+  <div id="create-proposal">
+    <toolbar title="Crear Propuesta" />
 
-          <v-carousel-item>
-          <img src="@/assets/sources/images/banner-2.svg" alt="Banner" class="banner-img">
-          </v-carousel-item>
+    <v-sheet class="mt-15 flex-grow-1" elevation="3" style="border-radius: 8px; padding: 15px;">
+      <v-card class="flex-column pa-4" elevation="3" color="#FAFAFA">
+        <v-form v-model="formValid" @submit.prevent="onSubmit">
+          <label for="type">Tipo de Propuesta</label>
+          <v-select
+            v-model="typeSelect"
+            id="type"
+            :items="proposalTypes"
+          />
 
-          <v-carousel-item>
-          <img src="@/assets/sources/images/banner-1.svg" alt="Banner" class="banner-img">
-          </v-carousel-item>
-        </v-carousel>
-      </section>
+          <span v-if="typeSelect">
+            <div class="d-flex" style="gap: 20px;">
+              <div class="flex-grow-1">
+                <label for="title">Título de la propuesta</label>
+                <v-text-field
+                  id="title"
+                  variant="solo"
+                  placeholder="Nombre de la propuesta"
+                  :rules="[globalRules.required]"
+                />
+              </div>
 
-      <section class="section2-create-proposal">
-        <v-card class="card mt-16 card-crear">
-          <div class="div-purple">
-            <h4>Crear Propuesta</h4>
-          </div>
+              <div class="flex-grow-1">
+                <label for="proponent">Proponente</label>
+                <v-text-field
+                  id="proponent"
+                  variant="solo"
+                  disabled
+                  :placeholder="address"
+                />
+              </div>
+            </div>
 
-          <v-row class="mt-6">
-            <v-col cols="12" class="col-select">
-              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Acción requerida en el DAO (transferir fondos o votación)">
-                <template v-slot:activator="{ props }">
-                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
-                    <label for="tipo_propuesta">Tipo de Propuesta</label>
-                  </v-badge>
-                </template>
-              </v-tooltip>
+            <label for="description">Descripción</label>
+            <v-textarea
+              id="description"
+              variant="solo"
+              placeholder="Descripción"
+              :rules="[globalRules.required]"
+            />
+
+            <label for="link">Link</label>
+            <v-text-field
+              id="link"
+              variant="solo"
+              placeholder="Link_de_prueba.com"
+              :rules="[globalRules.required]"
+            />
+
+            <span v-if="typeSelect === 'Agregar miembros'">
+              <label for="member">Miembro</label>
+              <v-text-field
+                id="member"
+                variant="solo"
+                placeholder="member.testnet"
+                :rules="[globalRules.required]"
+              />
+
+              <label for="roles">Grupo</label>
               <v-select
-                v-model="tipo_propuesta"
-                id="tipo_propuesta"
-                variant="outlined"
-                :items="itemsTipoPropuesta"
+                id="roles"
+                :items="roles"
+              />
+            </span>
+
+            <span v-if="typeSelect === 'Eliminar miembros'">
+              <label for="roles">Grupo</label>
+              <v-select
+                v-model="roleSelect"
+                id="roles"
+                :items="rolesMembers"
+                item-title="group"
+                item-value="group"
+              />
+
+              <label for="member">Miembro</label>
+              <v-select
+                id="member"
+                :items="menbersForRoles"
+              />
+
+            </span>
+
+            <span v-if="typeSelect === 'Solicitud de fondos'">
+
+              <v-select
+                id="tokenId"
+                :items="itemsTokens"
                 item-title="desc"
                 item-value="id"
-                density="compact"
-                :rules="[v => !!v || 'Es requerido']"
-                rounded
-                menu-icon="mdi-chevron-down"
-                class="select-create"
-                bg-color="#fff"
-                return-object
-                required
-              ></v-select>
-            </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Identificador de la propuesta">
-                <template v-slot:activator="{ props }">
-                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
-                    <label for="titulo_propuesta">Titulo de Propuesta</label>
-                  </v-badge>
-                </template>
-              </v-tooltip>
+              />
+
+              <label for="receiverId">ID de Receptor</label>
               <v-text-field
-              v-model="titulo_propuesta" id="titulo_propuesta" class="input" variant="outlined"
-              elevation="1" placeholder="Titulo de Propuesta" :rules="[globalRules.required]" required
-              ></v-text-field>
-            </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Persona o Wallet que realiza la propuesta">
-                <template v-slot:activator="{ props }">
-                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
-                    <label for="proponente">Proponente</label>
-                  </v-badge>
-                </template>
-              </v-tooltip>
+                id="receiverId"
+                variant="solo"
+                placeholder="member.testnet"
+                :rules="[globalRules.required]"
+              />
+
+              <label for="amount">Monto</label>
               <v-text-field
-              v-model="proponente" id="proponente" class="input" variant="outlined" disabled
-              elevation="1" :placeholder="'ejemplo.'+network" :rules="[globalRules.required]" required
-              ></v-text-field>
-            </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Detalle explicativo de la propuesta a realizar">
-                <template v-slot:activator="{ props }">
-                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
-                    <label for="descripcion">Descripción</label>
-                  </v-badge>
-                </template>
-              </v-tooltip>
+                id="amount"
+                type="number"
+                variant="solo"
+                placeholder="0.0"
+                :rules="[globalRules.required]"
+              />
+
+              <label for="msg">Mensaje (opcional)</label>
               <v-text-field
-              id="descripcion" class="input" variant="outlined"
-              elevation="1" placeholder="Descripción" :rules="[globalRules.required]" required
-              ></v-text-field>
-            </v-col>
-            <v-col xl="6" lg="6" md="6" cols="12">
-              <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Respaldo explicativo en el foro de gobernanza de la propuesta">
-                <template v-slot:activator="{ props }">
-                  <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
-                    <label for="link">Link</label>
-                  </v-badge>
-                </template>
-              </v-tooltip>
-              <v-text-field
-              id="link" class="input" variant="outlined"
-              elevation="1" placeholder="Link" :rules="[globalRules.required]" required
-              ></v-text-field>
-            </v-col>
+                id="msg"
+                variant="solo"
+                placeholder="Mensaje (opcional)"
+              />
 
+            </span>
 
-            <v-col v-if="tipo_propuesta && tipo_propuesta.desc === 'Cambiar política'" xl="6" lg="6" md="6" cols="12">
-              <label for="política">Política</label>
-              <v-text-field
-              id="política" class="input" variant="outlined"
-              elevation="1" placeholder="Política"
-              ></v-text-field>
-            </v-col>
-
-            <template v-if="tipo_propuesta && tipo_propuesta.desc === 'Agregar miembro del grupo'">
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="group_id">ID de Grupo</label>
-                <v-text-field
-                id="group_id" class="input" variant="outlined"
-                elevation="1" placeholder="#123456"
-                ></v-text-field>
-              </v-col>
-
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="member_id">ID de Miembro</label>
-                <v-text-field
-                id="member_id" class="input" variant="outlined"
-                elevation="1" placeholder="#123456"
-                ></v-text-field>
-              </v-col>
-            </template>
-
-            <template v-if="tipo_propuesta && tipo_propuesta.desc === 'Eliminar miembro del grupo'">
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="group_id">ID de Grupo</label>
-                <v-text-field
-                id="group_id" class="input" variant="outlined"
-                elevation="1" placeholder="#123456"
-                ></v-text-field>
-              </v-col>
-
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="member_id">ID de Miembro</label>
-                <v-text-field
-                id="member_id" class="input" variant="outlined"
-                elevation="1" placeholder="#123456"
-                ></v-text-field>
-              </v-col>
-            </template>
-
-            <template v-if="tipo_propuesta && tipo_propuesta.id === 'FunctionCall'">
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="receiver_id">ID contrato</label>
-                <v-text-field
-                id="receiver_id" class="input" variant="outlined"
-                elevation="1" :placeholder="'wallet.' + network" :rules="[globalRules.required]" required
-                ></v-text-field>
-              </v-col>
-
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="method_name">Nombre del método</label>
-                <v-text-field
-                id="method_name" class="input" variant="outlined"
-                elevation="1" placeholder="Nombre del método" :rules="[globalRules.required]" required
-                ></v-text-field>
-              </v-col>
-
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="args">Argumentos</label>
-                <v-text-field
-                id="args" class="input" variant="outlined"
-                elevation="1" placeholder="Argumentos" :rules="[globalRules.required]" required
-                ></v-text-field>
-              </v-col>
-
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="deposit">Deposito</label>
-                <v-text-field
-                id="deposit" class="input" variant="outlined"
-                elevation="1" placeholder="Deposito" :rules="[globalRules.required]" required
-                ></v-text-field>
-              </v-col>
-
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="gas">Gas</label>
-                <v-text-field
-                id="gas" class="input" variant="outlined"
-                elevation="1" placeholder="Gas" :rules="[globalRules.required]" required
-                ></v-text-field>
-              </v-col>
-            </template>
-
-            <template v-if="tipo_propuesta && tipo_propuesta.id === 'Transfer'">
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Token o cryptomoneda a transferir">
-                  <template v-slot:activator="{ props }">
-                    <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
-                      <label for="token_id">ID de Token</label>
-                    </v-badge>
-                  </template>
-                </v-tooltip>
-                <!--<v-text-field
-                id="token_id" class="input" variant="outlined"
-                elevation="1" placeholder="#123456"
-                ></v-text-field>-->
-                <v-select
-                  v-model="token_id"
-                  id="token_id"
-                  variant="outlined"
-                  :items="itemsTokenId"
-                  item-title="desc"
-                  item-value="id"
-                  density="compact"
-                  :selected="token_id"
-                  :rules="[v => !!v || 'Es requerido']"
-                  rounded
-                  menu-icon="mdi-chevron-down"
-                  class="select-create"
-                  bg-color="#fff"
-                  return-object
-                  required
-                ></v-select>
-              </v-col>
-
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Wallet o persona que va a recibir el dinero">
-                  <template v-slot:activator="{ props }">
-                    <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
-                      <label for="receiver_id">ID de Receptor</label>
-                    </v-badge>
-                  </template>
-                </v-tooltip>
-                <v-text-field
-                id="receiver_id" class="input" variant="outlined"
-                elevation="1" :placeholder="'ejemplo.'+network" :rules="[globalRules.required]" required
-                ></v-text-field>
-              </v-col>
-
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Tokens a enviar, ejemplo: 50 USDT">
-                  <template v-slot:activator="{ props }">
-                    <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
-                      <label for="amount">Cantidad</label>
-                    </v-badge>
-                  </template>
-                </v-tooltip>
-
-                <v-text-field
-                id="amount" class="input" variant="outlined" type="number"
-                elevation="1" placeholder="0.00" :rules="[globalRules.required]" required
-                ></v-text-field>
-              </v-col>
-
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <v-tooltip content-class="custom-tooltip" location="top end" offset="10" text="Cualquier mensaje opcional que se desee agrergar">
-                  <template v-slot:activator="{ props }">
-                    <v-badge v-bind="props" inline content="?" text-color="#fff" color="#DB107C">
-                      <label for="msg">Mensaje</label>
-                    </v-badge>
-                  </template>
-                </v-tooltip>
-                <v-text-field
-                id="msg" class="input" variant="outlined"
-                elevation="1" placeholder="Opcional"
-                ></v-text-field>
-              </v-col>
-            </template>
-
-            <template v-if="tipo_propuesta && tipo_propuesta.desc === 'Cambiar política agregar o actualizar rol'">
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="rol_name">Nombre de Rol</label>
-                <v-text-field
-                id="rol_name" class="input" variant="outlined"
-                elevation="1" placeholder="Nombre de Rol"
-                ></v-text-field>
-              </v-col>
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="rol">Rol</label>
-                <v-text-field
-                id="rol" class="input" variant="outlined"
-                elevation="1" placeholder="Rol"
-                ></v-text-field>
-              </v-col>
-            </template>
-
-            <template v-if="tipo_propuesta && tipo_propuesta.desc === 'Cambiar política eliminar rol'">
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="rol_name">Nombre de Rol</label>
-                <v-text-field
-                id="rol_name" class="input" variant="outlined"
-                elevation="1" placeholder="Nombre de Rol"
-                ></v-text-field>
-              </v-col>
-            </template>
-
-            <template v-if="tipo_propuesta && tipo_propuesta.desc === 'Cambiar política actualizar política de votación'">
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="proposal_kind">Tipo de Propuesta</label>
-                <v-text-field
-                id="proposal_kind" class="input" variant="outlined"
-                elevation="1" placeholder="Tipo de Propuesta"
-                ></v-text-field>
-              </v-col>
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="vote_policy">Política de voto</label>
-                <v-text-field
-                id="vote_policy" class="input" variant="outlined"
-                elevation="1" placeholder="Tipo de Propuesta"
-                ></v-text-field>
-              </v-col>
-            </template>
-
-            <template v-if="tipo_propuesta && tipo_propuesta.desc === 'Cambiar los parámetros de actualización de políticas'">
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="proposal_kind">Tipo de Propuesta</label>
-                <v-text-field
-                id="proposal_kind" class="input" variant="outlined"
-                elevation="1" placeholder="Tipo de Propuesta"
-                ></v-text-field>
-              </v-col>
-              <v-col xl="6" lg="6" md="6" cols="12">
-                <label for="parameters">Parámetros</label>
-                <v-text-field
-                id="parameters" class="input" variant="outlined"
-                elevation="1" placeholder="Parámetros"
-                ></v-text-field>
-              </v-col>
-            </template>
-          </v-row>
-
-          <div
-            v-if="session"
-            class="center mt-6"
-          >
             <v-btn
-              style="max-width: 200px;"
-              @click="addProposal()"
-            >
-              Crear Propuesta
-            </v-btn>
-          </div>
-        </v-card>
-      </section>
-    </div>
-  </v-form>
+              class="bg-tertiary"
+              :disabled="!formValid || loadingBtn"
+              :loading="loadingBtn"
+              @click="onSubmit"
+            >Crear Propuesta</v-btn>
+          </span>
+        </v-form>
+      </v-card>
+    </v-sheet>
+  </div>
 </template>
 
 <script>
-import '@/assets/styles/pages/create-proposals.scss'
+import '@/assets/styles/pages/create-proposal-new.scss'
 import { ref } from 'vue';
 import WalletP2p from '../services/wallet-p2p';
 import graphQl from '@/services/graphQl';
@@ -355,20 +143,32 @@ import variables from '@/mixins/variables';
 export default{
   setup(){
     const { globalRules } = variables;
-    const regular_expression_email = process.env.NETWORK == "testnet" ? /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.testnet+$/i : /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.mainnet+$/i;
+    //const regular_expression_email = process.env.NETWORK == "testnet" ? /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.testnet+$/i : /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.mainnet+$/i;
     return{
       Transfer: ref(false),
       session: ref(null),
       globalRules,
-      rules: {
-        address: [
-          v => !!v || 'Es requerido',
-          v =>  regular_expression_email.test(v) || 'Incorrect format'
-        ],
-      },
+      proposalTypes: ref([
+        "Solicitud de fondos",
+        "Votación",
+      ]),
+      typeSelect: ref(null),
+      roles: ref([]),
+      formValid: ref(false),
+      loadingBtn: ref(false),
+      address: WalletP2p.getAccount().address,
+      walletDao: ref(""),
+      roleSelect: ref(null),
+      rolesMembers: ref([]),
+      menbersForRoles: ref([]),
+      itemsTokens: [
+        {id: null, desc: "Near"},
+        {id: process.env.CONTRACT_USDT, desc: "USDT"},
+      ],
+
       network: process.env.NETWORK,
       proponente: WalletP2p.getAccount()?.address,
-      itemsTipoPropuesta: ref([]),
+
       titulo_propuesta: ref(null),
       //proponente: ref(null),
       tipo_propuesta: ref(null),
@@ -379,24 +179,64 @@ export default{
       token_id: ref({id: null, desc: "Near"}),
     }
   },
-  mounted() {
-    this.session = WalletP2p.getAccount().address;
-    this.itemsTipoPropuesta = [
-      // {id: '', desc: 'Cambiar política'},
-      // {id: '', desc: 'Agregar miembro del grupo'},
-      // {id: '', desc: 'Eliminar miembro del grupo'},
-      {id: 'Transfer', desc: 'Solicitud de fondos', fn: this.addTransfer},
-      {id: "Voting", desc: "Votación", fn: this.addVote},
-      // {id: 'FunctionCall', desc: 'Llamar funciones de contratos inteligentes usando el DAO', fn: this.addFunctionCall},
-      // {id: '', desc: 'Cambiar política agregar o actualizar rol'},
-      // {id: '', desc: 'Cambiar política eliminar rol'},
-      // {id: 'ChangePolicyUpdateVotePolicy', desc: 'Cambiar política actualizar política de votación'},
-      // {id: 'ChangePolicyUpdateParameters', desc: 'Cambiar los parámetros de actualización de políticas'}
-    ];
 
-    this.searchBond();
+  watch: {
+    roleSelect: function (val) {
+
+      const result = this.rolesMembers.filter((search) => search.group == val);
+
+      if(result.length <= 0) {
+        this.menbersForRoles = [];
+        return
+      }
+
+      this.menbersForRoles = result[0].members;
+    }
+  },
+
+  mounted() {
+    /*const valores = window.location.search;
+    const urlParams = new URLSearchParams(valores);*/
+    this.walletDao = this.$route.query?.dao
   },
   methods: {
+    async onSubmit() {
+
+      if (!this.formValid) return
+
+      const toast = useToast();
+      //if (this.loadingBtn.value) return
+      this.loadingBtn = true;
+
+
+      try {
+        switch (this.typeSelect) {
+          case "Votación": {
+            const bound = await this.searchBond("addVote")
+            if(!bound) return
+            this.addTransfer(bound)
+          }
+            break;
+
+          case "Solicitud de fondos": {
+            const bound = await this.searchBond("Transfer")
+            if(!bound) return
+            this.addTransfer(bound)
+          }
+            break;
+        }
+
+        // <---- await fetch
+        // this.addVote();
+        // toast('¡Tu propuesta ha sido creada\n con éxito!')
+      } catch (error) {
+        loadingBtn.value = false;
+        toast.error(error.toString())
+      }
+
+      this.loadingBtn = false
+    },
+
     searchBond(tipo_proposal) {
       const query = `query MyQuery {
         proposaldata(id: "1") {
@@ -423,20 +263,24 @@ export default{
     },
 
     addTransfer(bond){
+      const tokenId = document.getElementById("tokenId").value;
+      const amount = document.getElementById("amount").value;
+      const msg = document.getElementById("msg").value;
+
       const json = {
         contractId: process.env.CONTRACT_DAO,
         methodName: "set_proposal",
         args: {
           data: {
-            title: document.getElementById("titulo_propuesta").value,
-            description: document.getElementById("descripcion").value,
-            proponent: document.getElementById("proponente").value,
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            proponent: WalletP2p.getAccount().address,
             kind: {
               Transfer: {
-                token_id: this.token_id.id, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
-                receiver_id: document.getElementById("receiver_id").value,
-                amount: this.token_id.id ? BigInt(Number(document.getElementById("amount").value) * 1000000).toString() : BigInt(Number(document.getElementById("amount").value) * 1000000000000000000000000).toString(),
-                msg: document.getElementById("msg").value ? document.getElementById("msg").value.lenght > 0 ? document.getElementById("msg").value.length : null : null,
+                token_id: tokenId, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
+                receiver_id: document.getElementById("receiverId").value,
+                amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
+                msg: msg ? msg.lenght > 0 ? msg.length : null : null,
               }
             },
             link: document.getElementById("link").value,
@@ -455,9 +299,9 @@ export default{
         methodName: "set_proposal",
         args: {
           data: {
-            title: document.getElementById("titulo_propuesta").value,
-            description: document.getElementById("descripcion").value,
-            proponent: document.getElementById("proponente").value,
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            proponent: WalletP2p.getAccount().address,
             kind: {
               FunctionCall: {
                 receiver_id: document.getElementById("receiver_id").value,
@@ -488,9 +332,9 @@ export default{
         methodName: "set_proposal",
         args: {
           data: {
-            title: document.getElementById("titulo_propuesta").value,
-            description: document.getElementById("descripcion").value,
-            proponent: document.getElementById("proponente").value,
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            proponent: WalletP2p.getAccount().address,
             kind: "Voting",
             link: document.getElementById("link").value,
           }

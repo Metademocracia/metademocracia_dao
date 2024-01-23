@@ -104,6 +104,7 @@ const QUERY = gql`
 `;
 
 export default {
+  components: { ProposalCard },
   setup(){
     const { result, loading,  error } = useQuery(QUERY);
     return{

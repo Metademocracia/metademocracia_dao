@@ -72,6 +72,12 @@ const routes = [
             meta: { head: `Fondos - ${DEFAULT_TITLE}` }
           },
           {
+            path: 'funds-meta',
+            name: 'FundsMeta',
+            component: () => import('@/pages/funds.vue'),
+            meta: { head: `Fondos - ${DEFAULT_TITLE}` }
+          },
+          {
             path: 'settings',
             name: 'Settings',
             component: () => import('@/pages/settings.vue'),

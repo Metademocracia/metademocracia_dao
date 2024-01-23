@@ -317,7 +317,7 @@ export default {
     },
 
     addTransfer(bounty_bond) {
-      const tokenId = document.getElementById("receiverId").value;
+      const tokenId = document.getElementById("tokenId").value;
       const amount = document.getElementById("amount").value;
       const msg = document.getElementById("msg").value;
 
@@ -330,7 +330,7 @@ export default {
             description: btoa(document.getElementById("description").value),
             kind: {
               Transfer: {
-                token_id: document.getElementById("tokenId").value,
+                token_id: tokenId,
                 receiver_id: document.getElementById("receiverId").value,
                 amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
                 msg: msg ? msg.lenght > 0 ? msg.length : null : null,
