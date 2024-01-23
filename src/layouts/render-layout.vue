@@ -255,14 +255,14 @@ export default {
       this.create_proposal = true;
     } */
 
-    switch (this.$route.path) {
-      case '/funds':
+    switch (this.$route.name) {
+      case 'Funds':
         this.tab = 1
         break;
-      case '/members':
+      case 'Members':
         this.tab = 2
         break;
-      case '/settings':
+      case 'Settings':
         this.tab = 3
         break;
       default:
