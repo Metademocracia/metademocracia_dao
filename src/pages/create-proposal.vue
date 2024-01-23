@@ -446,7 +446,7 @@ export default{
         attachedDeposit: bond.toString()
       };
 
-      WalletP2p.call(json, "proposals");
+      WalletP2p.call(json, "proposals-meta");
     },
 
     addFunctionCall(bond){
@@ -478,7 +478,7 @@ export default{
         attachedDeposit: bond.toString()
       };
 
-      WalletP2p.call(json, "proposals");
+      WalletP2p.call(json, "proposals-meta");
     },
 
     addVote(bond) {
@@ -499,7 +499,7 @@ export default{
         attachedDeposit: bond.toString()
       };
 
-      WalletP2p.call(json, "proposals");
+      WalletP2p.call(json, "proposals-meta");
     },
 
 

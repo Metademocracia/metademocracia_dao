@@ -151,7 +151,7 @@
 						<v-btn v-if="session.address" class="mb-6" @click="goCreateProposal()">Crear propuesta</v-btn>
 					</div>
 
-					<v-card v-for="(item, index) in cardsProposals" :key="index" class="card-proposals" @click="$router.push({path: 'proposals-details', query: {id: item.proposals_id}})">
+					<v-card v-for="(item, index) in cardsProposals" :key="index" class="card-proposals" @click="$router.push({path: 'proposal-details-meta', query: {id: item.proposals_id}})">
 						<div class="side-bar">
 							<v-icon>mdi-tray-arrow-up</v-icon>
 							<div class="div-span-side">
@@ -425,7 +425,7 @@ export default {
       this.alert = !isMember || false;
 
       if(isMember) {
-        this.$router.push('create-proposals');
+        this.$router.push('create-proposal-meta');
       }
     },
 

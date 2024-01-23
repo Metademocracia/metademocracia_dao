@@ -438,7 +438,7 @@ export default {
           // attachedDeposit: "100000000000000000000"
         };
 
-        WalletP2p.call(json, "proposals");
+        WalletP2p.call(json, "proposals-meta");
       }
     },
     async downvote(id) {
@@ -457,7 +457,7 @@ export default {
           // attachedDeposit: "100000000000000000000"
         };
 
-        WalletP2p.call(json, "proposals");
+        WalletP2p.call(json, "proposals-meta");
       }
     },
     loadData(response){

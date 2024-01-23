@@ -45,6 +45,7 @@ import { ref, computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import graphQl from '@/services/graphQl';
 import WalletP2p from '../services/wallet-p2p';
+import axios from 'axios';
 
 const
   router = useRouter(),
@@ -59,7 +60,12 @@ paginatedDaos = computed(() => (daos.value.length || 9) / 9)
 onBeforeMount(getData)
 
 function view(item) {
-  router.push({ path: 'Proposals', query: {dao: item.wallet_dao}  })
+  console.log(item)
+  if(process.env.CONTRACT_DAO == item.wallet_dao) {
+    router.push({ path: 'proposals-meta'})
+  } else {
+    router.push({ path: 'Proposals', query: {dao: item.wallet_dao}  })
+  }
 }
 
 async function getData() {
@@ -69,6 +75,59 @@ async function getData() {
       wallet_dao
     }
   }`;
+
+  const queryMeta = `query dao {
+    proposaldata(id: "1") {
+      proposal_actives
+      proposal_total
+    }
+
+    delegations {
+      total_amount
+      id
+    }
+
+    serie(id: "1") {
+      supply
+    }
+  }`;
+
+  await graphQl.getQuery(queryMeta).then(async response => {
+    let total_balance = 0;
+    const delegation_near = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000 : 0;
+    const delegation_usdt = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000 : 0;
+
+    console.log(delegation_near, delegation_usdt)
+
+    axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"})
+    .then((response) => {
+      console.log("balance: ", response, Number((delegation_near * response.data[0].value).toFixed(2)))
+      total_balance += total_balance + Number((delegation_near * response.data[0].value).toFixed(2))
+    }).catch((error) => {
+      console.log("error balane: ", error)
+    });
+
+    axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"})
+    .then((response) => {
+      console.log(Number((delegation_usdt * response.data[0].value).toFixed(2)))
+      total_balance = total_balance + Number((delegation_usdt * response.data[0].value).toFixed(2))
+    }).catch((error) => {
+      console.log("error balane: ", error)
+    });
+
+    daos.value.push({
+      wallet_dao: process.env.CONTRACT_DAO,
+      image: MetademocraciaImage,
+      name: "Metademocracia",
+      account: process.env.CONTRACT_DAO,
+      description: "Metademocracia",
+      funds: total_balance,
+      members: response.data.data?.proposaldata ? response.data.data?.serie?.supply : 0,
+      groups: 1,
+      activeProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_actives : 0,
+      totalProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_total : 0,
+    })
+  })
 
   await graphQl.getQueryDaoV2(query).then(async response => {
     const data = response.data.data.daos
@@ -97,7 +156,6 @@ async function getData() {
       }
 
       const metadata = JSON.parse(atob(responseConfig.metadata))
-      console.log(metadata.img)
 
       daos.value.push({
         wallet_dao: data[i].wallet_dao,

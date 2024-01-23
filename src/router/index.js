@@ -48,6 +48,24 @@ const routes = [
             meta: { head: `Crear propuesta - ${DEFAULT_TITLE}` }
           },
           {
+            path: 'proposals-meta',
+            name: 'ProposalMeta',
+            component: () => import('@/pages/proposals.vue'),
+            meta: { head: `Propuestas - ${DEFAULT_TITLE}` }
+          },
+          {
+            path: 'proposal-details-meta',
+            name: 'ProposalDetailsMeta',
+            component: () => import('@/pages/proposal-details.vue'),
+            meta: { head: `Detalle de propuesta - ${DEFAULT_TITLE}` }
+          },
+          {
+            path: 'create-proposal-meta',
+            name: 'CreateProposalMeta',
+            component: () => import('@/pages/create-proposal.vue'),
+            meta: { head: `Crear propuesta - ${DEFAULT_TITLE}` }
+          },
+          {
             path: 'funds',
             name: 'Funds',
             component: () => import('@/pages/funds-new.vue'),
