@@ -4,7 +4,7 @@
       <v-tabs v-model="tab" slider-color="transparent">
         <v-tab v-for="(item, i) in tabs" :key="i">
           <div class="custom-checkbox mr-2" :class="{ active: tab == i }" />
-          {{ item }}
+          {{ item.name }}
         </v-tab>
       </v-tabs>
     </toolbar>
@@ -79,9 +79,55 @@ export default {
   setup() {
     return {
       tab: ref(0),
-      tabs: ["Todos", "Llamada de función", "Transferencia", "Miembros"],
+      tabs: ref([]),
       filter: ref('all'),
-      filters: [
+      filters: ref([]),
+      proposals: ref([]),
+      page: ref(1),
+      wallet_dao: ref(null),
+      typeDao: ref(false),
+      /*proposal old */
+
+
+    }
+  },
+  computed: {
+    paginatedProposals() {
+      return (this.proposals.length || 3) / 3
+    }
+  },
+  beforeMount() {
+    this.getTypeDao()
+    if(this.typeDao){
+      this.tabs = [
+        { name: "Todos", value: "all" },
+        // {id: "FunctionCall", desc: "Llamadas a Funciones"},
+        //{id: "Gobernancia", desc: "Gobernancia"},
+        {value: "Transfer", name: "Solicitud de fondos"},
+        {value: "Voting", name: "Votación"},
+        // {id: "ChangePolicyUpdateVotePolicy", desc: "Actualizar política de votación"},
+        //{id: "ChangePolicyUpdateParameters", desc: "Actualización parámetros de políticas"},
+        //{id: "Miembros", desc: "Miembros"},
+      ];
+
+      this.filters = [
+        { name: "Todos", value: "all" },
+        { value: "InProgress", name: "Activas"},
+        { value: "Approved", name: "Aprobadas"},
+        { value: "Rejected", name: "Rechazadas"},
+        // { id: "Removed", name: "Removed"},
+        { value: "Expired", name: "Expiradas"},
+        { value: "Failed", name: "Fallidas"},
+      ];
+
+    } else {
+      this.tabs = [
+        {name:"Todos", value: "all"},
+        {name:"Llamada de función", value: "FunctionCall"},
+        {name:"Transferencia", value: "Transfer"},
+        {name:"Miembros", value: "AddMemberToRole"}
+      ];
+      this.filters = [
         {
           name: "Todos",
           value: "all"
@@ -98,25 +144,18 @@ export default {
           name: "Fallidas",
           value: "failed"
         }
-      ],
-      proposals: ref([]),
-      page: ref(1),
-      wallet_dao: ref(null),
-      typeDao: ref(false)
+      ]
     }
-  },
-  computed: {
-    paginatedProposals() {
-      return (this.proposals.length || 3) / 3
-    }
-  },
-  beforeMount() {
+
+
+
+
     console.log(window.location.pathname.split('/').at(-1))
     const valores = window.location.search;
     const urlParams = new URLSearchParams(valores);
     var id = urlParams.get('dao');
     this.wallet_dao = id;
-    this.getTypeDao()
+
     this.getData()
   },
 
