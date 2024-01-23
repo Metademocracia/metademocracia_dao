@@ -10,6 +10,7 @@ const store = createStore({
       email: undefined,
       avatar: undefined,
     },
+    
   },
   mutations: {
     setProfile(state, profile) {

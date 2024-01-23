@@ -102,6 +102,7 @@ export default {
       proposals: ref([]),
       page: ref(1),
       wallet_dao: ref(null),
+      typeDao: ref(false)
     }
   },
   computed: {
@@ -115,11 +116,15 @@ export default {
     const urlParams = new URLSearchParams(valores);
     var id = urlParams.get('dao');
     this.wallet_dao = id;
+    this.getTypeDao()
     this.getData()
   },
 
 
   methods: {
+    getTypeDao() {
+      if (process.env.CONTRACT_DAO === this.$route.query.dao) this.typeDao = true
+    },
     async getData() {
       const response = await WalletP2p.view({
         contractId: this.wallet_dao,

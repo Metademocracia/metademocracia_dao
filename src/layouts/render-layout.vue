@@ -152,32 +152,11 @@ export default {
         'general-settings',
         'policy-settings',
       ],
-      tab: ref(3),
+      tab: ref(0),
       dialog: ref(false),
       required: [v => !!v || 'Ingrese un monto'],
       toggle: ref(0),
-      dataTabs: [
-        {
-          name: "Propuestas",
-          icon: proposalIcon,
-          to: "proposals"
-        },
-        {
-          name: "Fondos",
-          icon: fundsIcon,
-          to: "funds"
-        },
-        {
-          name: "Miembros",
-          icon: membersIcon,
-          to: "members"
-        },
-        {
-          name: "Configuración",
-          icon: settingsIcon,
-          to: "settings"
-        },
-      ],
+      dataTabs: ref([]),
       tokens: [
         {
           name: "NEAR",
@@ -200,6 +179,45 @@ export default {
     daoActive() {
       this.route = this.$route.path.replace("/", "");
       const dao = this.$route.query?.dao
+
+      if (process.env.CONTRACT_DAO !== dao) {
+        this.dataTabs = [
+          {
+            name: "Propuestas",
+            icon: proposalIcon,
+            to: "proposals"
+          },
+          {
+            name: "Fondos",
+            icon: fundsIcon,
+            to: "funds"
+          },
+          {
+            name: "Miembros",
+            icon: membersIcon,
+            to: "members"
+          },
+          {
+            name: "Configuración",
+            icon: settingsIcon,
+            to: "settings"
+          }
+        ]
+      } else {
+        
+        this.dataTabs = [
+          {
+            name: "Propuestas",
+            icon: proposalIcon,
+            to: "proposals"
+          },
+          {
+            name: "Fondos",
+            icon: fundsIcon,
+            to: "funds"
+          }
+        ]
+      }
 
       // this.routes.find((route) => route === route)
 
@@ -236,6 +254,21 @@ export default {
       this.create_proposal_route = dao
       this.create_proposal = true;
     } */
+
+    switch (this.$route.path) {
+      case '/funds':
+        this.tab = 1
+        break;
+      case '/members':
+        this.tab = 2
+        break;
+      case '/settings':
+        this.tab = 3
+        break;
+      default:
+        this.tab = 0
+        break;
+    }
   },
 
 
