@@ -27,13 +27,17 @@
             <v-menu location="bottom">
               <template v-slot:activator="{ props }">
                 <v-btn color="transparent" flat v-bind="props" class="btn-list list-font-btn mt-0">
-                  Propuestas <v-icon>mdi-chevron-down</v-icon>
+                  Daos <v-icon>mdi-chevron-down</v-icon>
                 </v-btn>
               </template>
 
               <v-card class="divcol card-menu">
-                <a @click="$router.push('/proposals')">Propuestas</a>
-                <a @click="goCreateProposal()">Crear propuesta</a>
+                <a @click="$router.push('/daos')">DAOs</a>
+                <a @click="$router.push('/my-daos')">Mis DAOs</a>
+                <a class="d-flex" style="white-space: nowrap;" @click="$router.push('/create-dao')">
+                  Crear DAOs
+                  <img class="ml-2" src="@/assets/sources/icons/plus.svg" alt="plus icon">
+                </a>
               </v-card>
             </v-menu>
 
