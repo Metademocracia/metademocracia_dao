@@ -163,8 +163,8 @@ export default {
       toggle: ref(0),
       delegation_near: ref(0),
       delegation_usdt: ref(0),
-      series: ref(null),
-      chartOptions: ref(null),
+      series: ref([]),
+      chartOptions: ref({}),
 
       chartSeries2: [
         {
@@ -258,70 +258,43 @@ export default {
   },
 
   mounted() {
-    if(this.result){
+    /* if(this.result){
       if(this.result.delegationhists) {
         this.loadChart(this.result);
       }
-    }
-    this.pru()
-
+    } */
   },
 
   methods: {
-    async pru(){
-      const privateKey = 'ed25519:37ZTUen2sqCeqk2gxZFDSxF1FHUNqdfUxXhuPbmJnjiQdAxGe79XqZfbAGfjjeCfcT5JSgWGC2Q7JipuWCEPTgaw';
-      const address =  'hrpalencia.testnet';
-
-
-      // creates a public / private key pair using the provided private key
-      // adds the keyPair you created to keyStore
-      const myKeyStore = new keyStores.InMemoryKeyStore();
-      const keyPairOld = KeyPair.fromString(privateKey);
-      await myKeyStore.setKey(process.env.NETWORK, address, keyPairOld);
-
-
-
-
-      const nearConnection = await connect(configNear(myKeyStore));
-      const account = await nearConnection.account(address);
-
-
-      const response = await account.viewFunction({
-        contractId: "nftv3.metademocracia.testnet",
-        methodName: "nft_total_supply"
-      });
-
-      console.log(response)
-    },
-
-
-
     loadChart(response) {
+
       if(response){
+
         if(response.delegationhists) {
-          this.series = null;
-          this.chartOptions = null;
+          console.log("resp: ", response)
+          this.series = [];
+          this.chartOptions = {};
 
           const data_series = [];
           for(let i = 0; i < response.delegationhists.length; i++){
             data_series.push(Number((response.delegationhists[i].amount / 1000000000000000000000000).toFixed(2)))
           }
 
-          let series = [
+          const series = [
             {
               name: 'series1',
               data: data_series, // [100, 150, 138, 200, 248, 230, 180],
             }
           ];
-
+            console.log(data_series)
 
           const data_chartOptions = [];
           for(let i = 0; i < response.delegationhists.length; i++){
             // data.push(moment(this.result.delegationhists[i].date_time/1000000).format('DD MM HH:MM'))
             data_chartOptions.push(response.delegationhists[i].date_time/1000000)
           }
-
-          let chartOptions = {
+          console.log(data_chartOptions)
+          const chartOptions = {
             tooltip: {
               theme: 'custom-tooltip',
               custom: function({ series, seriesIndex, dataPointIndex, w }) {
@@ -376,9 +349,10 @@ export default {
             },
           };
 
-
           this.series = series;
           this.chartOptions = chartOptions;
+
+          console.log("/////////////////",this.series, "/////////////////", this.chartOptions)
 
         }
       }

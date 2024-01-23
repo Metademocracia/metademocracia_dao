@@ -157,8 +157,9 @@ rights = ref([
   { name: "Actualizar remoto", key: ""},
   { name: "Establecer token de voto", key: ""}, */
 ]),
-headerRights = ref([])
-
+headerRights = ref([]),
+groupsList = ref([]),
+policy = ref([])
 
 watch(tab, clearEditing)
 
@@ -170,7 +171,12 @@ async function getData() {
     methodName: "get_policy"
   });
 
+  if(!responsePolicy) return
+
   const groups = responsePolicy.roles.map((items) => {return items.name});
+  groupsList.value = groups;
+
+  policy.value = responsePolicy;
 
   console.log("ajajaja: ", groups, responsePolicy)
 
@@ -200,7 +206,7 @@ async function getData() {
         "FunctionCall:AddProposal"
     ],
     "vote_policy": {}
-} 
+}
 
   {
     "name": "pruebas",
@@ -221,15 +227,15 @@ async function getData() {
   */
 
   for(const items of rights.value){
-    
+
     const permissionsGroupA = responsePolicy.roles.map((elm) => {
       const value = elm.permissions.includes(elm.permissions.find((search) => search.split(':')[0] == items.key || search.split(':')[0] == '*'))
       return {name: elm.name, value: value}
     });
 
     const permissionsGroupB = responsePolicy.roles.map((elm) => {
-      const value = elm.permissions.includes(elm.permissions.find((search) => 
-        (search.split(':')[0] == items.key && (search.split(':')[1] == 'VoteApprove' || search.split(':')[1] == 'VoteReject' || search.split(':')[1] == 'VoteRemove')) 
+      const value = elm.permissions.includes(elm.permissions.find((search) =>
+        (search.split(':')[0] == items.key && (search.split(':')[1] == 'VoteApprove' || search.split(':')[1] == 'VoteReject' || search.split(':')[1] == 'VoteRemove'))
         || (search.split(':')[0] == items.key && search.split(':')[1] == '*')
       ))
       return {name: elm.name, value: value}
@@ -263,44 +269,97 @@ async function getData() {
   permissions.value = rights4;
 }
 
+function setRoles(){
+  for(let i in policy.value.roles){
+    let rol = [];
+
+    console.log(proposals._rawValue)
+    console.log(proposals.value)
+
+    let countPermision = 0;
+    for(let index=0; index < proposals.value.length; index++) {
+      const proposalKey = proposals.value[index].key;
+      const proposal = proposals.value[index].group.filter((search) => search.name == policy.value.roles[i].name )
+      const action = permissions.value[index].group.filter((search) => search.name == policy.value.roles[i].name)
 
 
-function onCompleted({ formValid, bond, tgas }) {
+      if(proposal.length <= 0 || action.length <= 0) continue
+
+      if(proposal[0].value && action[0].value) {
+        rol.push(proposalKey+":*")
+        countPermision +=1;
+      } else if(!proposal[0].value && action[0].value) {
+        rol.push(proposalKey+":VoteApprove")
+        rol.push(proposalKey+":VoteReject")
+        rol.push(proposalKey+":VoteRemove")
+      } else if(proposal[0].value && !action[0].value) {
+        rol.push(proposalKey+":AddProposal")
+      }
+    }
+
+    if(rol.length == countPermision && rol.length > 0) {
+      rol = ["*:*"]
+    }
+
+    policy.value.roles[i].permissions = rol
+
+    //console.log("members: ", daoMembers.value.filter((search) => search.type == group).map((data) => {return data.member}))
+  }
+}
+
+async function onCompleted({ formValid }) {
   if (!formValid) return
 
-  console.log('here', bond, tgas)
+  setRoles();
+  console.log('here', policy.value)
+  const responsePolicy = await WalletP2p.view({
+    contractId: route.query?.dao,
+    methodName: "get_policy"
+  });
+
+  const response = await WalletP2p.view({
+    contractId: route.query?.dao,
+    methodName: "get_fee_metadao",
+  });
+
+  const bounty_bond = (BigInt(responsePolicy?.bounty_bond.toString()) + BigInt(response)).toString()
+
   switch (tab) {
     // proposal creation
     case 0: {
+      const title = btoa("Cambio permisos creación de propuesta");
+      addProposal(bounty_bond, title)
       console.log('proposal creation');
     } break;
 
     // vote permissions
     case 1: {
+      const title = btoa("Cambio permisos de Voto");
+      addProposal(bounty_bond, title)
       console.log('vote permissions');
     } break;
   }
 
   clearEditing()
-  toast('¡Tu propuesta ha sido enviada\n con éxito!')
+  //toast('¡Tu propuesta ha sido enviada\n con éxito!')
 }
 
-function addProposal(bounty_bond, title, description, link) {
+function addProposal(bounty_bond, title) {
   const json = {
     contractId: walletDao.value,
     methodName: "add_proposal",
     args: {
       proposal: {
         title: title,
-        description: description,
+        description: btoa(document.getElementById("description").value),
         kind: {
-          ChangePolicy: {policy: dataConfig._rawValue}
+          ChangePolicy: {policy: policy._rawValue}
         },
-        link: link,
+        link: document.getElementById("link").value,
       }
     },
     gas: "200000000000000",
-    attachedDeposit: bounty_bond.toString()
+    attachedDeposit: bounty_bond
   };
 
   console.log("json", json);

@@ -1,6 +1,6 @@
 <template>
   <div id="settings">
-    <h5 class="mt-4 mb-8">DAO Settings</h5>
+    <h5 class="mt-4 mb-8">Configuración de DAO</h5>
 
     <section id="settings__content">
       <v-sheet v-for="(item, i) in settings" :key="i">

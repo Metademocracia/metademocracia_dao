@@ -52,7 +52,7 @@
             />
 
             <span v-if="typeSelect === 'Agregar miembros'">
-              <label for="member">Member</label>
+              <label for="member">Miembro</label>
               <v-text-field
                 id="member"
                 variant="solo"
@@ -60,7 +60,7 @@
                 :rules="[globalRules.required]"
               />
 
-              <label for="roles">Rol</label>
+              <label for="roles">Grupo</label>
               <v-select
                 id="roles"
                 :items="roles"
@@ -68,7 +68,7 @@
             </span>
 
             <span v-if="typeSelect === 'Eliminar miembros'">
-              <label for="roles">Rol</label>
+              <label for="roles">Grupo</label>
               <v-select
                 v-model="roleSelect"
                 id="roles"
@@ -77,7 +77,7 @@
                 item-value="group"
               />
 
-              <label for="member">Member</label>
+              <label for="member">Miembro</label>
               <v-select
                 id="member"
                 :items="menbersForRoles"

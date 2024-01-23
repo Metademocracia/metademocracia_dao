@@ -1,6 +1,6 @@
 <template>
   <div id="proposals">
-    <toolbar title="Proposals">
+    <toolbar title="Propuestas">
       <v-tabs v-model="tab" slider-color="transparent">
         <v-tab v-for="(item, i) in tabs" :key="i">
           <div class="custom-checkbox mr-2" :class="{ active: tab == i }" />
@@ -14,7 +14,7 @@
     <section id="proposals__content">
       <!-- controls -->
       <sticky-drawer>
-        <h6 class="mb-3">Choose a filter</h6>
+        <h6 class="mb-3">Elige un filtro</h6>
 
         <v-list density="compact">
           <v-list-item
@@ -30,7 +30,7 @@
           </v-list-item>
         </v-list>
 
-        <h6 class="mt-6 mb-2">Filter by proposer</h6>
+        <h6 class="mt-6 mb-2">Filtrar por proponente</h6>
         <v-text-field
           placeholder="andresdom.near"
           append-inner-icon="mdi-magnify"
@@ -39,7 +39,7 @@
           hide-details
         ></v-text-field>
 
-        <h6 class="mt-6 mb-2">Filter by category</h6>
+        <h6 class="mt-6 mb-2">Filtrar por categoría</h6>
         <v-text-field
           placeholder="lorem ipsum"
           append-inner-icon="mdi-magnify"
@@ -79,23 +79,23 @@ export default {
   setup() {
     return {
       tab: ref(0),
-      tabs: ["All", "Function Calls", "Transfers", "Bounties", "Members"],
+      tabs: ["Todos", "Llamada de función", "Transferencia", "Miembros"],
       filter: ref('all'),
       filters: [
         {
-          name: "All",
+          name: "Todos",
           value: "all"
         },
         {
-          name: "Active",
+          name: "Activas",
           value:"active"
         },
         {
-          name: "Approved",
+          name: "Aprobados",
           value: "approved"
         },
         {
-          name: "Failed",
+          name: "Fallidas",
           value: "failed"
         }
       ],
@@ -129,7 +129,7 @@ export default {
           limit: 15
         }
       });
-      
+
       response.reverse()
 
       for (let i = 0; i < response.length; i++) {
@@ -149,7 +149,7 @@ export default {
         const type = typeof item.kind === "object" ? Object.keys(item.kind)[0] : item.kind;
         const objectProposal = typeof item.kind === "object" ? item.kind[type] : undefined;
         const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
-        
+
         this.proposals.push({
           id: item.id,
           contractId: this.wallet_dao,

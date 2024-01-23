@@ -27,7 +27,7 @@
           </span>
         </div>
 
-
+        <v-form v-model="formValid" @submit.prevent="delegate">
         <v-text-field
           v-model="amount_near"
           id="amount_near"
@@ -74,22 +74,23 @@
             <v-btn
               class="btn-donar"
               style="font-weight: 700!important;"
-              @click="openDialog()"
+              @click="delegate()"
             >Donar</v-btn>
           </template>
         </v-text-field>
+      </v-form>
 
 
 
         <div class="center" style="gap: 10px;">
-          <v-icon color="#fff">mdi-instagram</v-icon>
+          <!--<v-icon color="#fff">mdi-instagram</v-icon>
           <v-icon color="#fff">mdi-share-variant</v-icon>
           <v-btn
             color="rgb(var(--v-theme-tertiary))"
           >
             <img src="@/assets/sources/icons/plus.svg" alt="plus icon" class="mr-1" style="width: 10px;">
             Follow
-          </v-btn>
+          </v-btn>-->
         </div>
       </div>
 
@@ -188,13 +189,14 @@ export default {
       create_proposal: ref(false),
       create_proposal_route: ref(null),
       walletDao: ref(""),
+      formValid: ref(false),
     }
   },
   computed: {
     canActive() {
       return this.$route.name != "Home" && this.$route.name != "CreateProposal"
     },
-    
+
     daoActive() {
       this.route = this.$route.path.replace("/", "");
       const dao = this.$route.query?.dao
@@ -209,7 +211,7 @@ export default {
 
         this.create_proposal_route = dao
         this.create_proposal = true;
-        
+
         return true
       }
 
@@ -218,12 +220,18 @@ export default {
     }
   },
 
+  watch: {
+    amount_near: function(val) {
+      this.amount_near = val.replace(/[^0-9]/,'')
+    }
+  },
+
   beforeMount() {
     /* this.route = window.location.pathname.split('/').at(-1);
-    
+
     //console.log("query: ", this.$route.query.dao)
     const dao = this.$route.query?.dao
-    
+
     if(dao) {
       this.create_proposal_route = dao
       this.create_proposal = true;
@@ -252,14 +260,17 @@ export default {
         return
       }
 
-      const { valid } = await this.$refs.form.validate()
+      const valid = this.formValid
+      console.log(valid)
 
-      if(Number(this.amount_near) && valid) {
+      if(valid) {
         this.dialog = true;
       }
     },
 
     delegate(){
+      if(!this.formValid) return
+
       const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
       const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
 

@@ -523,7 +523,14 @@ async function onCompleted({ formValid }) {
     methodName: "get_policy"
   });
 
-  const bond = responsePolicy?.bounty_bond;
+  const response = await WalletP2p.view({
+    contractId: walletDao.value,
+    methodName: "get_fee_metadao",
+  });
+
+  const bounty_bond = (BigInt(responsePolicy?.bounty_bond.toString()) + BigInt(response)).toString()
+
+  const bond = bounty_bond;
 
   if(!bond) return;
 
@@ -586,7 +593,7 @@ async function onCompleted({ formValid }) {
 
       const metadata = btoa(JSON.stringify(metadataDao.value));
       dataConfig.value.metadata = metadata
-      
+
       const link = document.getElementById("linkLogo").value;
       const title = btoa("Cambio de logo");
       const description = btoa(document.getElementById("reasonLogo").value);
@@ -611,7 +618,7 @@ function addProposal(bounty_bond, title, description, link) {
       }
     },
     gas: "200000000000000",
-    attachedDeposit: bounty_bond.toString()
+    attachedDeposit: bounty_bond
   };
 
   console.log("json", json);

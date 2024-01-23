@@ -3,7 +3,7 @@
     <toolbar title="Tokens">
       <aside class="d-flex flex-center flex-grow-1" style="gap: 20px;">
         <div class="flex-column">
-          <span>DAO account name</span>
+          <span>Nombre de cuenta DAO</span>
           <span>{{ dao_account_name }}</span>
         </div>
 
@@ -14,8 +14,8 @@
         />
 
         <div class="flex-column">
-          <span>Total Value Locked</span>
-          <span>{{ total_value_computed }} USD</span>
+          <span>Valor total bloqueado</span>
+          <span>{{ total_value_bloqued }} USD</span>
         </div>
       </aside>
     </toolbar>
@@ -80,9 +80,9 @@
     <v-divider thickness="1" class="my-6" style="opacity: .5;" />
 
     <div class="flex-space-center mb-3">
-      <h5 class="mb-0">Transactions</h5>
+      <h5 class="mb-0">Transacciones</h5>
 
-      <v-select
+      <!--<v-select
         v-model="filter"
         :items="filters"
         item-title="name"
@@ -90,13 +90,13 @@
         variant="solo"
         class="custom-select flex-grow-0"
         hide-details
-      ></v-select>
+      ></v-select>-->
     </div>
 
     <section id="funds__content">
       <!-- controls -->
       <sticky-drawer>
-        <h6 class="mb-3">Choose a filter</h6>
+        <h6 class="mb-3">Elige un filtro</h6>
 
         <v-list density="compact">
           <v-list-item
@@ -115,7 +115,7 @@
           </v-list-item>
         </v-list>
 
-        <h6 class="mt-6 mb-2">Filter by wallet</h6>
+        <h6 class="mt-6 mb-2">Filtrar por billetera</h6>
         <v-text-field
           placeholder="andresdom.near"
           append-inner-icon="mdi-magnify"
@@ -240,15 +240,31 @@ export default {
           name: "Less Recent",
           value: "less"
         },
-      ])
+      ]),
+      total_value_bloqued: ref(0),
     }
   },
   computed: {
     chartHeight() {
       return window.innerWidth < 690 ? '250px' : '450px'
     },
-    async total_value_computed() {
-
+  },
+  /*watch: {
+    resultNear(response) {
+      this.loadChartNear(response);
+    },
+    resultUsdt(response) {
+      this.loadChartUsdt(response);
+    },
+  },
+  beforeMount() {
+    this.getData()
+  },*/
+  beforeMount() {
+    this.loadData();
+  },
+  methods: {
+    async loadData() {
       const responseNearAmount = await WalletP2p.view({
         contractId: this.$route.query.dao,
         methodName: "get_available_amount"
@@ -286,22 +302,11 @@ export default {
         console.log("error balane: ", error)
       })
 
+      // console.log("aaasasasas: ",(this.tokenCards[0].amount_usd + this.tokenCards[1].amount_usd).toFixed(2))
+      this.total_value_bloqued = 0 //(this.tokenCards[0].amount_usd + this.tokenCards[1].amount_usd).toFixed(2)
 
-      return (this.tokenCards[0].amount_usd + this.tokenCards[1].amount_usd).toFixed(2)
-    }
-  },
-  /*watch: {
-    resultNear(response) {
-      this.loadChartNear(response);
     },
-    resultUsdt(response) {
-      this.loadChartUsdt(response);
-    },
-  },
-  beforeMount() {
-    this.getData()
-  },*/
-  methods: {
+
     async getData() {
       if(this.resultChartNear.result){
         if(this.resultChartNear.result.delegationhists) {
