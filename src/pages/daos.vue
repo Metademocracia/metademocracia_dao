@@ -144,7 +144,7 @@ async function getData() {
 
       const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
       total_balance += !balanceUsdtUsd ? 0 : Number((balanceUsdt * balanceUsdtUsd.data[0].value).toFixed(2))
-      
+
 
       const responseConfig = await WalletP2p.view({
         contractId: data[i].wallet_dao,
@@ -174,7 +174,7 @@ async function getData() {
         wallet_dao: data[i].wallet_dao,
         image: metadata?.img ? metadata.img : MetademocraciaImage,
         name: responseConfig.name,
-        account: response[i],
+        account: data[i].wallet_dao,
         description: atob(responseConfig.purpose),
         funds: total_balance.toFixed(2),
         members: members,
