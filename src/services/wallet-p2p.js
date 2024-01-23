@@ -91,7 +91,6 @@ async function view(json) {
     address = implicitAccountId;
   }
 
-  console.log("-*-*-**: ",privateKey, address)
   // creates a public / private key pair using the provided private key
   // adds the keyPair you created to keyStore
   const myKeyStore = new keyStores.InMemoryKeyStore();

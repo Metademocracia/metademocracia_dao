@@ -133,6 +133,39 @@ async function getData() {
     const data = response.data.data.daos
 
     for(let i = 0; i < data.length; i++) {
+      const responseNearAmount = await WalletP2p.view({
+        contractId: data[i].wallet_dao,
+        methodName: "get_available_amount"
+      });
+
+      const responseUsdtAmount = await WalletP2p.view({
+        contractId: process.env.CONTRACT_USDT,
+        methodName: "ft_balance_of",
+        args: {account_id: data[i].wallet_dao }
+      });
+
+      console.log("aqui: ",responseUsdtAmount)
+
+      const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
+      const balanceNear = responseNearAmount ? (Number(responseNearAmount) / 1000000000000000000000000) : 0;
+
+      const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"})
+      /*.then((response) => {
+        // console.log("balance: ", response)
+        this.tokenCards[0].amount_usd = Number((balanceNear * response.data[0].value).toFixed(2))
+      }).catch((error) => {
+        console.log("error balane: ", error)
+      })*/
+
+      console.log("balance", balanceNearUsd)
+
+      axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"})
+      .then((response) => {
+        this.tokenCards[1].amount_usd = Number((balanceUsdt * response.data[0].value).toFixed(2))
+      }).catch((error) => {
+        console.log("error balane: ", error)
+      })
+
       const responseConfig = await WalletP2p.view({
         contractId: data[i].wallet_dao,
         methodName: "get_config"
