@@ -126,42 +126,45 @@
       </sticky-drawer>
 
       <!-- transactions -->
-      <aside class="flex-grow-1">
-        <div class="transactions">
-					<v-sheet
-						v-for="(item, i) in dataTransactions"
-						:key="i"
-						class="sheet-flexbar"
-					>
-						<v-btn
-							min-width="38"
-							width="38"
-							elevation="0"
-							:class="[item.icon == 'mdi-tray-arrow-down' ? 'bg-tertiary-variant' : 'bg-primary-variant']"
-						>
-							<v-icon
-								size="16"
-							>{{ item.icon }}</v-icon>
-						</v-btn>
+      <aside class="d-flex flex-column flex-grow-1" style="gap: 25px;">
+        <h6 v-if="!dataTransactions.length" class="text-center">No hay transacciones asociadas</h6>
 
-						<aside class="sheet-flexbar__wrapper">
-							<span>{{ item.near }}</span>
-							<span>{{ item.name.substring(0, 20) }}...</span>
-							<span v-if="item.date">
+        <tempplate v-else>
+          <v-sheet
+            v-for="(item, i) in dataTransactions"
+            :key="i"
+            class="sheet-flexbar"
+          >
+            <v-btn
+              min-width="45"
+              width="45"
+              height="45"
+              elevation="0"
+              :class="[item.icon == 'mdi-tray-arrow-down' ? 'bg-tertiary-variant' : 'bg-primary-variant']"
+            >
+              <v-icon
+                size="20"
+              >{{ item.icon }}</v-icon>
+            </v-btn>
+
+            <aside class="sheet-flexbar__wrapper">
+              <span>{{ item.near }}</span>
+              <span>{{ item.name.substring(0, 20) }}...</span>
+              <span v-if="item.date">
                 {{ item.date }}
                 <v-icon color="#fff" style="transform: rotate(135deg); margin-top: -5px;">mdi-link</v-icon>
               </span>
             </aside>
-					</v-sheet>
-        </div>
+          </v-sheet>
 
-        <v-pagination
-          v-model="currentPage"
-          :length="totalPages"
-          :total-visible="5"
-          class="mt-10 mb-16"
-          @click="loadPage"
-        ></v-pagination>
+          <v-pagination
+            v-model="currentPage"
+            :length="totalPages"
+            :total-visible="5"
+            class="mt-10 mb-16"
+            @click="loadPage"
+          ></v-pagination>
+        </tempplate>
       </aside>
     </section>
   </div>

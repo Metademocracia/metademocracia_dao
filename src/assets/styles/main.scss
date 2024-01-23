@@ -81,7 +81,7 @@
 }
 
 .sheet-flexbar {
-  display: flex;
+  display: flex !important;
   align-items: center;
   border-radius: 5px !important;
   background-color: #8564AB !important;
@@ -97,7 +97,9 @@
     justify-content: space-between;
     padding-inline: 20px;
     gap: 20px;
-    // TODO checkout to do responsive with horizontal scroll
     overflow-x: auto;
+    overflow-y: hidden;
+
+    &::-webkit-scrollbar { display: none !important }
   }
 }
