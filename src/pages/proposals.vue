@@ -3,7 +3,7 @@
     <toolbar title="Propuestas">
       <v-tabs v-model="filterTypeProposalSelected" slider-color="transparent">
         <v-tab v-for="(item, i) in typeProposal" :key="i" @click="loadProposal()">
-          <div class="custom-checkbox mr-2" :class="{ active: filterTypeProposalSelected == item.id }" />
+          <div class="custom-checkbox mr-2" :class="{ active: filterTypeProposalSelected == i }" />
           {{ item.desc }}
         </v-tab>
       </v-tabs>
@@ -53,7 +53,7 @@
       <aside class="flex-grow-1">
         <div class="proposals">
           <proposal-card
-            v-for="(item, i) in proposals" :key="i"
+            v-for="(item, i) in proposal_list" :key="i"
             :proposal="item"
           />
         </div>
@@ -150,48 +150,9 @@ export default {
   },
 
 	computed: {
-    /*totalPages() {
-      if(this.result) {
-        const cardsProposals = this.result.proposals;
-        return Math.ceil(cardsProposals.length / this.cardsPerPage);
-      } else {
-        return Math.ceil(0 / this.cardsPerPage)
-      }
-    },*/
-    /*displayedCards() {
-      if(this.result) {
-        const cardsProposals = this.result.proposals.map((item) => {
-          let amount = null
-          if(item.proposal_type == "Transfer") {
-            amount = Number((JSON.parse(item.kind).Transfer.amount / 1000000000000000000000000).toFixed(2));
-          }
-
-          const date = moment(item.approval_date/1000000)
-          const date_format = 'Aprobado el: ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
-          const date_final = item.approval_date ? date_format : item.approval_date;
-
-          return {
-            proposals_id: item.id,
-            title_desc: item.proposal_type,
-            title: item.title,
-            date: date_final, //  'Aprobado el: 31 de Agosto de 2023',
-            near_id: item.proposer,
-            desc: item.description,
-            link: item.link,
-            amount: amount,
-            currency: '',
-            time_complete: '7 Días',
-            likes: item.upvote,
-            dislikes: item.downvote,
-          }
-        });
-        const startIndex = (this.currentPage - 1) * this.cardsPerPage;
-        const endIndex = startIndex + this.cardsPerPage;
-        return cardsProposals.slice(startIndex, endIndex);
-      } else {
-        return [];
-      }
-    },*/
+    paginatedProposals() {
+      return (this.proposal_list.length || 3) / 3
+    }
   },
 
   methods: {
@@ -249,12 +210,12 @@ export default {
     },
 
     async loadProposal() {
-      console.log("aqui estoy: ", this.filterStatusSelected, this.filterTypeProposalSelected);
+      console.log("aqui estoy: ", this.filterStatusSelected, this.typeProposal[this.filterTypeProposalSelected].id);
       let status = this.statusProposal.map(item => { return item.id }).splice(1, this.statusProposal.length);
       let type = this.typeProposal.map(item => { return item.id }).splice(1, this.typeProposal.length);
 
       status = this.filterStatusSelected != '*' ? [this.filterStatusSelected] : status;
-      type = this.filterTypeProposalSelected != '*' ? [this.filterTypeProposalSelected] : type;
+      type = this.typeProposal[this.filterTypeProposalSelected].id != '*' ? [this.filterTypeProposalSelected] : type;
 
 
       const query1 = `query Proposals($type: [String], $status: [String]) {
@@ -305,6 +266,7 @@ export default {
     },
 
     loadCardProposal(response) {
+        console.log(response)
         const cardsProposals = response.proposals.map((item) => {
           let amount = null
           if(item.proposal_type == "Transfer") {
@@ -315,20 +277,27 @@ export default {
           const date_format = 'Aprobado el: ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
           const date_final = item.approval_date ? date_format : item.approval_date;
 
+          //const type = typeof item.kind === "object" ? Object.keys(item.kind)[0] : item.kind;
+          //const objectProposal = typeof item.kind === "object" ? item.kind[type] : undefined;
+          //const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+
           return {
-            proposals_id: item.id,
-            title_desc: item.proposal_type,
+            id: item.id,
+            contractId: this.$route.query?.dao,
+            type: item.proposal_type,
+            objectProposal: undefined,
+            configMetadata: undefined,
             title: item.title,
-            date: date_final, //  'Aprobado el: 31 de Agosto de 2023',
-            near_id: item.proposer,
-            desc: item.description,
+            date: item.approval_date/*item.submission_time*/,
+            proposer: item.proposer,
+            description: item.description,
+            approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
             link: item.link,
-            amount: amount,
-            currency: '',
-            time_complete: '7 Días',
+            amount: null,
+            claims: null,
+            remainingTime: "una semana",
             likes: item.upvote,
             dislikes: item.downvote,
-            status: item.status,
           }
         });
 
@@ -337,6 +306,7 @@ export default {
 
         this.totalPages = Math.ceil(cardsProposals.length / this.cardsPerPage);
         this.proposal_list = cardsProposals;
+        console.log(this.proposal_list)
         this.loadPage();
         // this.cardsProposals = cardsProposals.slice(startIndex, endIndex);
 

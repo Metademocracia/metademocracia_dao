@@ -151,6 +151,7 @@ export default {
         'settings',
         'general-settings',
         'policy-settings',
+        'proposals-meta'
       ],
       tab: ref(0),
       dialog: ref(false),
@@ -204,7 +205,7 @@ export default {
           }
         ]
       } else {
-        
+
         this.dataTabs = [
           {
             name: "Propuestas",
