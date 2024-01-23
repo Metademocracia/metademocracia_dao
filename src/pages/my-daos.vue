@@ -36,6 +36,7 @@ import { ref, computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import graphQl from '@/services/graphQl';
 import WalletP2p from '../services/wallet-p2p';
+import axios from 'axios';
 
 
 const
@@ -64,10 +65,31 @@ async function getData() {
   const variables = { owner_id: WalletP2p.getAccount().address };
 
   await graphQl.getQueryDaoV2(query, variables).then(async response => {
-    console.log(response.data.data.daos);
     const data = response.data.data.daos
 
     for(let i = 0; i < data.length; i++) {
+      const responseNearAmount = await WalletP2p.view({
+        contractId: data[i].wallet_dao,
+        methodName: "get_available_amount"
+      });
+
+      const responseUsdtAmount = await WalletP2p.view({
+        contractId: process.env.CONTRACT_USDT,
+        methodName: "ft_balance_of",
+        args: {account_id: data[i].wallet_dao }
+      });
+
+      let total_balance = 0;
+      const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
+      const balanceNear = responseNearAmount ? (Number(responseNearAmount) / 1000000000000000000000000) : 0;
+
+      const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
+      total_balance += !balanceNearUsd ? 0 : Number((balanceNear * balanceNearUsd.data[0].value).toFixed(2));
+
+      const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
+      total_balance += !balanceUsdtUsd ? 0 : Number((balanceUsdt * balanceUsdtUsd.data[0].value).toFixed(2))
+
+
       const responseConfig = await WalletP2p.view({
         contractId: data[i].wallet_dao,
         methodName: "get_config"
@@ -94,9 +116,9 @@ async function getData() {
         wallet_dao: data[i].wallet_dao,
         image: MetademocraciaImage,
         name: responseConfig.name,
-        account: response[i],
+        account: data[i].wallet_dao,
         description: atob(responseConfig.purpose), // responseConfig.purpose.split(" ").length > 0 ? responseConfig.purpose : atob(responseConfig.purpose),
-        funds: 0,
+        funds: total_balance,
         members: members,
         groups: responsePolicy.roles.length,
         activeProposals: responseSupply ? responseSupply[1] : 0,

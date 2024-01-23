@@ -135,8 +135,6 @@ async function getData() {
         args: {account_id: data[i].wallet_dao }
       });
 
-      console.log("aqui: ",responseUsdtAmount)
-
       let total_balance = 0;
       const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
       const balanceNear = responseNearAmount ? (Number(responseNearAmount) / 1000000000000000000000000) : 0;
@@ -144,10 +142,9 @@ async function getData() {
       const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
       total_balance += !balanceNearUsd ? 0 : Number((balanceNear * balanceNearUsd.data[0].value).toFixed(2));
 
-      console.log("balance", balanceNearUsd, total_balance)
-
       const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
       total_balance += !balanceUsdtUsd ? 0 : Number((balanceUsdt * balanceUsdtUsd.data[0].value).toFixed(2))
+      
 
       const responseConfig = await WalletP2p.view({
         contractId: data[i].wallet_dao,
