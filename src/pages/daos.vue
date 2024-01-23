@@ -62,11 +62,11 @@ onBeforeMount(getData)
 
 function view(item) {
   console.log(item)
-  // if(process.env.CONTRACT_DAO == item.wallet_dao) {
-  //   router.push({ path: 'proposals-meta'})
-  // } else {
-  // }
-  router.push({ path: 'Proposals', query: {dao: item.wallet_dao}  })
+  if(process.env.CONTRACT_DAO == item.wallet_dao) {
+    router.push({ path: 'proposals-meta'})
+  } else {
+    router.push({ path: 'Proposals', query: {dao: item.wallet_dao}  })
+  }
 }
 
 async function getData() {
