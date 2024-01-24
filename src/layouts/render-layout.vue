@@ -152,7 +152,8 @@ export default {
         'general-settings',
         'policy-settings',
         'proposals-meta',
-        'create-proposal-meta'
+        'create-proposal-meta',
+        'proposal-details-meta'
       ],
       tab: ref(0),
       dialog: ref(false),
