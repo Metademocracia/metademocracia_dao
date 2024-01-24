@@ -1,284 +1,187 @@
 <template>
-    <div id="funds" class="divcol center">
-			<section style="margin-inline: calc(50% - 50vw) !important; width: 100vw!important;">
-				<v-carousel cycle color="#DB107C" :show-arrows="false">
-					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-3.svg" alt="Banner" class="banner-img">
-					</v-carousel-item>
+  <div id="funds">
+    <toolbar title="Tokens">
+      <aside class="d-flex flex-center flex-grow-1" style="gap: 20px;">
+        <div class="flex-column">
+          <span>Nombre de cuenta DAO</span>
+          <span>{{ dao_account_name }}</span>
+        </div>
 
-					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-2.svg" alt="Banner" class="banner-img">
-					</v-carousel-item>
+        <v-divider
+          vertical
+          thickness="1"
+          style="height: 40px; opacity: .5; margin-block: auto;"
+        />
 
-					<v-carousel-item>
-					<img src="@/assets/sources/images/banner-1.svg" alt="Banner" class="banner-img">
-					</v-carousel-item>
-				</v-carousel>
-			</section>
+        <div class="flex-column">
+          <span>Valor total bloqueado</span>
+          <span>{{ total_value_computed }} USD</span>
+        </div>
+      </aside>
+    </toolbar>
 
-			<section class="section2-funds center">
-				<div class="container-titles divrow acenter">
-					<h5 class="mb-0 mr-8">Tokens</h5>
-					<div class="divrow center" style="gap: 15px;">
-						<div class="divcol jstart" style="gap: 5px;">
-							<span class="tstart" style="color: #61C2D5; font-size: 12px; margin-bottom: 0px;">Nombre de cuenta DAO</span>
-							<span class="tstart">{{ dao_account_name }}</span>
-						</div>
-						<v-divider vertical :thickness="1" class="border-opacity-50" style="color: rgba(#fff, 0.7);"></v-divider>
-						<div class="divcol jstart" style="gap: 5px;">
-							<span class="tstart" style="color: #61C2D5; font-size: 12px; margin-bottom: 0px;">Valor total</span>
-							<span class="tstart">{{ total_value_computed }} USD</span>
-						</div>
-					</div>
-					<div class="delete-mobile" style="width: 80px; height: 1px;"></div>
-				</div>
-			</section>
+    <v-divider thickness="1" class="my-6" style="opacity: .5;" />
 
-			<v-divider :thickness="1" class="delete-mobile border-opacity-50 mt-8 mb-8" style="width: 100%; color: rgba(#fff, 0.4);"></v-divider>
+    <aside class="controls">
+      <v-card
+        v-for="(item, i) in headerCards"
+        :key="i"
+        class="d-flex flex-center flex-grow-1"
+        :class="{ active: i === windowStep }"
+        height="80"
+        color="#7758a4"
+        elevation="3"
+        style="max-width: 250px;"
+        @click="windowStep = i"
+      >
+        <div class="d-flex justify-center align-start" style="gap: 8px;">
+          <img
+            :src="iconMap[item.icon]"
+            :alt="item.icon_alt"
+            style="--size: 25px; width: var(--size); height: var(--size);"
+          >
 
-			<section class="section3-funds center">
-					<v-row style="width: 100%;">
-						<v-col v-for="(item, index) in headerCards" :key="index" xl="3" lg="3" md="6" sm="6" cols="12">
-							<v-card
-							class="card-header-funds"
-							:class="{'first-element': index === 0 && windowStep == 0,
-							'second-element': index === 1 && windowStep == 1,
-							'third-element': index === 2 && windowStep == 2,
-							'fourth-element': index === 3 && windowStep == 3}"
-							@click="windowStep = index"
-							>
-								<img :src="iconMap[item.icon]" :alt="item.icon_alt" style="width: 25px;">
-								<div class="divcol jstart">
-									<span style="font-size: 1.3rem;" class="jstart">
-										{{ item.amount }} {{ item.currency }}
-									</span>
-									<span style="font-size: .8rem; color: #D1D1D1;" class="jstart">
-										{{ item.amount_usd }} USD
-									</span>
-								</div>
-							</v-card>
-						</v-col>
-					</v-row>
+          <div class="flex-column">
+            <h5 class="mb-0">{{ item.amount ?? 0.00 }} {{ item.currency }}</h5>
+            <span>{{ item.amount_usd }} USD</span>
+          </div>
+        </div>
+      </v-card>
+    </aside>
 
-					<v-row style="width: 100%;" class="mt-10">
-						<v-col cols="12">
-							<v-window v-model="windowStep" touchless>
-								<v-window-item class="window-sparkline" :value="0">
-									<div class="wrapper-chart">
-										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
-											<h5>
-												Actividad
-											</h5>
 
-											<!--<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													7D
-												</v-btn>
+    <v-window v-model="windowStep" class="container-chart mt-7">
+      <div class="flex-space-center">
+        <h6 class="mb-0">Actividad</h6>
 
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1W
-												</v-btn>
+        <v-btn-toggle v-model="toggle" style="border-radius: 0px!important; gap: 10px; height: max-content;">
+          <v-btn
+            v-for="(item, i) in dataToggle"
+            :key="i"
+            min-width="30"
+            width="30"
+            height="30"
+            class="btn-toggle"
+            style="background-color: #4056a1; border-radius: 5px !important;"
+          >{{ item }}</v-btn>
+        </v-btn-toggle>
+      </div>
 
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1M
-												</v-btn>
 
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1Y
-												</v-btn>
+      <v-window-item class="mt-5" :value="0">
+        <h6
+          v-if="seriesNear && seriesNear[0].data.length < 4"
+          class="text-center my-8"
+        >No hay suficientes datos</h6>
+        <apexchart v-else type="area" :height="chartHeight" :options="chartOptionsNear" :series="seriesNear" />
+      </v-window-item>
 
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													ALL
-												</v-btn>
-											</v-btn-toggle> -->
-										</div>
-										<div class="apexchart-container">
-											<apexchart type="area" :height="chartHeight" :options="chartOptionsNear" :series="seriesNear"></apexchart>
-										</div>
-									</div>
-								</v-window-item>
-								<v-window-item class="window-sparkline" :value="1">
-									<div class="wrapper-chart">
-										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
-											<h5>
-												Actividad
-											</h5>
+      <v-window-item class="mt-5" :value="1">
+        <h6
+          v-if="seriesUsdt && seriesUsdt[0].data.length < 4"
+          class="text-center my-8"
+        >No hay suficientes datos</h6>
+        <apexchart v-else type="area" :height="chartHeight" :options="chartOptionsUsdt" :series="seriesUsdt" />
+      </v-window-item>
+    </v-window>
 
-											<!--<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													7D
-												</v-btn>
+    <v-divider thickness="1" class="my-6" style="opacity: .5;" />
 
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1W
-												</v-btn>
+    <div class="flex-space-center mb-3">
+      <h5 class="mb-0">Transacciones</h5>
 
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1M
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1Y
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													ALL
-												</v-btn>
-											</v-btn-toggle> -->
-										</div>
-										<div class="apexchart-container">
-											<apexchart type="area" :height="chartHeight" :options="chartOptionsUsdt" :series="seriesUsdt"></apexchart>
-										</div>
-									</div>
-								</v-window-item>
-								<v-window-item class="window-sparkline" :value="2">
-									<div class="wrapper-chart">
-										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
-											<h5>
-												Actividad
-											</h5>
-
-											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													7D
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1W
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1M
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1Y
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													ALL
-												</v-btn>
-											</v-btn-toggle>
-										</div>
-										<div class="apexchart-container">
-											<apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
-										</div>
-									</div>
-								</v-window-item>
-								<v-window-item class="window-sparkline" :value="3">
-									<div class="wrapper-chart">
-										<div class="jspace acenter mb-8 mobile-col" style="width: 100%;">
-											<h5>
-												Actividad
-											</h5>
-
-											<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													7D
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1W
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1M
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													1Y
-												</v-btn>
-
-												<v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-													ALL
-												</v-btn>
-											</v-btn-toggle>
-										</div>
-										<div class="apexchart-container">
-											<apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
-										</div>
-									</div>
-								</v-window-item>
-							</v-window>
-						</v-col>
-					</v-row>
-			</section>
-
-			<v-divider :thickness="1" class="delete-mobile border-opacity-50 mt-8 mb-8" style="width: 100%; color: rgba(#fff, 0.4);"></v-divider>
-
-			<section class="section4-funds center mt-3">
-				<v-row style="width: 100%;" class="radio-side-container">
-					<v-col xl="3" lg="3" md="3" sm="12" cols="12" class="divrow-mobile">
-						<div>
-							<span>
-								Elige un Filtro
-							</span>
-							<v-radio-group
-								v-model="select_radio_buttons"
-                v-for="(item, index) in typeTransaction" :key="index"
-								hide-details
-								class="mb-6"
-                @change="loadTransactions()"
-							>
-                <v-radio :label="item.desc" class="radios mr-4" :value="item.id"></v-radio>
-								<!--<v-radio label="Todos" class="radios mr-4" :value="1"></v-radio>
-								<v-radio label="Recibidos" class="radios mr-4"	:value="2"></v-radio>
-								<v-radio label="Enviados" class="radios mr-4"	:value="3"></v-radio>-->
-							</v-radio-group>
-						</div>
-						<div>
-							<label for="address">Filtrar por Wallet</label>
-							<v-text-field
-              v-model="address"
-							id="address"
-							class="input mt-6 mb-6"
-							variant="solo"
-							placeholder="address"
-							append-inner-icon="mdi-magnify"
-              @keyup="loadTransactions()"
-							></v-text-field>
-						</div>
-					</v-col>
-					<v-col align="center" xl="9" lg="9" md="9" sm="12" cols="12" class="divcol pl-14 no-padding">
-						<v-select
-							v-model="selectedOrderBy"
-							:items="filterTableOrderBy"
-              item-title="desc"
-              item-value="id"
-              variant="solo"
-							flat
-							menu-icon="mdi-chevron-down"
-							class="select"
-							bg-color="transparent"
-							hide-details
-							style="color: white;"
-              onchange="loadTransactions()"
-						></v-select>
-
-						<div v-for="(item, index) in dataTransactions" :key="index" class="card-desc-votes">
-							<div class="div-img" :class="{'purple-absolute' : item.icon == 'mdi-tray-arrow-down', 'red-absolute' : item.icon == 'mdi-tray-arrow-up'}">
-								<v-icon>{{ item.icon }}</v-icon>
-							</div>
-							<span>{{ item.near }}</span>
-							<span>{{ item.name.substring(0, 20) }}...</span>
-							<span v-if="item.date">{{ item.date }} <v-icon color="#fff" style="transform: rotate(135deg); margin-top: -5px;">mdi-link</v-icon></span>
-						</div>
-
-						<v-pagination
-							v-model="currentPage"
-							:length="totalPages"
-							:total-visible="5"
-							size="small"
-              @click="loadPage()"
-						></v-pagination>
-					</v-col>
-				</v-row>
-			</section>
+      <v-select
+        v-model="selectedOrderBy"
+        :items="filterTableOrderBy"
+        item-title="desc"
+        item-value="id"
+        variant="solo"
+        class="custom-select flex-grow-0"
+        hide-details
+        @update="loadTransactions"
+      ></v-select>
     </div>
+
+    <section id="funds__content">
+      <!-- controls -->
+      <sticky-drawer>
+        <h6 class="mb-3">Elige un filtro</h6>
+
+        <v-list density="compact">
+          <v-list-item
+            v-for="(item, i) in typeTransaction"
+            :key="i"
+            min-height="30"
+            class="clear-overlay pa-0"
+            :ripple="false"
+            @click="() => {
+              select_radio_buttons = item.id
+              loadTransactions()
+            }"
+          >
+            <div class="custom-checkbox mr-2" style="--size: 10px" :class="{ active: select_radio_buttons === item.id }" />
+            {{ item.desc }}
+          </v-list-item>
+        </v-list>
+
+        <h6 class="mt-6 mb-2">Filtrar por billetera</h6>
+        <v-text-field
+          placeholder="andresdom.near"
+          append-inner-icon="mdi-magnify"
+          class="flex-grow-0"
+          variant="solo"
+          hide-details
+          @keyup="loadTransactions"
+        ></v-text-field>
+      </sticky-drawer>
+
+      <!-- transactions -->
+      <aside class="d-flex flex-column flex-grow-1" style="gap: 25px;">
+        <h6 v-if="!dataTransactions.length" class="text-center">No hay transacciones asociadas</h6>
+
+        <template v-else>
+          <v-sheet
+            v-for="(item, i) in dataTransactions"
+            :key="i"
+            class="sheet-flexbar"
+          >
+            <v-btn
+              min-width="45"
+              width="45"
+              height="45"
+              elevation="0"
+              :class="[item.icon == 'mdi-tray-arrow-down' ? 'bg-tertiary-variant' : 'bg-primary-variant']"
+            >
+              <v-icon
+                size="20"
+              >{{ item.icon }}</v-icon>
+            </v-btn>
+
+            <aside class="sheet-flexbar__wrapper">
+              <span>{{ item.near }}</span>
+              <span>{{ item.name.substring(0, 20) }}...</span>
+              <span v-if="item.date">
+                {{ item.date }}
+                <v-icon color="#fff" style="transform: rotate(135deg); margin-top: -5px;">mdi-link</v-icon>
+              </span>
+            </aside>
+          </v-sheet>
+
+          <v-pagination
+            v-model="currentPage"
+            :length="totalPages"
+            :total-visible="5"
+            class="mt-10 mb-16"
+            @click="loadPage"
+          ></v-pagination>
+        </template>
+      </aside>
+    </section>
+  </div>
 </template>
 
 <script>
-import '@/assets/styles/pages/funds.scss'
+import '@/assets/styles/pages/funds-new.scss'
 import near from '@/assets/sources/icons/near-icon.svg';
 import stnear from '@/assets/sources/icons/stnear-icon.svg';
 import usdc from '@/assets/sources/icons/usdc-icon.svg';
@@ -333,8 +236,10 @@ export default {
 	data() {
     const resultChartNear = useQuery(QUERY);
     const resultChartUsdt = useQuery(QUERY_USDT);
+
 		return{
       resultChartNear,
+			dao_account_name: process.env.CONTRACT_DAO,
       resultNear: ref(resultChartNear.result),
       resultChartUsdt,
       resultUsdt: ref(resultChartUsdt.result),
@@ -600,6 +505,7 @@ export default {
 
       // const startIndex = (this.currentPage - 1) * this.cardsPerPage;
       // const endIndex = startIndex + this.cardsPerPage;
+      console.log(dataTransactions, "⭕");
 
       this.totalPages = Math.ceil(dataTransactions.length / this.cardsPerPage);
       this.transactions_list = dataTransactions;
