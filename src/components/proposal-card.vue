@@ -47,7 +47,7 @@
           <p class="label mb-2">Proposer</p>
           <p>{{ proposal?.proposer }}</p>
 
-          
+
           <span v-if="proposal?.type == 'ChangeConfig'">
             <p class="label mb-2">Motivo</p>
             <p class="ellipsis-box" style="--lines: 6; color: black !important;"> {{ proposal?.description }}</p>
@@ -68,14 +68,14 @@
               <p class="label mb-2">Nuevo documento</p>
               <a :href="proposal?.configMetadata?.kyc?.proposalKyc" class="ellipsis-box" style="--lines: 6;" target="_blank"> {{ proposal?.configMetadata?.kyc?.proposalKyc }}</a>
             </span>
-            
+
             <span v-if="proposal?.title == 'Cambio de redes sociales'">
               <p class="label mb-2">Nuevas redes sociales</p>
               <span v-if="proposal?.configMetadata?.social"  v-for="(item, i) in proposal?.configMetadata?.social" :key="i">
                 <a :href="item" class="ellipsis-box" style="--lines: 6;" target="_blank"> {{ item }}</a>
               </span>
             </span>
-            
+
             <span v-if="proposal?.title == 'Cambio de logo'">
               <p class="label mb-2">Nuevo logo</p>
               <a :href="proposal?.configMetadata.img" class="ellipsis-box" style="--lines: 6;" target="_blank"> {{ proposal?.configMetadata.img }}</a>
@@ -159,6 +159,8 @@ import ApprovedIcon from '@/assets/sources/images/approved.svg'
 import FailedIcon from '@/assets/sources/images/failed.svg'
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
+import utilsDAO from '@/services/utils-dao';
+
 
 const
   router = useRouter(),
@@ -172,13 +174,19 @@ const
 
 
 function onPressProposal() {
-  router.push({ name: 'ProposalDetails', query: { dao: props.proposal.contractId, id: props.proposal.id } })
+  if(process.env.CONTRACT_DAO == props.proposal.contractId) {
+    router.push({ path: 'proposal-details-meta', query: { dao: props.proposal.contractId, id: props.proposal.id } })
+  } else {
+    router.push({ path: 'proposal-details', query: { dao: props.proposal.contractId, id: props.proposal.id }  })
+  }
+
+  //router.push({ name: 'ProposalDetails', query: { dao: props.proposal.contractId, id: props.proposal.id } })
 }
 
 async function upvote(id, contractId) {
   if(!id && !contractId) return
 
-  const json = {
+  let json = {
     contractId: contractId,
     methodName: "act_proposal",
     args: {
@@ -189,6 +197,22 @@ async function upvote(id, contractId) {
     // attachedDeposit: "1000000000000000000"
   };
 
+  if(contractId == process.env.CONTRACT_DAO) {
+    const isMember = await utilsDAO.isMember();
+    if(isMember) {
+      json = {
+        contractId: process.env.CONTRACT_DAO,
+        methodName: "update_proposal",
+        args: {
+          id: Number(id),
+          action: "VoteApprove"
+        },
+        gas: "36000000000000"
+        // attachedDeposit: "100000000000000000000"
+      };
+    }
+  }
+
   WalletP2p.call(json);
 
 }
@@ -197,7 +221,7 @@ async function upvote(id, contractId) {
 async function downvote(id, contractId) {
   if(!id && !contractId) return
 
-  const json = {
+  let json = {
     contractId: contractId,
     methodName: "act_proposal",
     args: {
@@ -207,6 +231,22 @@ async function downvote(id, contractId) {
     // gas: "36000000000000"
     // attachedDeposit: "100000000000000000000"
   };
+
+  if(contractId == process.env.CONTRACT_DAO) {
+    const isMember = await utilsDAO.isMember();
+    if(isMember) {
+      json = {
+        contractId: process.env.CONTRACT_DAO,
+        methodName: "update_proposal",
+        args: {
+          id: Number(id),
+          action: "VoteReject"
+        },
+        gas: "36000000000000"
+        // attachedDeposit: "100000000000000000000"
+      };
+    }
+  }
 
   WalletP2p.call(json);
 
