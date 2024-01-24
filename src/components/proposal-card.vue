@@ -1,7 +1,7 @@
 <template>
   <v-sheet class="proposal-card" elevation="3">
     <v-card class="vertical-toolbar clear-overlay" @click="onPressProposal">
-      <span>Proposals ID:{{ proposal?.id }}</span>
+      <span>Propuesta ID:{{ proposal?.id }}</span>
       <img src="@/assets/sources/icons/leave.svg" alt="leave icon" style="width: 20px;">
     </v-card>
 
