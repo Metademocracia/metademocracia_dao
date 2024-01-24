@@ -93,12 +93,12 @@ async function getData() {
     }
   }`;
 
+
+  /// dao metademocracia
   await graphQl.getQuery(queryMeta).then(async response => {
     let total_balance = 0;
     const delegation_near = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000 : 0;
     const delegation_usdt = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000 : 0;
-
-    console.log(delegation_near, delegation_usdt)
 
     const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
     total_balance += !balanceNearUsd ? 0 : Number((delegation_near * balanceNearUsd.data[0].value).toFixed(2));
@@ -121,6 +121,8 @@ async function getData() {
     })
   })
 
+
+  //// daos factory
   await graphQl.getQueryDaoV2(query).then(async response => {
     const data = response.data.data.daos
 

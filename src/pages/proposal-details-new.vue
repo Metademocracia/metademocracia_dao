@@ -195,12 +195,12 @@ async function getProposal() {
 
       if(noMembers.length < countVotes) {
         childrens = formatChildrens(members);
-        voices = members.length + "/" + walletsGroup.length
-        percent = members.length / walletsGroup.length
+        voices = members.length + "/" + walletsGroup.length;
+        percent = Number(((walletsGroup.length * 100) / members.length).toFixed(2));
       } else {
         childrens = formatChildrens(noMembers);
-        voices = noMembers.length + "/" + walletsGroup.length
-        percent = noMembers.length / walletsGroup.length
+        voices = noMembers.length + "/" + walletsGroup.length;
+        percent = Number(((walletsGroup.length * 100) / noMembers.length).toFixed(2));
       }
     } else {
       const walletsGroup = responsePolicy.roles.filter((search) => search.name == map)[0].kind.Group
@@ -208,9 +208,8 @@ async function getProposal() {
       const members = walletVote.filter((itemMember) => walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
 
       childrens = formatChildrens(members);
-      voices = members.length + "/" + walletsGroup.length
-      percent = members.length / walletsGroup.length
-
+      voices = members.length + "/" + walletsGroup.length;
+      percent = Number(((walletsGroup.length * 100) / members.length).toFixed(2));
     }
 
     return {

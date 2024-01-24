@@ -280,8 +280,8 @@ export default {
 
         this.panels = [{
           title: "council",
-          voices: "0/2",
-          percent: 0.50,
+          voices: dataVoice.length+"/"+response.serie.supply,
+          percent: Number((dataVoice.length * 100) / Number(response.serie.supply).toFixed(2)),
           children: dataVoice
         }]
 

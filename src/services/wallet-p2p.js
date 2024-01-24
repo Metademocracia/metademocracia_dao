@@ -53,7 +53,7 @@ function call (json, ruta, param_ruta) {
     contract: json.contractId,
     from: wallet,
     json: json,
-    success: ruta ? window.location.origin + process.env.BASE_URL + ruta : window.location.origin + window.location.pathname,
+    success: ruta ? window.location.origin + (!process.env.BASE_URL ? "/" : process.env.BASE_URL) + ruta : window.location.origin + window.location.pathname,
     search: ruta ? param_ruta : urlParams.toString() != "" ? "?"+urlParams.toString() : undefined,
     error: window.location.origin + window.location.pathname,
     searchError: urlParams.toString() != "" ? "?"+urlParams.toString() : undefined,
