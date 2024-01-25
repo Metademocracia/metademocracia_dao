@@ -21,8 +21,8 @@
         <div class="center mobile-div-member" style="gap: 10px;">
           <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;" class="member-img">
           <span style="font-weight: 700!important; line-height: 1.6ch;">
-            Nombre de la Dao <br>
-            <span style="font-size: 11px; font-weight: 400 !important;">{{ walletDao }}</span>
+            Dao: <br> <br>
+            <span style="font-size: 13px; font-weight: 400 !important;">{{ walletDao }}</span>
             <!-- <span style="font-size: 1.5rem;" v-if="result">{{ result?.serie?.supply }}</span> -->
           </span>
         </div>
@@ -43,14 +43,14 @@
               :items="tokens"
               item-title="name"
               item-value="name"
-              class="token-selector"
+              class="token-selector disable-title"
               :menu-props="{ class: 'disable-title' }"
               variant="solo"
               hide-details
             >
               <template #selection="{ item }">
                 <div class="token-logo mr-2">
-                  <img :src="item.raw.icon" :alt="`${item.raw.name} icon`">
+                  <img style="height: 20px; width: 20px;" :src="item.raw.icon" :alt="`${item.raw.name} icon`">
                 </div>
 
                 <span>{{ item.raw.name }}</span>
@@ -60,7 +60,7 @@
                 <v-list-item v-bind="props">
                   <aside class="d-flex align-center pa-1">
                     <div class="token-logo mr-2">
-                      <img :src="item.raw.icon" :alt="`${item.raw.name} icon`">
+                      <img style="height: 20px; width: 20px;" :src="item.raw.icon" :alt="`${item.raw.name} icon`">
                     </div>
 
                     <span>{{ item.raw.name }}</span>
@@ -132,6 +132,7 @@ import fundsIcon from '@/assets/sources/icons/funds.svg'
 import membersIcon from '@/assets/sources/icons/members.svg'
 import settingsIcon from '@/assets/sources/icons/settings.svg'
 import nearIcon from '@/assets/sources/logos/near.svg'
+import usdtIcon from '@/assets/sources/icons/tether-icon.svg';
 import WalletP2p from '../services/wallet-p2p';
 import { ref } from 'vue';
 // import moment from 'moment';
@@ -153,7 +154,8 @@ export default {
         'policy-settings',
         'proposals-meta',
         'create-proposal-meta',
-        'proposal-details-meta'
+        'proposal-details-meta',
+        'funds-meta'
       ],
       tab: ref(0),
       dialog: ref(false),
@@ -161,10 +163,8 @@ export default {
       toggle: ref(0),
       dataTabs: ref([]),
       tokens: [
-        {
-          name: "NEAR",
-          icon: nearIcon,
-        }
+        { name: "NEAR", icon: nearIcon},
+        { name: "USDT", icon: usdtIcon}
       ],
       selectedToken: "NEAR",
       amount_near: ref(null),
@@ -314,23 +314,50 @@ export default {
 
     delegate(){
       if(!this.formValid) return
+      console.log("token: ", this.selectedToken)
+      switch (this.selectedToken) {
+        case 'NEAR': {
+          const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
+          const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
 
-      const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
-      const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
+          const json = {
+            contractId: process.env.CONTRACT_DAO,
+            methodName: "delegate",
+            args: {
+              account_id: WalletP2p.getAccount().address,
+              amount: amount
+            },
+            gas: "300000000000000",
+            attachedDeposit: deposit
+          };
 
-      const json = {
-        contractId: process.env.CONTRACT_DAO,
-        methodName: "delegate",
-        args: {
-          account_id: WalletP2p.getAccount().address,
-          amount: amount
-        },
-        gas: "300000000000000",
-        attachedDeposit: deposit
-      };
+          // 1000000000000000000000
+          WalletP2p.call(json);
+        }
+          break;
 
-      // 1000000000000000000000
-      WalletP2p.call(json);
+        case 'USDT': {
+          console.log("deposit usdt")
+
+          const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000")).toString()
+
+          const json = {
+            contractId: process.env.CONTRACT_USDT,
+            methodName: "ft_transfer",
+            args: {
+              receiver_id: process.env.CONTRACT_DAO,
+              amount: amount
+            },
+            gas: "300000000000000",
+            attachedDeposit: "1"
+          };
+
+          // 1000000000000000000000
+          WalletP2p.call(json);
+        }
+          break;
+      }
+
     },
   }
 }

@@ -196,11 +196,11 @@ async function getProposal() {
       if(noMembers.length < countVotes) {
         childrens = formatChildrens(members);
         voices = members.length + "/" + walletsGroup.length;
-        percent = Number(((walletsGroup.length * 100) / members.length).toFixed(2));
+        percent = Number(((walletsGroup.length * members.length) / 100).toFixed(2));
       } else {
         childrens = formatChildrens(noMembers);
         voices = noMembers.length + "/" + walletsGroup.length;
-        percent = Number(((walletsGroup.length * 100) / noMembers.length).toFixed(2));
+        percent = Number(((walletsGroup.length * noMembers.length) / 100).toFixed(2));
       }
     } else {
       const walletsGroup = responsePolicy.roles.filter((search) => search.name == map)[0].kind.Group
@@ -209,7 +209,7 @@ async function getProposal() {
 
       childrens = formatChildrens(members);
       voices = members.length + "/" + walletsGroup.length;
-      percent = Number(((walletsGroup.length * 100) / members.length).toFixed(2));
+      percent = Number(((walletsGroup.length * members.length) / 100).toFixed(2));
     }
 
     return {

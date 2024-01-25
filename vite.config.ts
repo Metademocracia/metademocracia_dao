@@ -12,7 +12,7 @@ export default defineConfig((userConfig) => {
   const isProduction = process.env.NODE_ENV === 'production'
   const env = loadEnv(userConfig.mode, process.cwd(), '')
 
-  const baseUrl = isProduction ? env.BASE_URL : env.VITE_BASE_URL
+  const baseUrl = isProduction ? !env.BASE_URL ? "/" : env.BASE_URL : !env.VITE_BASE_URL ? "/" : env.VITE_BASE_URL
 
   return {
     base: baseUrl,

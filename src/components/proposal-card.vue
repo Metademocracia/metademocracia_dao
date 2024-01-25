@@ -10,14 +10,44 @@
         <div class="flex-space-center">
           <label>Proposal type: {{ proposal?.type }}</label>
 
-          <v-btn icon color="transparent" elevation="0" size="20px" class="relative clear-overlay" :ripple="false">
+          <!--<v-btn icon color="transparent" elevation="0" size="20px" class="relative clear-overlay" :ripple="false">
             <v-icon
               class="text-tertiary"
               icon="mdi-dots-horizontal"
               size="40px"
               style="translate: 0 -10px;"
             />
-          </v-btn>
+          </v-btn>-->
+          <v-menu>
+            <template v-slot:activator="{ props: menu }">
+              <v-tooltip location="top">
+                <template v-slot:activator="{ props: tooltip }">
+                  <v-btn
+                    icon
+                    color="transparent"
+                    elevation="0"
+                    size="20px"
+                    class="relative clear-overlay"
+                    :ripple="false"
+                    v-bind="mergeProps2(menu, tooltip)"
+                  >
+                    <v-icon
+                      class="text-tertiary"
+                      icon="mdi-dots-horizontal"
+                      size="40px"
+                      style="translate: 0 -10px;"
+                    />
+                  </v-btn>
+                </template>
+                <span>opciones</span>
+              </v-tooltip>
+            </template>
+            <v-list>
+              <v-list-item  @click="copy(proposal?.id)">
+                <v-list-item-title> Copiar Link</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </div>
 
         <div class="flex-space-center flex-wrap">
@@ -160,6 +190,7 @@ import FailedIcon from '@/assets/sources/images/failed.svg'
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 import utilsDAO from '@/services/utils-dao';
+import { mergeProps } from 'vue'
 
 
 const
@@ -169,9 +200,17 @@ const
       type: Object,
       default: undefined
     }
-  })
+  }),
+  mergeProps2 = mergeProps
 
-
+function copy(id) {
+  let route = "proposal-details";
+  if(process.env.CONTRACT_DAO == props.proposal.contractId) {
+    route = "proposal-details-meta";
+  }
+  const link = window.location.origin + process.env.BASE_URL + route + "?dao="+props.proposal.contractId+"&id=" + id
+  navigator.clipboard.writeText(link);
+}
 
 function onPressProposal() {
   if(process.env.CONTRACT_DAO == props.proposal.contractId) {
@@ -216,6 +255,7 @@ async function upvote(id, contractId) {
   WalletP2p.call(json);
 
 }
+
 
 
 async function downvote(id, contractId) {

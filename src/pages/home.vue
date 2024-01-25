@@ -83,7 +83,7 @@
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
           </v-card>
 
-          <v-card class="double-card-charts">
+          <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
               <span style="font-weight: 700!important;">
                 Propuestas Activas
@@ -94,6 +94,9 @@
               {{ result?.proposaldata?.proposal_actives }}
             </h5>
             <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
+          </v-card>
+
+          <v-card class="card-charts">
             <div class="jspace" style="width: 100%;">
               <span style="font-weight: 700!important;">
                 Propuestas Totales
