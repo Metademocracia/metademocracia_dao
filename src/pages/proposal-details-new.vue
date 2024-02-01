@@ -235,7 +235,7 @@ async function getProposal() {
 			]
 		},
 		{
-			title: "Council",
+			title: "Counci",
 			voices: "3/4",
 			percent: 75,
 			children: [
@@ -252,44 +252,6 @@ async function getProposal() {
 			]
 		},
 	]*/
-
-	// set index of current elements
-	panelsExpanded.value = panels.value.map((panel, index) => index)
-}
-
-function getPanels() {
-	panels.value = [
-		{
-			title: "Non DAO members",
-			voices: "0/1",
-			percent: 0,
-			children: [
-				{ user: "pruebavotar.near" },
-				{
-					user: "pruebavotar.near",
-					state: false,
-					date: "02 May 2023 22:56:28"
-				},
-			]
-		},
-		{
-			title: "Council",
-			voices: "3/4",
-			percent: 75,
-			children: [
-				{
-					user: "pruebavotar.near",
-					state: true,
-					date: "02 May 2023 22:56:28"
-				},
-				{
-					user: "pruebavotar.near",
-					state: false,
-					date: "02 May 2023 22:56:28"
-				},
-			]
-		},
-	]
 
 	// set index of current elements
 	panelsExpanded.value = panels.value.map((panel, index) => index)

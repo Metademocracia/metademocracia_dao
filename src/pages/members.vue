@@ -73,10 +73,7 @@ import WalletP2p from '../services/wallet-p2p';
 
 const
 dataTabs = ref([
-  /* {
-    name: "Council",
-    value: "council"
-  },
+/*
   {
     name: "Onboardees",
     value: "onboardees"

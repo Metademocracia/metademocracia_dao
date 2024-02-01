@@ -279,7 +279,7 @@ export default {
         console.log("aqui: ", this.cardsProposals)
 
         this.panels = [{
-          title: "council",
+          title: "Concejales",
           voices: dataVoice.length+"/"+response.serie.supply,
           percent: Number(((dataVoice.length * Number(response.serie.supply)) / 100).toFixed(2)),
           children: dataVoice

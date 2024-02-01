@@ -32,10 +32,10 @@
               </template>
 
               <v-card class="divcol card-menu">
-                <a @click="$router.push('/daos')">Colección de DAOs</a>
+                <a @click="$router.push('/daos')">Todos</a>
                 <a @click="$router.push('/my-daos')">Mis DAOs</a>
                 <a class="d-flex" style="white-space: nowrap;" @click="$router.push('/create-dao')">
-                  Crear DAOs
+                  Crear
                   <img class="ml-2" src="@/assets/sources/icons/plus.svg" alt="plus icon">
                 </a>
               </v-card>
@@ -108,10 +108,10 @@
         </template>
 
         <v-card class="divcol card-menu">
-          <a @click="$router.push('/daos')">Colección de DAOs</a>
+          <a @click="$router.push('/daos')">Todos</a>
           <a @click="$router.push('/my-daos')">Mis DAOs</a>
           <a class="d-flex" style="white-space: nowrap;" @click="$router.push('/create-dao')">
-            Crear DAOs
+            Crear
             <img class="ml-2" src="@/assets/sources/icons/plus.svg" alt="plus icon">
           </a>
         </v-card>

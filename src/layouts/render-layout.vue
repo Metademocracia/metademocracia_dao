@@ -19,7 +19,19 @@
     <section class="section2-home">
       <div class="member-container">
         <div class="center mobile-div-member" style="gap: 10px;">
-          <img src="@/assets/sources/images/members.svg" alt="Members" style="max-width: 80px;" class="member-img">
+          <img
+            :src="imgDao"
+            alt="Members"
+            style="
+              max-width: 60px;
+              $size: 58px;
+              width: $size;
+              height: $size;
+              border-radius: 50%;
+              border: 3.5px solid rgb(var(--v-theme-primary));
+              background: linear-gradient(-145deg, rgb(var(--v-theme-primary)), #62C3D7);
+              object-fit: cover;"
+            class="dao-image mx-auto">
           <span style="font-weight: 700!important; line-height: 1.6ch;">
             Dao: <br> <br>
             <span style="font-size: 13px; font-weight: 400 !important;">{{ walletDao }}</span>
@@ -126,12 +138,13 @@
 </template>
 
 <script>
-import '@/assets/styles/layouts/render-layout.scss'
-import proposalIcon from '@/assets/sources/icons/proposal.svg'
-import fundsIcon from '@/assets/sources/icons/funds.svg'
-import membersIcon from '@/assets/sources/icons/members.svg'
-import settingsIcon from '@/assets/sources/icons/settings.svg'
-import nearIcon from '@/assets/sources/logos/near.svg'
+import '@/assets/styles/layouts/render-layout.scss';
+import proposalIcon from '@/assets/sources/icons/proposal.svg';
+import MetademocraciaImage from '@/assets/sources/images/metademocracia-image.png';
+import fundsIcon from '@/assets/sources/icons/funds.svg';
+import membersIcon from '@/assets/sources/icons/members.svg';
+import settingsIcon from '@/assets/sources/icons/settings.svg';
+import nearIcon from '@/assets/sources/logos/near.svg';
 import usdtIcon from '@/assets/sources/icons/tether-icon.svg';
 import WalletP2p from '../services/wallet-p2p';
 import { ref } from 'vue';
@@ -172,14 +185,19 @@ export default {
       create_proposal_route: ref(null),
       walletDao: ref(""),
       formValid: ref(false),
+      imgDao: ref(MetademocraciaImage)
     }
+  },
+  mounted(){
+    console.log("aqui: ", atob("eyJwdXJwb3NlIjoiZGRkZyIsImJvbmQiOiIxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJ2b3RlX3BlcmlvZCI6IjYwNDgwMDAwMDAwMDAwMCIsImdyYWNlX3BlcmlvZCI6Ijg2NDAwMDAwMDAwMDAwIiwicG9saWN5Ijp7InJvbGVzIjpbeyJuYW1lIjoiY291bmNpbCIsImtpbmQiOnsiR3JvdXAiOlsiaHJwYWxlbmNpYS5uZWFyIl19LCJwZXJtaXNzaW9ucyI6WyIqOioiXSwidm90ZV9wb2xpY3kiOnt9fV0sImRlZmF1bHRfdm90ZV9wb2xpY3kiOnsid2VpZ2h0X2tpbmQiOiJSb2xlV2VpZ2h0IiwicXVvcnVtIjoiMCIsInRocmVzaG9sZCI6WzEsMl19LCJwcm9wb3NhbF9ib25kIjoiMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIiwicHJvcG9zYWxfcGVyaW9kIjoiNjA0ODAwMDAwMDAwMDAwIiwiYm91bnR5X2JvbmQiOiIxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJib3VudHlfZm9yZ2l2ZW5lc3NfcGVyaW9kIjoiNjA0ODAwMDAwMDAwMDAwIn0sImNvbmZpZyI6eyJwdXJwb3NlIjoiZGRkZyIsIm5hbWUiOiJnZGZnZGYiLCJtZXRhZGF0YSI6ImV5SnpiM1ZzUW05MWJtUlViMnRsYmtsemMzVmxjaUk2SWlJc0lteHBibXR6SWpwYlhTd2labXhoWjBOdmRtVnlJam9pYUhSMGNITTZMeTlwY0daekxtNWxZWEl1YzI5amFXRnNMMmx3Wm5NdlltRm1hM0psYVdOa04zZHRhbVpwZW5Oc2VEY3llV050Ym5OdGJ6ZHROMjF1ZG1aemVYSjNObmRuYUhOaGMyVnhORFY1WW5Oc1ltVnFkbmtpTENKbWJHRm5URzluYnlJNkltaDBkSEJ6T2k4dmFYQm1jeTV1WldGeUxuTnZZMmxoYkM5cGNHWnpMMkpoWm10eVpXbGhaRFZqTkhJemJtZHRibTAzY1RaMk5USnFiMkY2TkhsMGFUZHJaM05uYnpac2N6VndabUp6YW5wamJHeHFjSFp2Y25OMUlpd2laR2x6Y0d4aGVVNWhiV1VpT2lKblpHWm5aR1lpTENKc1pXZGhiQ0k2ZXlKc1pXZGhiRk4wWVhSMWN5STZJaUlzSW14bFoyRnNUR2x1YXlJNklpSjlmUT09In19"))
+
   },
   computed: {
     canActive() {
       return this.$route.name != "Home" && this.$route.name != "CreateProposal"
     },
 
-    daoActive() {
+    async daoActive() {
       this.route = this.$route.path.replace("/", "");
       const dao = this.$route.query?.dao
 
@@ -233,13 +251,18 @@ export default {
         this.create_proposal_route = dao
         this.create_proposal = true;
 
+        this.loadImgDao(dao);
+
         return true
       }
 
       this.walletDao = process.env.CONTRACT_DAO;
+      this.loadImgDao(process.env.CONTRACT_DAO);
+
       return false
     }
   },
+
 
   watch: {
     amount_near: function(val) {
@@ -279,6 +302,21 @@ export default {
     /* isRouteValid() {
       return this.routes.find((route) => route === this.route)
     }, */
+    async loadImgDao(dao) {
+      if(dao == process.env.CONTRACT_DAO) {
+        this.imgDao = MetademocraciaImage
+      } else {
+        const responseConfig = await WalletP2p.view({
+            contractId: dao,
+            methodName: "get_config"
+          });
+
+        const metadata = JSON.parse(atob(responseConfig.metadata));
+
+        this.imgDao = metadata?.img ? metadata.img : MetademocraciaImage;
+      }
+
+    },
 
     routeRedirect(route){
       if(!this.create_proposal_route) return
@@ -378,5 +416,14 @@ export default {
       color: #fff;
     }
   }
+}
+.dao-image {
+  $size: 58px;
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  border: 3.5px solid rgb(var(--v-theme-primary));
+  background: linear-gradient(-145deg, rgb(var(--v-theme-primary)), #62C3D7);
+  object-fit: cover;
 }
 </style>

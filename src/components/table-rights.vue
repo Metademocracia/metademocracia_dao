@@ -5,8 +5,6 @@
     :headers="headers ?? [
       { key: 'name', sortable: false },
       { key: 'all', title: 'Todos', align: 'center', sortable: false },
-      { key: 'group', title: 'Grupo Personalizado', align: 'center', sortable: false },
-      { key: 'council', title: 'Council', align: 'center', sortable: false },
     ]"
     :items="items"
   >
@@ -37,9 +35,9 @@
       />
     </template>
 
-    <template #item.council="{ item }">
+    <template #item.counci="{ item }">
       <v-checkbox
-        v-model="item.council"
+        v-model="item.counci"
         density="compact"
         class="flex-center"
         true-icon="mdi-checkbox-outline"

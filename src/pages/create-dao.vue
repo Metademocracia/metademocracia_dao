@@ -58,10 +58,11 @@
             <v-textarea
               v-model="formItems.purpose"
               id="proposal-dao"
-              placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis accumsan urna ac placerat. Ut scelerisque eu ligula ac rhoncus. Aliquam sagittis sapien sit amet libero ultricies varius. Curabitur ac ligula ultricies, semper ipsum nec, auctor sapien. Etiam nec sem ac mauris imperdiet rutrum. Sed mi dui, mattis vel ipsum eget, dictum interdum augue. Donec mollis congue enim quis dignissim. Ut egestas dolor at mauris suscipit dictum. Quisque at sollicitudin"
+              placeholder="Propósito"
               variant="solo"
               class="mb-1"
-              :rules="[globalRules.required]"
+              counter="200"
+              :rules="[globalRules.required, v => v.length <= 200 || 'Max 200 characters']"
             />
           </form-card>
         </v-window-item>
@@ -147,18 +148,19 @@
             <label style="color: #333 !important;">Grupos predeterminados</label>
             <span class="d-block mb-3" style="color: #939393 !important;">No puedes eliminarlos</span>
             <v-text-field
-              value="all"
-              placeholder="all"
+              value="Todos"
+              placeholder="Todos"
               variant="solo"
               class="mb-1"
               readOnly
             />
             <v-text-field
-              value="council"
-              placeholder="council"
+              v-model="groupCouncil"
+              placeholder="Concejal"
               variant="solo"
               class="mb-1"
-              readOnly
+              :rules=[globalRules.required]
+              @change="() => { item.type = groupCouncil }"
             />
 
             <p class="d-block mb-3">Grupos personalizados</p>
@@ -205,26 +207,33 @@
                 v-model="item.member"
                 placeholder="ap6ay7auhan6a78ahah8gfcvbay77a9a0han5"
                 variant="solo"
+                :error-messages="item.memberErrror"
+                :success-messages="item.memberSuccess"
+                @keyup="validMember(item)"
+                @change="validMember(item)"
               />
 
-              <v-autocomplete
+              <v-select
+                v-if="item.member"
                 v-model="item.type"
-                placeholder="council"
-                :items="getGroups(['council'])"
+                :items="getGroups([groupCouncil])"
                 variant="solo"
-              />
+                placeholder="Sleccione un grupo"
+                :rules="[(v) => !!v || 'Seleccione un grupo']"
+                required
+              ></v-select>
 
               <v-btn
                 min-width="70"
                 height="42"
-                :color="i == daoMembers.length - 1 ? '#61C2D5' : '#505050'"
+                :color="i == daoMembers.length - 1 && i <= 7 ? '#61C2D5' : '#505050'"
                 style="border-radius: 8px !important;"
                 @click="() => {
-                  if (i == daoMembers.length - 1) return daoMembers.push({  member: undefined, type: undefined })
+                  if (i == daoMembers.length - 1 && i <= 7) return daoMembers.push({  member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined })
                   daoMembers.splice(i, 1)
                 }"
               >
-                <v-icon :icon="i == daoMembers.length - 1 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+                <v-icon :icon="i == daoMembers.length - 1  && i <= 7 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
               </v-btn>
             </div>
           </form-card>
@@ -343,6 +352,9 @@ import { useRouter, useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import axios from 'axios';
 import WalletP2p from '../services/wallet-p2p';
+import * as nearAPI from "near-api-js";
+const { utils, Account, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
+import {configNear} from '../services/nearConfig';
 
 const
   toast = useToast(),
@@ -363,7 +375,7 @@ steps = [
 ],
 daoLinks = ref([ { model: undefined } ]),
 customGroups = ref([ { model: undefined } ]),
-daoMembers = ref([ { member: undefined, type: undefined } ]),
+daoMembers = ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ]),
 proposals = ref([]),
 permissions = ref([]),
 rights = ref([
@@ -391,7 +403,8 @@ feeMetadao = ref(null),
 costDeploy = ref("8000000000000000000000000"),
 contractCost = ref(""),
 contractCostNear = ref(""),
-loadingBtn = ref(false)
+loadingBtn = ref(false),
+groupCouncil = ref("Concejal")
 
 watch(nameDao, async (newName, oldName) => {
   if(newName){
@@ -401,6 +414,25 @@ watch(nameDao, async (newName, oldName) => {
 //this.value.replace(/[^a-zA-Z0-9]/,'')"
 
 onBeforeMount(getFee)
+
+async function validMember(item) {
+  //item.memberErrror = "wallet no valida"
+
+  //item.memberSuccess = "wallet no valida"
+
+  const keyStore = new keyStores.InMemoryKeyStore()
+  const near = new Near(configNear(keyStore))
+  const account = new Account(near.connection, item.member)
+
+  await account.state()
+    .then(() => {
+      item.memberErrror = null
+      item.memberSuccess = "Wallet válido"
+    }).catch(() => {
+      item.memberSuccess = null
+      item.memberErrror = "Wallet no valida"
+    })
+}
 
 async function getFee() {
   const response = await WalletP2p.view({
@@ -414,7 +446,7 @@ async function getFee() {
 
 }
 
-function getGroups(groups=['all', 'council']) {
+function getGroups(groups=['Todos', groupCouncil.value]) {
   for(let i = 0; i< customGroups.value.length; i++) {
     if(customGroups.value[i].model) {
       if(customGroups.value[i].model.trim() !== '') {
@@ -434,8 +466,6 @@ function getData() {
 
   const header = [
     { key: 'name', sortable: false },
-    // { key: 'all', title: 'Todos', align: 'center', sortable: false },
-    // { key: 'council', title: 'Council', align: 'center', sortable: false },
   ];
 
   for(let i=0; i<groups.length; i++){
@@ -455,7 +485,7 @@ function getData() {
       key: items.key,
       group: groups.map((item) => {
         return {
-          name: item, value: item === 'council'
+          name: item, value: item === groupCouncil.value
         }
       }),
     });
@@ -465,7 +495,7 @@ function getData() {
       key: items.key,
       group: groups.map((item) => {
         return {
-          name: item, value: item === 'council'
+          name: item, value: item === groupCouncil.value
         }
       }),
     });
@@ -546,9 +576,9 @@ function getRoles(){
       rol = ["*:*"]
     }
 
-    if(group == 'all') {
+    if(group == 'all' || group == 'Todos') {
       roles.push({
-        name: "all",
+        name: "Todos",
         permissions: rol,
         kind: "Everyone",
         vote_policy: {}
@@ -558,7 +588,7 @@ function getRoles(){
       roles.push({
         name: group,
         kind: {
-            Group: group == 'council' ? [WalletP2p.getAccount().address].concat(members) : members
+            Group: group == groupCouncil.value ? [WalletP2p.getAccount().address].concat(members) : members
         },
         permissions: rol,
         vote_policy: {}
@@ -573,7 +603,7 @@ function getRoles(){
 
 
 async function createDao(formValid) {
-  //console.log(getRoles())
+  console.log("roles: ", getRoles())
   if (!formValid) return
 
   loadingBtn.value = true;
@@ -633,7 +663,7 @@ async function createDao(formValid) {
   console.log(objectJson)
 
   loadingBtn.value = false;
-  WalletP2p.call(objectJson, "daos")
+  // WalletP2p.call(objectJson, "daos")
 
   // toast('¡Felicidades la DAO ha sido creada\n con éxito!')
 
