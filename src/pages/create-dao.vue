@@ -87,13 +87,40 @@
             />
 
             <label for="proposal-kyc">Documento Legal</label>
-            <v-text-field
+            <!--<v-text-field
               v-model="formItems.proposalKyc"
               id="proposal-kyc"
-              placeholder="https:// Documento_Legal"
+              placeholder="https://Documento_Legal"
               variant="solo"
               class="mb-1"
-            />
+            />-->
+
+            <v-text-field
+              v-for="(item, i) in daoProposalKyc"
+              v-model="item.model"
+              :key="i"
+              placeholder="https://Documento_Legal"
+              class="appened"
+              variant="solo"
+            >
+              <template #append-inner>
+                <v-btn
+                  min-width="70"
+                  height="42"
+                  :color="i == daoProposalKyc.length - 1 &&  daoProposalKyc.length <= 2 ? '#61C2D5' : '#505050'"
+                  style="border-radius: 8px !important;"
+                  @click="() => {
+                    if (i == daoProposalKyc.length - 1 &&  daoProposalKyc.length <= 2) return daoProposalKyc.push({ model: undefined })
+                    daoProposalKyc.splice(i, 1)
+                  }"
+                >
+                  <v-icon :icon="i == daoProposalKyc.length - 1 &&  daoProposalKyc.length <= 2 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+                </v-btn>
+              </template>
+            </v-text-field>
+
+
+
           </form-card>
         </v-window-item>
 
@@ -121,14 +148,14 @@
                 <v-btn
                   min-width="70"
                   height="42"
-                  :color="i == daoLinks.length - 1 ? '#61C2D5' : '#505050'"
+                  :color="i == daoLinks.length - 1 && daoLinks.length <= 2 ? '#61C2D5' : '#505050'"
                   style="border-radius: 8px !important;"
                   @click="() => {
-                    if (i == daoLinks.length - 1) return daoLinks.push({ model: undefined })
+                    if (i == daoLinks.length - 1 && daoLinks.length <= 2) return daoLinks.push({ model: undefined })
                     daoLinks.splice(i, 1)
                   }"
                 >
-                  <v-icon :icon="i == daoLinks.length - 1 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+                  <v-icon :icon="i == daoLinks.length - 1 && daoLinks.length <= 2 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
                 </v-btn>
               </template>
             </v-text-field>
@@ -201,6 +228,24 @@
             @next="() => {windowStep++; getData()}"
           >
             <p class="d-block mb-3">Agregue miembros a su DAO.</p>
+
+            <div class="d-flex" style="gap: 20px;">
+              <v-text-field
+                :value="addressUser"
+                placeholder="ap6ay7auhan6a78ahah8gfcvbay77a9a0han5"
+                variant="solo"
+                readonly
+              />
+
+              <v-select
+                v-model="groupCouncil"
+                :items="getGroups([groupCouncil])"
+                variant="solo"
+                placeholder="Sleccione un grupo"
+                readonly
+              ></v-select>
+            </div>
+
 
             <div v-for="(item, i) in daoMembers" :key="i" class="d-flex" style="gap: 20px;">
               <v-text-field
@@ -373,6 +418,7 @@ steps = [
   "Permisos de Votación",
   "Create DAO Assets"
 ],
+daoProposalKyc = ref([ { model: undefined } ]),
 daoLinks = ref([ { model: undefined } ]),
 customGroups = ref([ { model: undefined } ]),
 daoMembers = ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ]),
@@ -404,7 +450,8 @@ costDeploy = ref("8000000000000000000000000"),
 contractCost = ref(""),
 contractCostNear = ref(""),
 loadingBtn = ref(false),
-groupCouncil = ref("Concejal")
+groupCouncil = ref("Concejal"),
+addressUser = WalletP2p.getAccount().address
 
 watch(nameDao, async (newName, oldName) => {
   if(newName){
@@ -603,7 +650,7 @@ function getRoles(){
 
 
 async function createDao(formValid) {
-  console.log("roles: ", getRoles())
+  //console.log("roles: ", getRoles())
   if (!formValid) return
 
   loadingBtn.value = true;
@@ -624,10 +671,20 @@ async function createDao(formValid) {
     }
   }
 
+  const documentsKyc = [];
+  for(let i = 0; i< daoProposalKyc._rawValue.length; i++) {
+    if(daoProposalKyc._rawValue[i].model) {
+      if(daoProposalKyc._rawValue[i].model.trim() !== '') {
+        social.push(daoProposalKyc._rawValue[i].model.trim());
+      }
+    }
+  }
+
   const metadata = btoa(JSON.stringify({
     kyc: {
       legacyState: !formItems.legacyState ? null : formItems.legacyState,
-      proposalKyc: !formItems.proposalKyc ? null : formItems.proposalKyc
+      //proposalKyc: !formItems.proposalKyc ? null : formItems.proposalKyc
+      documentsKyc: documentsKyc
     },
     social: social.length > 0 ? social  : null,
     img: img ? img : null
@@ -660,7 +717,9 @@ async function createDao(formValid) {
   };
 
  // 21b85007de8967c3ec3dd51060bef1a31f5f7d5cd1da82c5765c1966f286ecd7
-  console.log(objectJson)
+  console.log("json: ", objectJson)
+  console.log("json: ", JSON.parse(atob(objectJson.args.args)))
+  console.log("json: ", JSON.parse(atob(metadata)))
 
   loadingBtn.value = false;
   // WalletP2p.call(objectJson, "daos")
