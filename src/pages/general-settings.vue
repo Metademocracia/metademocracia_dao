@@ -32,7 +32,6 @@
         id="linkName"
         variant="solo"
         placeholder="Link_de_prueba.com"
-        :rules="[globalRules.required]"
       />
 
       <label for="nameDao">Nombre</label>
@@ -86,7 +85,6 @@
         id="linkState"
         variant="solo"
         placeholder="Link_de_prueba.com"
-        :rules="[globalRules.required]"
       />
 
       <label for="legacy-state">Explique el estado legal y la jurisdicción de su DAO ( si se conoce) :</label>
@@ -99,7 +97,7 @@
         :rules="[globalRules.required]"
       />
 
-      <label for="proposal-kyc">Propósito</label>
+      <!--<label for="proposal-kyc">Propósito</label>
       <v-text-field
         ref="proposal-kyc"
         id="proposal-kyc"
@@ -107,7 +105,33 @@
         variant="solo"
         class="mb-1"
         :rules="[globalRules.required]"
-      />
+      />-->
+
+      <label for="proposal-kyc">Documento Legal</label>
+      <v-text-field
+        v-for="(item, i) in daoProposalKyc"
+        v-model="item.model"
+        :key="i"
+        placeholder="https://Documento_Legal"
+        class="appened"
+        variant="solo"
+        :rules="[globalRules.required]"
+      >
+        <template #append-inner>
+          <v-btn
+            min-width="70"
+            height="42"
+            :color="i == daoProposalKyc.length - 1 &&  daoProposalKyc.length <= 2 ? '#61C2D5' : '#505050'"
+            style="border-radius: 8px !important;"
+            @click="() => {
+              if (i == daoProposalKyc.length - 1 &&  daoProposalKyc.length <= 2) return daoProposalKyc.push({ model: undefined })
+              daoProposalKyc.splice(i, 1)
+            }"
+          >
+            <v-icon :icon="i == daoProposalKyc.length - 1 &&  daoProposalKyc.length <= 2 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+          </v-btn>
+        </template>
+      </v-text-field>
 
     </form-card-editable>
 
@@ -144,7 +168,6 @@
         id="linkSocial"
         variant="solo"
         placeholder="Link_de_prueba.com"
-        :rules="[globalRules.required]"
       />
 
       <p class="mb-8">Indique los nuevos links para las redes sociales:</p>
@@ -162,14 +185,14 @@
           <v-btn
             min-width="70"
             height="42"
-            :color="i == daoLinks.length - 1 ? '#61C2D5' : '#505050'"
+            :color="i == daoLinks.length - 1 && daoLinks.length <= 2 ? '#61C2D5' : '#505050'"
             style="border-radius: 8px !important;"
             @click="() => {
-              if (i == daoLinks.length - 1) return daoLinks.push({ model: undefined })
+              if (i == daoLinks.length - 1 && daoLinks.length <= 2) return daoLinks.push({ model: undefined })
               daoLinks.splice(i, 1)
             }"
           >
-            <v-icon :icon="i == daoLinks.length - 1 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+            <v-icon :icon="i == daoLinks.length - 1 && daoLinks.length <= 2 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
           </v-btn>
         </template>
       </v-text-field>
@@ -207,7 +230,6 @@
         id="linkLogo"
         variant="solo"
         placeholder="Link_de_prueba.com"
-        :rules="[globalRules.required]"
       />
 
       <div class="flex-column-center mr-auto" style="gap: 20px; max-width: max-content;">
@@ -314,7 +336,14 @@
           <p class="mt-1" style="font-size: 16px !important;">{{ !metadataDao?.kyc?.legacyState ? "No cuenta con un estado legal" : metadataDao?.kyc?.legacyState }}</p>
 
           <label>Documento Legal:</label>
-          <p class="mt-1" style="font-size: 16px !important;">{{ !metadataDao?.kyc?.proposalKyc ? "No cuenta con un documento legal" : metadataDao?.kyc?.proposalKyc }}</p>
+          <p v-if="!metadataDao?.kyc?.proposalKyc && !metadataDao?.kyc?.documentsKyc" class="mt-1" style="font-size: 16px !important;">No cuenta con un documento legal</p>
+
+          <p v-if="metadataDao?.kyc?.proposalKyc" class="mt-1" style="font-size: 16px !important;">{{ metadataDao?.kyc?.proposalKyc }}</p>
+
+          <span v-if="metadataDao?.kyc?.documentsKyc">
+            <p v-if="metadataDao?.kyc?.documentsKyc.length <= 0" class="mt-1" style="font-size: 16px !important;">No cuenta con un documento legal</p>
+            <p v-for="(item, i) in metadataDao?.kyc?.documentsKyc" :key="i" class="mt-1" style="font-size: 16px !important;">{{ item }}</p>
+          </span>
 
           <!--<v-btn variant="text" class="pa-0">
             <span style="color: #333 !important;">Documento Legal</span>
@@ -409,6 +438,7 @@ import variables from '@/mixins/variables';
 import { getUrlFromFile } from '@/plugins/functions';
 import WalletP2p from '../services/wallet-p2p';
 import axios from 'axios';
+//import { Link } from '@inertiajs/inertia-vue3';
 
 const
   toast = useToast(),
@@ -448,7 +478,8 @@ daoLogo = ref(null),
 walletDao = ref(null),
 metadataDao = ref(null),
 dataConfig = ref(null),
-nameDao = ref(null)
+nameDao = ref(null),
+daoProposalKyc = ref([ { model: undefined } ])
 
 watch(tab, clearEditing)
 watch(nameDao, async (newName, oldName) => {
@@ -471,7 +502,7 @@ async function getData() {
   const urlParams = new URLSearchParams(valores);
   walletDao.value = urlParams.get('dao');
 
-  console.log(walletDao.value)
+  //console.log(walletDao.value)
   const responseConfig = await WalletP2p.view({
     contractId: walletDao.value,
     methodName: "get_config"
@@ -483,10 +514,10 @@ async function getData() {
   links.value = metadataDao.value.social.map((item) => {return {text: item, href: item}});
   daoLogo.value = !metadataDao.value?.img ? MetademocraciaImage : metadataDao.value?.img
 
-  console.log("links: ", metadataDao.value.social.map((item) => {return {text: item, href: item}}))
+  //console.log("links: ", metadataDao.value.social.map((item) => {return {text: item, href: item}}))
 
 
-  console.log(metadataDao.value)
+  //console.log(metadataDao.value)
 }
 
 async function uploadImgIpfs() {
@@ -494,7 +525,7 @@ async function uploadImgIpfs() {
 
   if(!imgDao) return null
 
-  console.log("file print 1 ", imgDao)
+  //console.log("file print 1 ", imgDao)
   const resp = await axios.post('https://api.nft.storage/upload', imgDao[0], {
     headers: {
       'accept': 'application/json',
@@ -517,7 +548,7 @@ async function uploadImgIpfs() {
 async function onCompleted({ formValid }) {
   if (!formValid) return
 
-  console.log('here', tab.value)
+  //console.log('here', tab.value)
   const responsePolicy = await WalletP2p.view({
     contractId: walletDao.value,
     methodName: "get_policy"
@@ -544,13 +575,26 @@ async function onCompleted({ formValid }) {
       const title = btoa("Cambio de nombre y propósito del dao");
       const description = btoa(document.getElementById("reasonName").value);
 
-      addProposal(bond, title, description, link);
+      addProposal(bond, title, description, (!link ? "" : link));
     } break;
 
      // Estado Legal y Doc
     case 1: {
       metadataDao.value.kyc.legacyState = document.getElementById("legacy-state").value;
-      metadataDao.value.kyc.proposalKyc = document.getElementById("proposal-kyc").value;
+      if(metadataDao.value.kyc?.proposalKyc) {
+        metadataDao.value.kyc.proposalKyc = undefined
+      }
+
+      const documentsKyc = [];
+      for(let i = 0; i< daoProposalKyc._rawValue.length; i++) {
+        if(daoProposalKyc._rawValue[i].model) {
+          if(daoProposalKyc._rawValue[i].model.trim() !== '') {
+            social.push(daoProposalKyc._rawValue[i].model.trim());
+          }
+        }
+      }
+
+      metadataDao.value.kyc.documentsKyc = documentsKyc;
 
       const metadata = btoa(JSON.stringify(metadataDao.value));
       dataConfig.value.metadata = metadata
@@ -559,7 +603,7 @@ async function onCompleted({ formValid }) {
       const title = btoa("Cambio Estado legal y Documento");
       const description = btoa(document.getElementById("reasonState").value);
 
-      addProposal(bond, title, description, link);
+      addProposal(bond, title, description, (!link ? "" : link));
     } break;
 
     // Enlaces
@@ -582,7 +626,7 @@ async function onCompleted({ formValid }) {
       const title = btoa("Cambio de redes sociales");
       const description = btoa(document.getElementById("reasonSocial").value);
 
-      addProposal(bond, title, description, link);
+      addProposal(bond, title, description, (!link ? "" : link));
     } break;
 
     // Logo change
@@ -598,7 +642,7 @@ async function onCompleted({ formValid }) {
       const title = btoa("Cambio de logo");
       const description = btoa(document.getElementById("reasonLogo").value);
 
-      addProposal(bond, title, description, link);
+      addProposal(bond, title, description, (!link ? "" : link));
     } break;
   }
 }

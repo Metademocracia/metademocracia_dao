@@ -247,7 +247,7 @@
             </div>
 
 
-            <div v-for="(item, i) in daoMembers" :key="i" class="d-flex" style="gap: 20px;">
+            <div   class="d-flex" style="gap: 20px;">
               <v-text-field
                 v-model="item.member"
                 placeholder="ap6ay7auhan6a78ahah8gfcvbay77a9a0han5"

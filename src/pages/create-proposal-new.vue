@@ -48,7 +48,6 @@
               id="link"
               variant="solo"
               placeholder="Link_de_prueba.com"
-              :rules="[globalRules.required]"
             />
 
             <span v-if="typeSelect === 'Agregar miembros'">
@@ -146,7 +145,7 @@ export default {
     return {
       globalRules,
       proposalTypes: ref([
-        "Encuestas",
+        "Votos",
         "Agregar miembros",
         "Eliminar miembros",
         "Transferencia"
@@ -225,7 +224,7 @@ export default {
         const bounty_bond = (BigInt(responsePolicy?.bounty_bond.toString()) + BigInt(response)).toString()
 
         switch (this.typeSelect) {
-          case "Encuestas": this.addVote(bounty_bond);
+          case "Votos": this.addVote(bounty_bond);
             break;
 
           case "Agregar miembros": this.addMembers(bounty_bond);
@@ -258,7 +257,7 @@ export default {
             title: btoa(document.getElementById("title").value),
             description: btoa(document.getElementById("description").value),
             kind: "Vote",
-            link: document.getElementById("link").value,
+            link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
           }
         },
         gas: "200000000000000",
@@ -282,7 +281,7 @@ export default {
                 role: document.getElementById("roles").value,
               }
             },
-            link: document.getElementById("link").value,
+            link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
           }
         },
         gas: "200000000000000",
@@ -306,7 +305,7 @@ export default {
                 role: document.getElementById("roles").value,
               }
             },
-            link: document.getElementById("link").value,
+            link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
           }
         },
         gas: "200000000000000",
@@ -336,7 +335,7 @@ export default {
                 msg: msg ? msg.lenght > 0 ? msg.length : null : null,
               }
             },
-            link: document.getElementById("link").value,
+            link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
           }
         },
         gas: "200000000000000",
