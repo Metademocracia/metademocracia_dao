@@ -350,19 +350,23 @@ export default {
       }
     },
 
-    delegate(){
+    async delegate(){
       if(!this.formValid) return
       console.log("token: ", this.selectedToken)
+      //this.walletDao = process.env.CONTRACT_DAO
       switch (this.selectedToken) {
         case 'NEAR': {
+          const contractId = this.walletDao == process.env.CONTRACT_DAO ? process.env.CONTRACT_DAO : process.env.CONTRACT_FACTORY;
+          const delegateAccount = this.walletDao == process.env.CONTRACT_DAO ? WalletP2p.getAccount().address : this.walletDao;
+
           const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
           const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
 
           const json = {
-            contractId: process.env.CONTRACT_DAO,
+            contractId: contractId,
             methodName: "delegate",
             args: {
-              account_id: WalletP2p.getAccount().address,
+              account_id: delegateAccount,
               amount: amount
             },
             gas: "300000000000000",
@@ -379,16 +383,45 @@ export default {
 
           const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000")).toString()
 
-          const json = {
+          const usdtIsActive = await WalletP2p.view({
+            contractId: process.env.CONTRACT_USDT,
+            methodName: "storage_balance_of",
+            args: { account_id: this.walletDao }
+          });
+
+          let json = {
             contractId: process.env.CONTRACT_USDT,
             methodName: "ft_transfer",
             args: {
-              receiver_id: process.env.CONTRACT_DAO,
+              receiver_id: this.walletDao,
               amount: amount
             },
             gas: "300000000000000",
             attachedDeposit: "1"
           };
+          if(!usdtIsActive){
+            json = [
+              {
+                contractId: process.env.CONTRACT_USDT,
+                methodName: "storage_deposit",
+                args: {
+                  account_id: this.walletDao,
+                },
+                gas: "30000000000000",
+                attachedDeposit: "1250000000000000000000"
+              },
+              {
+                contractId: process.env.CONTRACT_USDT,
+                methodName: "ft_transfer",
+                args: {
+                  receiver_id: this.walletDao,
+                  amount: amount
+                },
+                gas: "15000000000000",
+                attachedDeposit: "1"
+              }
+            ];
+          }
 
           // 1000000000000000000000
           WalletP2p.call(json);

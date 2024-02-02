@@ -419,7 +419,13 @@ export default {
           let status = status_json?.SuccessValue != undefined || status_json?.SuccessReceiptId != undefined ? "Success" : "Failure";
 
           if(status == "Success") {
-            const dataAlert = '<p class="mt-5"> <span style="color: black" ><b>Hash:</b></span> <a href="'+ process.env.ROUTER_EXPLORER_NEAR_HASH + hash +'" target="_blank"> '+ hash +' </a></p>';
+            const dataAlert = '<p style="font-size:30px; color: white"><b>Felicidades</b></p> \
+              <p class="mt-5"> \
+                <span style="color: white"> \
+                  <b>Hash:</b> \
+                </span> \
+                <a href="'+ process.env.ROUTER_EXPLORER_NEAR_HASH + hash +'" target="_blank"> '+ hash +' </a> \
+              </p>';
             this.toast.success({component: formatHtml,
               props:  {
                   html: dataAlert
@@ -439,7 +445,7 @@ export default {
 
           //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
 
-          history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
+          // history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
 
         });
 

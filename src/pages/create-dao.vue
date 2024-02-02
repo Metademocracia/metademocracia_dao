@@ -247,7 +247,7 @@
             </div>
 
 
-            <div   class="d-flex" style="gap: 20px;">
+            <div v-for="(item, i) in daoMembers" :key="i" class="d-flex" style="gap: 20px;">
               <v-text-field
                 v-model="item.member"
                 placeholder="ap6ay7auhan6a78ahah8gfcvbay77a9a0han5"
@@ -398,7 +398,7 @@ import { useToast } from 'vue-toastification';
 import axios from 'axios';
 import WalletP2p from '../services/wallet-p2p';
 import * as nearAPI from "near-api-js";
-const { utils, Account, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
+const { utils, Account, NearUtils, KeyPair, keyStores, Near, connect, transactions } = nearAPI;
 import {configNear} from '../services/nearConfig';
 
 const
@@ -461,6 +461,7 @@ watch(nameDao, async (newName, oldName) => {
 //this.value.replace(/[^a-zA-Z0-9]/,'')"
 
 onBeforeMount(getFee)
+
 
 async function validMember(item) {
   //item.memberErrror = "wallet no valida"
