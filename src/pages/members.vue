@@ -68,7 +68,7 @@
 import '@/assets/styles/pages/members.scss'
 import avatarIcon from '@/assets/sources/images/avatar.jpg'
 import { computed } from 'vue';
-import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount, watch  } from 'vue'
 import WalletP2p from '../services/wallet-p2p';
 
 const
@@ -104,28 +104,43 @@ filters = [
 ],
 dataMembers = ref([]),
 page = ref(1),
-paginatedDataMembers = computed(() => (dataMembers.value.length || 12) / 12),
+elementosPorPagina = ref(3),
+totalMembersList = ref(0),
+paginatedDataMembers = ref(0),
 policy = ref({}),
-membersTotal = ref(0)
+membersTotal = ref(0),
+selectGroup = ref("")
 
 onBeforeMount(getData)
 
+watch(page, async (newPage, oldPage) => {
+  loadData()
+})
+
+
 function changeGroup(item){
-  console.log("aqui si: ",item)
   //selectedGroup.value = item.value;
-  loadData(item.value)
+  selectGroup.value = item.value
+  loadData()
 }
 
-function loadData(group) {
+function loadData() {
+  const group = selectGroup.value
   const responsePolicy = policy.value;
-  console.log("grupo: ", group)
+
 
   let members = []
 
   members = responsePolicy.roles.filter((filterRole) => filterRole.name == group)[0].kind.Group;
+  totalMembersList.value = members.length;
+  paginatedDataMembers.value = Math.ceil(members.length / elementosPorPagina.value);
 
 
-  console.log("--------", members)
+  const corteDeInicio = (page.value - 1) * elementosPorPagina.value;
+	const corteDeFinal = corteDeInicio + elementosPorPagina.value;
+
+  //baseDeDatos.slice(corteDeInicio, corteDeFinal);
+
 
 
   dataMembers.value = members.map((member) => {
@@ -134,7 +149,7 @@ function loadData(group) {
       group: group,
       user: member,
     }
-  })
+  }).slice(corteDeInicio, corteDeFinal)
 }
 
 async function getData() {
@@ -147,9 +162,8 @@ async function getData() {
     methodName: "get_policy",
   });
 
-  const indexDelete = responsePolicy.roles.indexOf(responsePolicy.roles.find((element) => element.name === "all"))
+  const indexDelete = responsePolicy.roles.indexOf(responsePolicy.roles.find((element) => element.name === "all" || element.name === "Todos"))
   if(indexDelete >= 0) {
-    console.log("aqui prueba", indexDelete)
     responsePolicy.roles.splice(indexDelete, 1);
   }
 
@@ -168,6 +182,7 @@ async function getData() {
   console.log(responsePolicy)
   policy.value = responsePolicy
 
-  loadData(responsePolicy.roles[0].name)
+  selectGroup.value = responsePolicy.roles[0].name
+  loadData()
 }
 </script>

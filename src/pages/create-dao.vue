@@ -723,7 +723,7 @@ async function createDao(formValid) {
   console.log("json: ", JSON.parse(atob(metadata)))
 
   loadingBtn.value = false;
-  // WalletP2p.call(objectJson, "daos")
+  WalletP2p.call(objectJson, "daos")
 
   // toast('¡Felicidades la DAO ha sido creada\n con éxito!')
 
