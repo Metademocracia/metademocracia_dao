@@ -121,19 +121,6 @@
       }
 
       .v-field__input { padding-right: 0 }
-
-      &::after {
-        @media (max-width: 880px) { display: none }
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        margin: auto;
-        width: 1px;
-        height: 60%;
-        background-color: #000;
-      }
     }
 
     .container-input-search{
@@ -145,6 +132,10 @@
       height: 45px!important;
       max-height: 45px!important;
       min-height: 1px!important;
+
+      .v-input { padding-right: 0 }
+
+      .v-input__prepend { margin-right: 0 }
 
       .v-field{
         padding-inline: 0;
@@ -160,6 +151,7 @@
         height: 45px!important;
         max-height: 45px!important;
         min-height: 1px!important;
+        // min-width: 70px;
         margin-top: -5px;
         padding-inline: 10px !important;
       }

@@ -179,7 +179,7 @@ export default {
         { name: "NEAR", icon: nearIcon},
         { name: "USDT", icon: usdtIcon}
       ],
-      selectedToken: "NEAR",
+      selectedToken: ref("NEAR"),
       amount_near: ref(null),
       create_proposal: ref(false),
       create_proposal_route: ref(null),
