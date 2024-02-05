@@ -74,7 +74,7 @@
             style="--w: clamp(4em, 12vw, 6.25em); width: var(--w); height: var(--w); float: right;"
           >
 
-          <p class="label mb-2">Proposer</p>
+          <p class="label mb-2">Proponente</p>
           <p>{{ proposal?.proposer }}</p>
 
 
@@ -114,7 +114,7 @@
           </span>
 
           <span v-else-if="proposal?.type == 'AddMemberToRole' || proposal?.type == 'RemoveMemberFromRole'">
-            <p class="label mb-2">Description</p>
+            <p class="label mb-2">Descripción</p>
             <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.description }} </p>
 
             <p class="label mb-2">Usuario</p>
@@ -125,7 +125,7 @@
           </span>
 
           <span v-else>
-            <p class="label mb-2">Description</p>
+            <p class="label mb-2">Descripción</p>
             <v-div id="description" class="ellipsis-box" style="--lines: 6; color: black !important;" v-html="proposal?.description"></v-div>
           </span>
         </div>
@@ -151,12 +151,12 @@
             </div>
 
             <div v-if="proposal?.claims" class="flex-column" style="gap: 10px;">
-              <label>Available Claims</label>
+              <label>Reclamaciones disponibles</label>
               <span>{{ proposal?.claims }}</span>
             </div>
 
             <div class="flex-column" style="gap: 10px;">
-              <label>Time to Complete</label>
+              <label>Tiempo para completar</label>
               <span>{{ proposal?.remainingTime }}</span>
             </div>
           </aside>

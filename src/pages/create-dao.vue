@@ -263,7 +263,7 @@
                 v-model="item.type"
                 :items="getGroups([groupCouncil])"
                 variant="solo"
-                placeholder="Sleccione un grupo"
+                placeholder="Seleccione un grupo"
                 :rules="[(v) => !!v || 'Seleccione un grupo']"
                 required
               ></v-select>
@@ -478,7 +478,7 @@ async function validMember(item) {
       item.memberSuccess = "Wallet válido"
     }).catch(() => {
       item.memberSuccess = null
-      item.memberErrror = "Wallet no valida"
+      item.memberErrror = "Wallet no válida"
     })
 }
 
