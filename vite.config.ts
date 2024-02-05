@@ -42,6 +42,7 @@ export default defineConfig((userConfig) => {
         ROUTER_RPC: env.VITE_ROUTER_RPC,
         ROUTER_GRAPH: env.VITE_ROUTER_GRAPH,
         ROUTER_GRAPH_DAOS: env.VITE_ROUTER_GRAPH_DAOS,
+        ROUTER_API_METADEMOCRACIA: env.VITE_ROUTER_API_METADEMOCRACIA,
         CONTRACT_USDT: env.VITE_CONTRACT_USDT,
         KEY_IPFS: env.VITE_KEY_IPFS,
       },

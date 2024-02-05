@@ -32,21 +32,23 @@
 
         <h6 class="mt-6 mb-2">Filtrar por proponente</h6>
         <v-text-field
+          v-model="proposer"
           placeholder="andresdom.near"
           append-inner-icon="mdi-magnify"
           class="flex-grow-0"
           variant="solo"
           hide-details
+          @keyup="loadProposal()"
         ></v-text-field>
 
-        <h6 class="mt-6 mb-2">Filtrar por categoría</h6>
+        <!--<h6 class="mt-6 mb-2">Filtrar por categoría</h6>
         <v-text-field
           placeholder="lorem ipsum"
           append-inner-icon="mdi-magnify"
           class="flex-grow-0"
           variant="solo"
           hide-details
-        ></v-text-field>
+        ></v-text-field>-->
       </sticky-drawer>
 
       <!-- proposals -->
@@ -216,8 +218,8 @@ export default {
       let type = this.typeProposal.map(item => { return item.id }).splice(1, this.typeProposal.length);
 
       status = this.filterStatusSelected != '*' ? [this.filterStatusSelected] : status;
-      type = this.typeProposal[this.filterTypeProposalSelected].id != '*' ? [this.filterTypeProposalSelected] : type;
-
+      type = this.typeProposal[this.filterTypeProposalSelected].id != '*' ? [this.typeProposal[this.filterTypeProposalSelected].id] : type;
+      console.log("type: ", type)
 
       const query1 = `query Proposals($type: [String], $status: [String]) {
         proposals(where: {proposal_type_in: $type, status_in: $status} orderBy: creation_date, orderDirection: desc) {

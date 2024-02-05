@@ -32,21 +32,22 @@
 
         <h6 class="mt-6 mb-2">Filtrar por proponente</h6>
         <v-text-field
-          placeholder="andresdom.near"
+          v-model="filterProposer"
+          placeholder="metademocracia_dao.near"
           append-inner-icon="mdi-magnify"
           class="flex-grow-0"
           variant="solo"
           hide-details
         ></v-text-field>
 
-        <h6 class="mt-6 mb-2">Filtrar por categoría</h6>
+        <!--<h6 class="mt-6 mb-2">Filtrar por categoría</h6>
         <v-text-field
           placeholder="lorem ipsum"
           append-inner-icon="mdi-magnify"
           class="flex-grow-0"
           variant="solo"
           hide-details
-        ></v-text-field>
+        ></v-text-field>-->
       </sticky-drawer>
 
       <!-- proposals -->
@@ -61,7 +62,7 @@
         <v-pagination
           v-model="page"
           class="mt-10 mb-16"
-          :length="paginatedProposals"
+          :length="paginatedDataProposal"
         ></v-pagination>
       </aside>
     </section>
@@ -69,20 +70,21 @@
 </template>
 
 <script>
-import '@/assets/styles/pages/proposals-new.scss'
-import ProposalCard from '@/components/proposal-card.vue'
+import axios from'axios';
+import '@/assets/styles/pages/proposals-new.scss';
+import ProposalCard from '@/components/proposal-card.vue';
 import WalletP2p from '../services/wallet-p2p';
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 export default {
   components: { ProposalCard },
   setup() {
     return {
       tab: ref(0),
-      filter: ref('all'),
+      filter: ref('todos'),
       proposals: ref([]),
       tabs: [
-        {name:"Todos", value: "all"},
+        {name:"Todos", value: "todos"},
         {name:"Llamada de función", value: "FunctionCall"},
         {name:"Transferencia", value: "Transfer"},
         {name:"Miembros", value: "AddMemberToRole"}
@@ -90,44 +92,153 @@ export default {
       filters: [
         {
           name: "Todos",
-          value: "all"
+          value: "todos"
         },
         {
           name: "Activas",
-          value:"active"
+          value:"InProgress"
         },
         {
           name: "Aprobados",
-          value: "approved"
+          value: "Approved"
         },
         {
           name: "Fallidas",
-          value: "failed"
+          value: "Failed"
         }
       ],
       page: ref(1),
       wallet_dao: ref(null),
-      typeDao: ref(false)
+      typeDao: ref(false),
+      paginatedDataProposal: ref(0),
+      elementosPorPagina: ref(2),
+      totalProposalList: ref(0),
+      nextIndex: ref(0),
+      type: ref(undefined),
+      status: ref(undefined),
+      filterProposer: ref(undefined),
+      likeProposer: ref(undefined)
     }
   },
+
+  watch: {
+    page: function(val) {
+      this.nextIndex = (val - 1) * this.elementosPorPagina;
+      this.getData()
+    },
+    tab: function(val) {
+      this.nextIndex = 0;
+      this.type = this.tabs[val].value == "todos" ? undefined : this.tabs[val].value;
+      this.status = this.filter == "todos" ? undefined : this.filter;
+      this.getData()
+    },
+    filter: function(val) {
+      this.nextIndex = 0;
+      this.type = this.tabs[this.tab].value == "todos" ? undefined : this.tabs[this.tab].value;
+      this.status = val == "todos" ? undefined : val;
+      this.getData()
+    },
+    filterProposer: function(val) {
+      this.nextIndex = 0;
+      this.likeProposer = !val ? undefined : val.trim() == "" ? undefined : val.trim();
+      console.log("like: ",this.likeProposer)
+      this.getData()
+    }
+  },
+
   computed: {
     paginatedProposals() {
       return (this.proposals.length || 3) / 3
     }
   },
   beforeMount() {
-    console.log(window.location.pathname.split('/').at(-1))
+    // console.log(window.location.pathname.split('/').at(-1))
     const valores = window.location.search;
     const urlParams = new URLSearchParams(valores);
     var id = urlParams.get('dao');
     this.wallet_dao = id;
 
     this.getData()
+    //this.getData2()
   },
 
 
   methods: {
     async getData() {
+      const response = await axios.post(process.env.ROUTER_API_METADEMOCRACIA + "/queries/get-proposals",
+      {
+        contractId: this.wallet_dao,
+        limit: this.elementosPorPagina,
+        index: this.nextIndex,
+        typeProposal: this.type,
+        status: this.status,
+        proposerLike: this.likeProposer
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      if(!response) return
+
+      //paginacion
+      this.totalProposalList = response.data[1];
+      this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+      this.nextIndex = (this.page) * this.elementosPorPagina;
+
+      console.log("nextindex: ", this.nextIndex)
+
+
+      //pintado data
+      const proposals = []
+      for (let i = 0; i < response.data[0].length; i++) {
+        const item = response.data[0][i];
+        const votes = Object.keys(JSON.parse(item.vote_counts)).map((map) => {return JSON.parse(item.vote_counts)[map]})
+
+        let votesup = 0
+        let votesdown = 0
+        for(const vote of votes){
+          console.log(vote[0])
+          votesup += vote[0]
+          votesdown += vote[1]
+        }
+
+        let kind;
+        try {
+          kind = JSON.parse(item.kind);
+        } catch (error) {
+          kind = item.kind;
+        }
+
+        const type = typeof kind === "object" ? Object.keys(kind)[0] : item.kind;
+        const objectProposal = typeof kind === "object" ? kind[type] : undefined;
+        const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+
+        proposals.push({
+          id: item.proposal_id,
+          contractId: this.wallet_dao,
+          type,
+          objectProposal,
+          configMetadata,
+          title: item.title,
+          date: null,
+          proposer: item.proposer,
+          description: item.description,
+          approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
+          link: item.link,
+          amount: null,
+          claims: null,
+          remainingTime: "una semana",
+          likes: votesup,
+          dislikes: votesdown,
+        });
+      }
+
+      this.proposals = proposals
+    },
+
+    /* async getData2() {
       const response = await WalletP2p.view({
         contractId: this.wallet_dao,
         methodName: "get_proposals",
@@ -164,7 +275,7 @@ export default {
           objectProposal,
           configMetadata,
           title: atob(item.title),
-          date: null/*item.submission_time*/,
+          date: null,
           proposer: item.proposer,
           description: atob(item.description),
           approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
@@ -176,7 +287,7 @@ export default {
           dislikes: votesdown,
         });
       }
-    }
+    }*/
   }
 }
 </script>
