@@ -445,7 +445,7 @@ export default {
 
           //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
 
-          // history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
+          history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
 
         });
 
