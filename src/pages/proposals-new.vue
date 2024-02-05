@@ -85,7 +85,8 @@ export default {
       proposals: ref([]),
       tabs: [
         {name:"Todos", value: "todos"},
-        {name:"Llamada de función", value: "FunctionCall"},
+        {name:"Votos", value: "Vote"},
+        /*{name:"Llamada de función", value: "FunctionCall"},*/
         {name:"Transferencia", value: "Transfer"},
         {name:"Miembros", value: "AddMemberToRole"}
       ],
