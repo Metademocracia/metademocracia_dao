@@ -32,7 +32,7 @@
         color="#7758a4"
         elevation="3"
         style="max-width: 250px;"
-        @click="windowStep = i"
+        @click="() => { tokenCardsSelected = item.currency; windowStep = i;}"
       >
         <div class="d-flex justify-center align-start" style="gap: 8px;">
           <img
@@ -107,7 +107,6 @@
             :ripple="false"
             @click="() => {
               select_radio_buttons = item.id
-              loadTransactions()
             }"
           >
             <div class="custom-checkbox mr-2" style="--size: 10px" :class="{ active: select_radio_buttons === item.id }" />
@@ -117,7 +116,8 @@
 
         <h6 class="mt-6 mb-2">Filtrar por billetera</h6>
         <v-text-field
-          placeholder="andresdom.near"
+          v-model="walletLike"
+          placeholder="metademocracia_dao.near"
           append-inner-icon="mdi-magnify"
           class="flex-grow-0"
           variant="solo"
@@ -171,18 +171,19 @@
 </template>
 
 <script>
-import '@/assets/styles/pages/funds-new.scss'
+import '@/assets/styles/pages/funds-new.scss';
 import near from '@/assets/sources/icons/near-icon.svg';
 import stnear from '@/assets/sources/icons/stnear-icon.svg';
 import usdc from '@/assets/sources/icons/usdc-icon.svg';
 import usdt from '@/assets/sources/icons/tether-icon.svg';
-import VueApexchart from "vue3-apexcharts"
+import VueApexchart from "vue3-apexcharts";
 import { ref } from 'vue';
 import { useQuery } from '@vue/apollo-composable';
 import axios from 'axios';
 import gql from 'graphql-tag';
 import graphQl from '@/services/graphQl';
 import WalletP2p from '../services/wallet-p2p';
+import moment from 'moment';
 
 export default {
   components: { VueApexchart },
@@ -227,8 +228,8 @@ export default {
       select_radio_buttons: ref("todos"),
       typeTransaction: ref([
         {id: "todos", desc: "Todos"},
-        {id: "received", desc: "Recibidos"},
-        {id: "transfer", desc: "Enviados"},
+        {id: "Entrada", desc: "Recibidos"},
+        {id: "Salida", desc: "Enviados"},
       ]),
       address: ref(null),
       selectedOrderBy: ref({id: "asc", desc: "Menos Recientes"}),
@@ -245,8 +246,27 @@ export default {
         },
       ]),
       total_value_bloqued: ref(0),
+      tokenCardsSelected: ref("NEAR"),
+      typeTransfer: ref(undefined),
+      walletLike: ref(undefined),
     }
   },
+
+  watch: {
+    select_radio_buttons: function(val){
+      this.typeTransfer = val == 'todos' ? undefined : val;
+      this.loadTransactionsTable()
+    },
+    tokenCardsSelected: function(val) {
+      this.assetTransfer = val;
+      this.loadTransactionsTable()
+    },
+    walletLike: function(val) {
+      this.walletLike = !val ? undefined : val.trim() == "" ? undefined : val.trim();
+      this.loadTransactionsTable()
+    }
+  },
+
   computed: {
     chartHeight() {
       return window.innerWidth < 690 ? '250px' : '450px'
@@ -265,6 +285,7 @@ export default {
   },*/
   beforeMount() {
     this.loadData();
+    this.loadTransactionsTable();
   },
   methods: {
     async loadData() {
@@ -278,8 +299,6 @@ export default {
         methodName: "ft_balance_of",
         args: {account_id: this.$route.query.dao }
       });
-
-      console.log("aqui: ",responseUsdtAmount)
 
       const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
       const balanceNear = responseNearAmount ? (Number(responseNearAmount) / 1000000000000000000000000) : 0;
@@ -321,7 +340,6 @@ export default {
           this.loadChartUsdt(this.resultChartUsdt.result);
         }
       }
-      this.loadTransactions()
     },
     mapChart(response, asset) {
       const data_series = [];
@@ -393,48 +411,30 @@ export default {
         }
       }
     },
-    async loadTransactions() {
-      let typeTransactions = this.typeTransaction.map(item => { return item.id }).splice(1, this.typeTransaction.length);
-      typeTransactions = this.select_radio_buttons != 'todos' ? [this.select_radio_buttons] : typeTransactions;
 
-      const query1 = `query MyQuery($typeTransactions: [String], $orderDirection: String) {
-        fundshists(where: {type_in: $typeTransactions}, orderBy: date_time, orderDirection: $orderDirection ) {
-          amount
-          date_time
-          id
-          token_id
-          type
-          user_id
-        }
-      }`;
-
-      const query2 = `query MyQuery($typeTransactions: [String], $address: String, $orderDirection: String) {
-        fundshists(where: {type_in: $typeTransactions, user_id_contains_nocase: $address}, orderBy: date_time, orderDirection: $orderDirection ) {
-          amount
-          date_time
-          id
-          token_id
-          type
-          user_id
-        }
-      }`;
-
-      const querys = !this.address ? query1 : query2;
-
-      const variables = { typeTransactions, address: this.address, orderDirection: this.selectedOrderBy?.id };
-
-      await graphQl.getQuery(querys, variables).then(response => {
-        this.loadTransactionsTable(response.data.data.fundshists);
+    async loadTransactionsTable() {
+      const response = await axios.post(process.env.ROUTER_API_METADEMOCRACIA + "/queries/get-funds-history",
+      {
+        contractId: this.$route.query.dao,
+        typeTransfer: this.typeTransfer,
+        asset: this.tokenCardsSelected,
+        walletLike: this.walletLike
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       });
-    },
-    loadTransactionsTable(response) {
-      const dataTransactions = response.map((item) => {
-        const epoch = item.date_time/1000000;
+
+      if(!response) return
+
+      const dataTransactions = response.data.map((item) => {
+        const epoch = item.blockTimestamp/1000000;
 
         return {
-            near: (item.type == "received" ? '+ ' : '- ')+Number(item.amount).toFixed(2)+' '+item.token_id,
-            icon: item.type == "received" ? 'mdi-tray-arrow-down' : 'mdi-tray-arrow-up',
-            name: item.user_id,
+            near: (item.type_transfer == "Entrada" ? '+ ' : '- ')+Number(item.amount).toFixed(2)+' '+item.fund_asset,
+            icon: item.type_transfer == "Entrada" ? 'mdi-tray-arrow-down' : 'mdi-tray-arrow-up',
+            name: item.predecessor,
             date: moment(epoch).format("DD MMM yyyy HH:mm:ss")
           };
       });
@@ -449,6 +449,7 @@ export default {
 
     },
     loadPage() {
+      console.log("aqui va")
       const startIndex = (this.currentPage - 1) * this.cardsPerPage;
       const endIndex = startIndex + this.cardsPerPage;
 
