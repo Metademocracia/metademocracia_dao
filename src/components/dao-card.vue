@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="dao-card bg-tertiary">
-    <v-card>
+    <v-card
+      :ripple="hasPressedEmit"
+      :style="`cursor: ${hasPressedEmit ? 'pointer' : 'default'}`"
+      @click="emit('pressed')"
+    >
       <v-btn
         icon="mdi-open-in-new"
         color="rgba(111, 91, 165, 1)"
@@ -42,12 +46,19 @@
 </template>
 
 <script setup>
+import { getCurrentInstance } from 'vue';
+
 defineProps({
   dao: {
     type: Object,
     default: undefined
   }
 })
+const
+  emit = defineEmits(['pressed']),
+  instance = getCurrentInstance(),
+
+hasPressedEmit = !!instance?.vnode.props?.onPressed
 </script>
 
 <style lang="scss">
