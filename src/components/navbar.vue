@@ -350,7 +350,7 @@ export default {
       dataLinks:[
         {
           name: 'WhatsGPT',
-          ref: 'https://api.whatsapp.com/send/?phone=584244078772&text&type=phone_number&app_absent=0'
+          ref: 'https://t.me/WhatsGPTFree_bot'
         },
         {
           name: 'NearP2P',
