@@ -4,7 +4,7 @@
       <aside class="d-flex flex-center flex-grow-1" style="gap: 20px;">
         <div class="flex-column">
           <span>Nombre de cuenta DAO</span>
-          <span>{{ dao_account_name }}</span>
+          <span>{{ $route.query?.dao }}</span>
         </div>
 
         <v-divider
@@ -158,11 +158,9 @@
           </v-sheet>
 
           <v-pagination
-            v-model="currentPage"
-            :length="totalPages"
-            :total-visible="5"
+            v-model="page"
             class="mt-10 mb-16"
-            @click="loadPage"
+            :length="paginatedDataFunds"
           ></v-pagination>
         </tempplate>
       </aside>
@@ -189,7 +187,6 @@ export default {
   components: { VueApexchart },
   setup() {
     return {
-			dao_account_name: process.env.CONTRACT_DAO,
 			total_value: ref(0),
       iconMap: { near, stnear, usdc, usdt },
       tokenCards: ref([
@@ -234,10 +231,10 @@ export default {
       address: ref(null),
       selectedOrderBy: ref({id: "asc", desc: "Menos Recientes"}),
       dataTransactions: ref([]),
-      transactions_list: ref([]),
-      currentPage: ref(1),
-      totalPages: ref(Math.ceil(0 / 0)),
-      cardsPerPage: ref(10),
+      //transactions_list: ref([]),
+      //currentPage: ref(1),
+      //totalPages: ref(Math.ceil(0 / 0)),
+      //cardsPerPage: ref(10),
       filter: ref('less'),
       filters: ref([
         {
@@ -249,19 +246,42 @@ export default {
       tokenCardsSelected: ref("NEAR"),
       typeTransfer: ref(undefined),
       walletLike: ref(undefined),
+      page: ref(1),
+      paginatedDataFunds: ref(0),
+      elementosPorPagina: ref(6),
+      totalFundsList: ref(0),
+      totalFundsListOld: ref(0),
+      nextIndex: ref(0),
     }
   },
 
   watch: {
+    page: function(valNew, valOld) {
+      //totalFundsListOld
+
+      this.nextIndex = (valNew - 1) * this.elementosPorPagina;
+      if(valNew < valOld) {
+        this.totalFundsList = this.totalFundsListOld - this.totalFundsList;
+        this.totalFundsList = this.totalFundsList <= 0 ? 0 : this.totalFundsList;
+      }
+      console.log(valNew, valOld, this.totalFundsList)
+      this.loadTransactionsTable()
+    },
     select_radio_buttons: function(val){
+      this.nextIndex = 0;
+      this.totalFundsList = 0;
       this.typeTransfer = val == 'todos' ? undefined : val;
       this.loadTransactionsTable()
     },
     tokenCardsSelected: function(val) {
+      this.nextIndex = 0;
+      this.totalFundsList = 0;
       this.assetTransfer = val;
       this.loadTransactionsTable()
     },
     walletLike: function(val) {
+      this.nextIndex = 0;
+      this.totalFundsList = 0;
       this.walletLike = !val ? undefined : val.trim() == "" ? undefined : val.trim();
       this.loadTransactionsTable()
     }
@@ -413,48 +433,66 @@ export default {
     },
 
     async loadTransactionsTable() {
-      const response = await axios.post(process.env.ROUTER_API_METADEMOCRACIA + "/queries/get-funds-history",
-      {
+      const typeTransfer = !this.typeTransfer ? '' : ', type_transfer: "' + this.typeTransfer + '"';
+      const tokenId = !this.tokenCardsSelected ? '' : ', token_id: "' + this.tokenCardsSelected + '"';
+      const walletLike = !this.walletLike ? '' : ', receiver_id: "' + this.walletLike + '"';
+
+      const query = `query MyQuery($contractId: String, $limit: Int, $index: Int) {
+        delegations(where: {contract_id: $contractId ${typeTransfer} ${tokenId} ${walletLike}},
+        orderBy: date_time, orderDirection: desc, skip: $index, first: $limit) {
+          amount
+          contract_id
+          receipt_id
+          token_decimals
+          date_time
+          type_transfer
+          token_id
+          receiver_id
+        }
+      }`;
+
+
+      const variables = {
         contractId: this.$route.query.dao,
-        typeTransfer: this.typeTransfer,
-        asset: this.tokenCardsSelected,
-        walletLike: this.walletLike
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      });
+        limit: this.elementosPorPagina,
+        index:this.nextIndex
+      }
 
-      if(!response) return
+      await graphQl.getQueryDaoV2(query, variables).then(async response => {
+        const delegations = response.data.data.delegations
 
-      const dataTransactions = response.data.map((item) => {
-        const epoch = item.blockTimestamp/1000000;
 
-        return {
-            near: (item.type_transfer == "Entrada" ? '+ ' : '- ')+Number(item.amount).toFixed(2)+' '+item.fund_asset,
-            icon: item.type_transfer == "Entrada" ? 'mdi-tray-arrow-down' : 'mdi-tray-arrow-up',
-            name: item.predecessor,
-            date: moment(epoch).format("DD MMM yyyy HH:mm:ss")
-          };
-      });
+        //control paginacion
+        this.nextIndex = (this.page) * this.elementosPorPagina;
+        const variablesLast = {
+          contractId: this.$route.query.dao,
+          limit: this.elementosPorPagina,
+          index: this.nextIndex
+        }
+        const lastResult = await graphQl.getQueryDaoV2(query, variablesLast)
+        const lasRegistersTotal = !lastResult ? 0 : lastResult.data.data.delegations.length;
 
-      // const startIndex = (this.currentPage - 1) * this.cardsPerPage;
-      // const endIndex = startIndex + this.cardsPerPage;
+        this.totalFundsList = delegations.length <= 0 ? 0 : (this.totalFundsList + ((this.page == 1 ? delegations.length : 0) + lasRegistersTotal));
+        this.totalFundsListOld = lasRegistersTotal <= 0 ? this.totalFundsListOld : lasRegistersTotal;
+        this.paginatedDataFunds = Math.ceil(this.totalFundsList / this.elementosPorPagina);
 
-      this.totalPages = Math.ceil(dataTransactions.length / this.cardsPerPage);
-      this.transactions_list = dataTransactions;
-      this.loadPage();
-      // dataTransactions.value = dataTransactions.slice(startIndex, endIndex);
+
+
+
+        //pintado de la data
+        this.dataTransactions = delegations.map((item) => {
+          const epoch = item.date_time/1000000;
+
+          return {
+              near: (item.type_transfer == "Entrada" ? '+ ' : '- ')+(Number(item.amount) / Math.pow(10, Number(item.token_decimals))).toFixed(2)+' '+item.token_id,
+              icon: item.type_transfer == "Entrada" ? 'mdi-tray-arrow-down' : 'mdi-tray-arrow-up',
+              name: item.receiver_id,
+              date: moment(epoch).format("DD MMM yyyy HH:mm:ss")
+            };
+        });
+      })
 
     },
-    loadPage() {
-      console.log("aqui va")
-      const startIndex = (this.currentPage - 1) * this.cardsPerPage;
-      const endIndex = startIndex + this.cardsPerPage;
-
-      this.dataTransactions = this.transactions_list.slice(startIndex, endIndex);
-    }
   }
 }
 </script>

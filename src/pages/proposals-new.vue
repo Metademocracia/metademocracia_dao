@@ -163,25 +163,15 @@ export default {
 
     this.getData()
     //this.getData2()
+
+    const a = "algo.factoryv4.metademocracia.testnet"
+    const b = "factoryv4.metademocracia.testnet"
+    console.log("includes: ", a.includes(b))
   },
 
 
   methods: {
     async getData() {
-      /*const response = await axios.post(process.env.ROUTER_API_METADEMOCRACIA + "/queries/get-proposals",
-      {
-        contractId: this.wallet_dao,
-        limit: this.elementosPorPagina,
-        index: this.nextIndex,
-        typeProposal: this.type,
-        status: this.status,
-        proposerLike: this.likeProposer
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      }); */
       const proposalType = !this.type ? '' : ', proposal_type: "' + this.type + '"';
       const statusProposal = !this.status ? '' : ', status: "' + this.status + '"';
       const proposerLike = !this.likeProposer ? '' : ', proposer_contains: "' + this.likeProposer + '"';
