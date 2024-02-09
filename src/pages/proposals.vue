@@ -291,7 +291,7 @@ export default {
             objectProposal: undefined,
             configMetadata: undefined,
             title: item.title,
-            date: item.approval_date/*item.submission_time*/,
+            date: date_final /*item.submission_time*/,
             proposer: item.proposer,
             description: item.description,
             approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,

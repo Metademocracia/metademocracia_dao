@@ -57,27 +57,29 @@ function view(item) {
 async function getData() {
 
   const query = `query dao($owner_id: String) {
-    daos(where: { owner_id: $owner_id }) {
-      owner_id
-      wallet_dao
+    members(where: {member: $owner_id}) {
+      dao {
+        owner_id
+        wallet_dao
+      }
     }
   }`;
 
   const variables = { owner_id: WalletP2p.getAccount().address };
 
   await graphQl.getQueryDaoV2(query, variables).then(async response => {
-    const data = response.data.data.daos
+    const data = response.data.data.members
 
     for(let i = 0; i < data.length; i++) {
       const responseNearAmount = await WalletP2p.view({
-        contractId: data[i].wallet_dao,
+        contractId: data[i].dao.wallet_dao,
         methodName: "get_available_amount"
       });
 
       const responseUsdtAmount = await WalletP2p.view({
         contractId: process.env.CONTRACT_USDT,
         methodName: "ft_balance_of",
-        args: {account_id: data[i].wallet_dao }
+        args: {account_id: data[i].dao.wallet_dao }
       });
 
       let total_balance = 0;
@@ -92,17 +94,17 @@ async function getData() {
 
 
       const responseConfig = await WalletP2p.view({
-        contractId: data[i].wallet_dao,
+        contractId: data[i].dao.wallet_dao,
         methodName: "get_config"
       });
 
       const responsePolicy = await WalletP2p.view({
-        contractId: data[i].wallet_dao,
+        contractId: data[i].dao.wallet_dao,
         methodName: "get_policy"
       });
 
       const responseSupply = await WalletP2p.view({
-        contractId: data[i].wallet_dao,
+        contractId: data[i].dao.wallet_dao,
         methodName: "get_supply"
       });
 
@@ -113,11 +115,13 @@ async function getData() {
         }
       }
 
+      const metadata = JSON.parse(atob(responseConfig.metadata))
+
       daos.value.push({
-        wallet_dao: data[i].wallet_dao,
-        image: MetademocraciaImage,
+        wallet_dao: data[i].dao.wallet_dao,
+        image: metadata?.img ? metadata.img : MetademocraciaImage,
         name: responseConfig.name,
-        account: data[i].wallet_dao,
+        account: data[i].dao.wallet_dao,
         description: atob(responseConfig.purpose), // responseConfig.purpose.split(" ").length > 0 ? responseConfig.purpose : atob(responseConfig.purpose),
         funds: total_balance,
         members: members,

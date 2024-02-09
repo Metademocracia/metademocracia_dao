@@ -74,6 +74,8 @@ import axios from'axios';
 import '@/assets/styles/pages/proposals-new.scss';
 import ProposalCard from '@/components/proposal-card.vue';
 import WalletP2p from '../services/wallet-p2p';
+import graphQl from '@/services/graphQl';
+import moment from 'moment'
 import { ref } from 'vue';
 
 export default {
@@ -112,7 +114,7 @@ export default {
       wallet_dao: ref(null),
       typeDao: ref(false),
       paginatedDataProposal: ref(0),
-      elementosPorPagina: ref(2),
+      elementosPorPagina: ref(4),
       totalProposalList: ref(0),
       nextIndex: ref(0),
       type: ref(undefined),
@@ -166,7 +168,7 @@ export default {
 
   methods: {
     async getData() {
-      const response = await axios.post(process.env.ROUTER_API_METADEMOCRACIA + "/queries/get-proposals",
+      /*const response = await axios.post(process.env.ROUTER_API_METADEMOCRACIA + "/queries/get-proposals",
       {
         contractId: this.wallet_dao,
         limit: this.elementosPorPagina,
@@ -179,64 +181,134 @@ export default {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-      });
+      }); */
+      const proposalType = !this.type ? '' : ', proposal_type: "' + this.type + '"';
+      const statusProposal = !this.status ? '' : ', status: "' + this.status + '"';
+      const proposerLike = !this.likeProposer ? '' : ', proposer_contains: "' + this.likeProposer + '"';
 
-      if(!response) return
-
-      //paginacion
-      this.totalProposalList = response.data[1];
-      this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
-      this.nextIndex = (this.page) * this.elementosPorPagina;
-
-      console.log("nextindex: ", this.nextIndex)
-
-
-      //pintado data
-      const proposals = []
-      for (let i = 0; i < response.data[0].length; i++) {
-        const item = response.data[0][i];
-        const votes = Object.keys(JSON.parse(item.vote_counts)).map((map) => {return JSON.parse(item.vote_counts)[map]})
-
-        let votesup = 0
-        let votesdown = 0
-        for(const vote of votes){
-          console.log(vote[0])
-          votesup += vote[0]
-          votesdown += vote[1]
+      const query = `query MyQuery($contractId: String, $limit: Int, $index: Int) {
+        dao(id: $contractId) {
+          proposal_total
         }
 
-        let kind;
-        try {
-          kind = JSON.parse(item.kind);
-        } catch (error) {
-          kind = item.kind;
+        proposals(where: {contract_id: $contractId ${proposalType} ${statusProposal} ${proposerLike}},
+        orderBy: proposal_id, orderDirection: desc, skip: $index, first: $limit) {
+          description
+          contract_id
+          creation_date
+          approval_date
+          id
+          kind
+          link
+          proposal_id
+          proposer
+          status
+          title
+          upvote
+          downvote
         }
+      }`;
 
-        const type = typeof kind === "object" ? Object.keys(kind)[0] : item.kind;
-        const objectProposal = typeof kind === "object" ? kind[type] : undefined;
-        const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
 
-        proposals.push({
-          id: item.proposal_id,
-          contractId: this.wallet_dao,
-          type,
-          objectProposal,
-          configMetadata,
-          title: item.title,
-          date: null,
-          proposer: item.proposer,
-          description: item.description,
-          approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
-          link: item.link,
-          amount: null,
-          claims: null,
-          remainingTime: "una semana",
-          likes: votesup,
-          dislikes: votesdown,
-        });
+      const variables = {
+        contractId: this.wallet_dao,
+        limit: this.elementosPorPagina,
+        index:this.nextIndex
       }
 
-      this.proposals = proposals
+      await graphQl.getQueryDaoV2(query, variables).then(async response => {
+        const dao = response.data.data.dao
+        const proposals = response.data.data.proposals
+
+
+        //paginacion
+        this.totalProposalList = proposals.length <= 0 ? 0 : dao.proposal_total;
+        this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+        this.nextIndex = (this.page) * this.elementosPorPagina;
+
+        this.proposals = proposals.map((item) => {
+          let kind;
+          try {
+            kind = JSON.parse(item.kind);
+          } catch (error) {
+            kind = item.kind;
+          }
+
+          const type = typeof kind === "object" ? Object.keys(kind)[0] : item.kind;
+          const objectProposal = typeof kind === "object" ? kind[type] : undefined;
+          const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+
+          const date = moment(item.approval_date/1000000)
+          const date_format = ' ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
+          const date_final = item.approval_date ? date_format : item.approval_date;
+
+          return{
+            id: item.proposal_id,
+            contractId: item.contract_id,
+            type,
+            objectProposal,
+            configMetadata,
+            title: atob(item.title),
+            date: date_final,
+            proposer: item.proposer,
+            description: atob(item.description),
+            approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
+            link: item.link,
+            amount: null,
+            claims: null,
+            remainingTime: "una semana",
+            likes: item.upvote,
+            dislikes: item.downvote,
+          }});
+
+
+        //pintado data
+        /*const proposals = []
+        for (let i = 0; i < response.data[0].length; i++) {
+          const item = response.data[0][i];
+          const votes = Object.keys(JSON.parse(item.vote_counts)).map((map) => {return JSON.parse(item.vote_counts)[map]})
+
+          let votesup = 0
+          let votesdown = 0
+          for(const vote of votes){
+            console.log(vote[0])
+            votesup += vote[0]
+            votesdown += vote[1]
+          }
+
+          let kind;
+          try {
+            kind = JSON.parse(item.kind);
+          } catch (error) {
+            kind = item.kind;
+          }
+
+          const type = typeof kind === "object" ? Object.keys(kind)[0] : item.kind;
+          const objectProposal = typeof kind === "object" ? kind[type] : undefined;
+          const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+
+          proposals.push({
+            id: item.proposal_id,
+            contractId: this.wallet_dao,
+            type,
+            objectProposal,
+            configMetadata,
+            title: item.title,
+            date: null,
+            proposer: item.proposer,
+            description: item.description,
+            approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
+            link: item.link,
+            amount: null,
+            claims: null,
+            remainingTime: "una semana",
+            likes: votesup,
+            dislikes: votesdown,
+          });
+        }
+
+        this.proposals = proposals*/
+      })
     },
 
     /* async getData2() {

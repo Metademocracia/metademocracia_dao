@@ -58,7 +58,7 @@
             class="title-linked px-0"
           />
 
-          <span v-if="proposal?.date" class="text-tertiary ml-auto" style="--fs: 0.875em">Approved at: {{ proposal?.date }}</span>
+          <span v-if="proposal?.date" class="text-tertiary ml-auto" style="--fs: 0.875em">Aprobado el: {{ proposal?.date }}</span>
         </div>
       </v-card-title>
 
