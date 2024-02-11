@@ -12,12 +12,12 @@
           <v-icon size="30">mdi-account-multiple</v-icon>
         </v-tab>
 
-        <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: i == 0}" @click="changeGroup(item)">
+        <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: i == 0}">
           {{ item.name }}
         </v-tab>
       </v-tabs>
 
-      <v-select
+      <!--<v-select
         v-model="filter"
         :items="filters"
         item-title="name"
@@ -25,7 +25,7 @@
         variant="solo"
         class="custom-select my-4"
         hide-details
-      ></v-select>
+      ></v-select> -->
 
       <aside class="grid">
         <v-sheet v-for="(item, i) in dataMembers" :key="i">
@@ -67,33 +67,18 @@
 <script setup>
 import '@/assets/styles/pages/members.scss'
 import avatarIcon from '@/assets/sources/images/avatar.jpg'
-import { computed } from 'vue';
 import { ref, onBeforeMount, watch  } from 'vue'
-import WalletP2p from '../services/wallet-p2p';
+import graphQl from '@/services/graphQl';
+import { useRouter, useRoute } from 'vue-router';
 
 const
+router = useRouter(),
+route = useRoute(),
 dataTabs = ref([
-/*
   {
-    name: "Onboardees",
-    value: "onboardees"
-  },
-  {
-    name: "Grifters",
-    value: "grifters"
-  },
-  {
-    name: "Sponsors",
-    value: "sponsors"
-  },
-  {
-    name: "Partners",
-    value: "partners"
-  },
-  {
-    name: "Whitelist Members",
-    value: "whitelist"
-  }, */
+    name: "Consejal",
+    value: "Consejal"
+  }
 ]),
 filter = ref('actives'),
 filters = [
@@ -107,82 +92,64 @@ page = ref(1),
 elementosPorPagina = ref(3),
 totalMembersList = ref(0),
 paginatedDataMembers = ref(0),
-policy = ref({}),
-membersTotal = ref(0),
-selectGroup = ref("")
+nextIndex = ref(0),
+membersTotal = ref(0)
+
+
 
 onBeforeMount(getData)
 
 watch(page, async (newPage, oldPage) => {
-  loadData()
+  nextIndex.value = (newPage - 1) * elementosPorPagina.value;
+  getData()
 })
 
 
-function changeGroup(item){
-  //selectedGroup.value = item.value;
-  selectGroup.value = item.value
-  loadData()
-}
-
-function loadData() {
-  const group = selectGroup.value
-  const responsePolicy = policy.value;
-
-
-  let members = []
-
-  members = responsePolicy.roles.filter((filterRole) => filterRole.name == group)[0].kind.Group;
-  totalMembersList.value = members.length;
-  paginatedDataMembers.value = Math.ceil(members.length / elementosPorPagina.value);
-
-
-  const corteDeInicio = (page.value - 1) * elementosPorPagina.value;
-	const corteDeFinal = corteDeInicio + elementosPorPagina.value;
-
-  //baseDeDatos.slice(corteDeInicio, corteDeFinal);
-
-
-
-  dataMembers.value = members.map((member) => {
-    return {
-      avatar: avatarIcon,
-      group: group,
-      user: member,
-    }
-  }).slice(corteDeInicio, corteDeFinal)
-}
-
 async function getData() {
-  const valores = window.location.search;
-  const urlParams = new URLSearchParams(valores);
-  var wallet_dao = urlParams.get('dao');
-
-  const responsePolicy = await WalletP2p.view({
-    contractId: wallet_dao,
-    methodName: "get_policy",
-  });
-
-  const indexDelete = responsePolicy.roles.indexOf(responsePolicy.roles.find((element) => element.name === "all" || element.name === "Todos"))
-  if(indexDelete >= 0) {
-    responsePolicy.roles.splice(indexDelete, 1);
-  }
-
-  let totalMembers = 0;
-  for(let j=0; j < responsePolicy.roles.length; j++) {
-    if(responsePolicy.roles[j].kind?.Group) {
-      totalMembers += responsePolicy.roles[j].kind?.Group.length;
+  const query = `query MyQuery($limit: Int, $index: Int) {
+    datanft(id: "1") {
+    total_owners
+    owners(
+      where: {total_mft_gt: "0"}
+      orderBy: owner_id
+      orderDirection: asc
+      skip: $index
+      first: $limit
+    ) {
+      owner_id
     }
   }
+  }`;
 
-  membersTotal.value = totalMembers
 
-  dataTabs.value = responsePolicy.roles.map((itemRole) => {return {name: itemRole.name, value: itemRole.name} })
-  console.log(dataTabs.value)
+  const variables = {
+    limit: elementosPorPagina.value,
+    index: nextIndex.value
+  }
 
-  console.log(responsePolicy)
-  policy.value = responsePolicy
+  console.log(variables)
 
-  selectGroup.value = responsePolicy.roles[0].name
-  loadData()
+  await graphQl.getQuery(query, variables).then(async response => {
+    console.log(response.data)
+    const datanft = response.data.data.datanft
+
+    membersTotal.value = !datanft?.total_owners ? "0" : datanft.total_owners;
+
+    //paginacion
+    totalMembersList.value = membersTotal.value;
+    paginatedDataMembers.value = Math.ceil(totalMembersList.value / elementosPorPagina.value);
+    nextIndex.value = (page.value) * elementosPorPagina.value;
+
+    console.log(datanft)
+
+    dataMembers.value = datanft.owners.map((item) => {
+      return {
+        avatar: avatarIcon,
+        group: "Consejal",
+        user: item.owner_id,
+      }
+    });
+
+  })
 }
 </script>

@@ -156,7 +156,8 @@ export default {
     return{
       route: "",
       routes: [
-        'Proposals',
+        '', '/', 'Home'
+        /*'Proposals',
         'proposals',
         'proposal-details',
         'create-proposal',
@@ -168,7 +169,7 @@ export default {
         'proposals-meta',
         'create-proposal-meta',
         'proposal-details-meta',
-        'funds-meta'
+        'funds-meta'*/
       ],
       tab: ref(0),
       dialog: ref(false),
@@ -182,8 +183,8 @@ export default {
       selectedToken: ref("NEAR"),
       amount_near: ref(null),
       create_proposal: ref(false),
-      create_proposal_route: ref(null),
-      walletDao: ref(""),
+      // route_dao: ref(null),
+      walletDao: ref(null),
       formValid: ref(false),
       imgDao: ref(MetademocraciaImage)
     }
@@ -199,61 +200,64 @@ export default {
 
     async daoActive() {
       this.route = this.$route.path.replace("/", "");
-      const dao = this.$route.query?.dao
+      const dao = this.route == "" ? process.env.CONTRACT_DAO : this.$route.query?.dao
 
-      if (process.env.CONTRACT_DAO !== dao) {
-        this.dataTabs = [
-          {
-            name: "Propuestas",
-            icon: proposalIcon,
-            to: "proposals"
-          },
-          {
-            name: "Fondos",
-            icon: fundsIcon,
-            to: "funds"
-          },
-          {
-            name: "Miembros",
-            icon: membersIcon,
-            to: "members"
-          },
-          {
-            name: "Configuración",
-            icon: settingsIcon,
-            to: "settings"
-          }
-        ]
-      } else {
-
-        this.dataTabs = [
-          {
-            name: "Propuestas",
-            icon: proposalIcon,
-            to: "proposals"
-          },
-          {
-            name: "Fondos",
-            icon: fundsIcon,
-            to: "funds"
-          }
-        ]
-      }
+      // const excludeRoute = this.routes.find((routeFind) => routeFind === this.route)
 
       // this.routes.find((route) => route === route)
 
       if(dao) {
+        if (process.env.CONTRACT_DAO !== dao) {
+          this.dataTabs = [
+            {
+              name: "Propuestas",
+              icon: proposalIcon,
+              to: "proposals"
+            },
+            {
+              name: "Fondos",
+              icon: fundsIcon,
+              to: "funds"
+            },
+            {
+              name: "Miembros",
+              icon: membersIcon,
+              to: "members"
+            },
+            {
+              name: "Configuración",
+              icon: settingsIcon,
+              to: "settings"
+            }
+          ]
+        } else {
+
+          this.dataTabs = [
+            {
+              name: "Propuestas",
+              icon: proposalIcon,
+              to: "proposals"
+            },
+            {
+              name: "Fondos",
+              icon: fundsIcon,
+              to: "funds"
+            },
+            {
+              name: "Miembros",
+              icon: membersIcon,
+              to: "members"
+            }
+          ]
+        }
+
         this.walletDao = dao;
-        const result = this.routes.find((routeFind) => routeFind === this.route)
-
-        if(!result) return false
-
-        this.create_proposal_route = dao
+        // this.route_dao = dao;
         this.create_proposal = true;
-
         this.loadImgDao(dao);
 
         return true
+
       }
 
       this.walletDao = process.env.CONTRACT_DAO;
@@ -277,7 +281,7 @@ export default {
     const dao = this.$route.query?.dao
 
     if(dao) {
-      this.create_proposal_route = dao
+      this.walletDao = dao
       this.create_proposal = true;
     } */
 
@@ -319,31 +323,29 @@ export default {
     },
 
     routeRedirect(route){
-      if(!this.create_proposal_route) return
+      if(!this.walletDao) return
 
-      if(process.env.CONTRACT_DAO == this.$route.query?.dao) {
-        this.$router.push({ path: route+'-meta', query: {dao: this.$route.query?.dao}  })
+      if(process.env.CONTRACT_DAO == this.walletDao /* this.$route.query?.dao*/ ) {
+        this.$router.push({ path: route+'-meta', query: {dao: this.walletDao}  })
       } else {
-        this.$router.push({ path: route, query: {dao: this.$route.query?.dao}  })
+        this.$router.push({ path: route, query: {dao: this.walletDao}  })
       }
     },
 
     createProposal() {
-      if(process.env.CONTRACT_DAO == this.$route.query?.dao) {
-        this.$router.push({ path: 'create-proposal-meta', query: {dao: this.$route.query?.dao}  })
+      if(process.env.CONTRACT_DAO == this.walletDao) {
+        this.$router.push({ path: 'create-proposal-meta', query: {dao: this.walletDao}  })
       } else {
-        this.$router.push({ path: 'create-proposal', query: {dao: this.$route.query?.dao}  })
+        this.$router.push({ path: 'create-proposal', query: {dao: this.walletDao}  })
       }
     },
     async openDialog() {
-      console.log(WalletP2p.getAccount().address)
       if(!WalletP2p.getAccount().address) {
         this.$toast('Debe conectar su wallet primero para poder donar')
         return
       }
 
       const valid = this.formValid
-      console.log(valid)
 
       if(valid) {
         this.dialog = true;
@@ -352,7 +354,7 @@ export default {
 
     async delegate(){
       if(!this.formValid) return
-      console.log("token: ", this.selectedToken)
+      // console.log("token: ", this.selectedToken)
       //this.walletDao = process.env.CONTRACT_DAO
       switch (this.selectedToken) {
         case 'NEAR': {
@@ -379,7 +381,7 @@ export default {
           break;
 
         case 'USDT': {
-          console.log("deposit usdt")
+          // console.log("deposit usdt")
 
           const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000")).toString()
 

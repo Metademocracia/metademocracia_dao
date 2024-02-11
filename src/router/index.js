@@ -26,7 +26,7 @@ const routes = [
           {
             path: 'members',
             name: 'Members',
-            component: () => import('@/pages/members.vue'),
+            component: () => import('@/pages/members-new.vue'),
             meta: { head: `Miembros - ${DEFAULT_TITLE}` }
           },
           {
@@ -46,6 +46,12 @@ const routes = [
             name: 'CreateProposal',
             component: () => import('@/pages/create-proposal-new.vue'),
             meta: { head: `Crear propuesta - ${DEFAULT_TITLE}` }
+          },
+          {
+            path: 'members-meta',
+            name: 'Members-meta',
+            component: () => import('@/pages/members.vue'),
+            meta: { head: `Miembros - ${DEFAULT_TITLE}` }
           },
           {
             path: 'proposals-meta',

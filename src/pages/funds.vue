@@ -50,7 +50,7 @@
     </aside>
 
 
-    <v-window v-model="windowStep" class="container-chart mt-7">
+    <!--<v-window v-model="windowStep" class="container-chart mt-7">
       <div class="flex-space-center">
         <h6 class="mb-0">Actividad</h6>
 
@@ -83,7 +83,7 @@
         >No hay suficientes datos</h6>
         <apexchart v-else type="area" :height="chartHeight" :options="chartOptionsUsdt" :series="seriesUsdt" />
       </v-window-item>
-    </v-window>
+    </v-window> -->
 
     <v-divider thickness="1" class="my-6" style="opacity: .5;" />
 
@@ -340,8 +340,13 @@ export default {
     },*/
     total_value_computed() {
       if(this.resultChartNear.result) {
-        const balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
-        const balanceNear = this.resultChartNear.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
+        let balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
+        let balanceNear = this.resultChartNear.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
+        console.log(balanceNear, isNaN(balanceNear), balanceUsdt, isNaN(balanceUsdt))
+        balanceNear = !isNaN(balanceNear) ? balanceNear : 0;
+        balanceUsdt = !isNaN(balanceUsdt) ? balanceUsdt : 0;
+
+        console.log("aqui va: ", balanceUsdt, this.resultChartNear.result)
 
         this.headerCards[0].amount = balanceNear.toFixed(5);
         this.headerCards[1].amount = balanceUsdt.toFixed(2);
