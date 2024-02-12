@@ -510,7 +510,6 @@ export default {
 
       // const startIndex = (this.currentPage - 1) * this.cardsPerPage;
       // const endIndex = startIndex + this.cardsPerPage;
-      console.log(dataTransactions, "⭕");
 
       this.totalPages = Math.ceil(dataTransactions.length / this.cardsPerPage);
       this.transactions_list = dataTransactions;

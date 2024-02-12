@@ -274,7 +274,6 @@ export default {
       if(response){
 
         if(response.delegationhists) {
-          console.log("resp: ", response)
           this.series = [];
           this.chartOptions = {};
 
@@ -289,14 +288,14 @@ export default {
               data: data_series, // [100, 150, 138, 200, 248, 230, 180],
             }
           ];
-            console.log(data_series)
+          
 
           const data_chartOptions = [];
           for(let i = 0; i < response.delegationhists.length; i++){
             // data.push(moment(this.result.delegationhists[i].date_time/1000000).format('DD MM HH:MM'))
             data_chartOptions.push(response.delegationhists[i].date_time/1000000)
           }
-          console.log(data_chartOptions)
+
           const chartOptions = {
             tooltip: {
               theme: 'custom-tooltip',
@@ -354,8 +353,6 @@ export default {
 
           this.series = series;
           this.chartOptions = chartOptions;
-
-          console.log("/////////////////",this.series, "/////////////////", this.chartOptions)
 
         }
       }

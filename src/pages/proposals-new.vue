@@ -166,7 +166,6 @@ export default {
 
     const a = "algo.factoryv4.metademocracia.testnet"
     const b = "factoryv4.metademocracia.testnet"
-    console.log("includes: ", a.includes(b))
   },
 
 

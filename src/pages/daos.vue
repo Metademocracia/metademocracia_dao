@@ -61,7 +61,6 @@ paginatedDaos = computed(() => (daos.value.length || 9) / 9)
 onBeforeMount(getData)
 
 function view(item) {
-  console.log(item)
   if(process.env.CONTRACT_DAO == item.wallet_dao) {
     router.push({ path: 'proposals-meta', query: {dao: item.wallet_dao}})
   } else {

@@ -264,7 +264,7 @@ export default {
         this.totalFundsList = this.totalFundsListOld - this.totalFundsList;
         this.totalFundsList = this.totalFundsList <= 0 ? 0 : this.totalFundsList;
       }
-      console.log(valNew, valOld, this.totalFundsList)
+      
       this.loadTransactionsTable()
     },
     select_radio_buttons: function(val){

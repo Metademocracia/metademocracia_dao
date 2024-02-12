@@ -213,13 +213,11 @@ export default {
     },
 
     async loadProposal() {
-      console.log("aqui estoy: ", this.filterStatusSelected, this.typeProposal[this.filterTypeProposalSelected].id);
       let status = this.statusProposal.map(item => { return item.id }).splice(1, this.statusProposal.length);
       let type = this.typeProposal.map(item => { return item.id }).splice(1, this.typeProposal.length);
 
       status = this.filterStatusSelected != '*' ? [this.filterStatusSelected] : status;
       type = this.typeProposal[this.filterTypeProposalSelected].id != '*' ? [this.typeProposal[this.filterTypeProposalSelected].id] : type;
-      console.log("type: ", type)
 
       const query1 = `query Proposals($type: [String], $status: [String]) {
         proposals(where: {proposal_type_in: $type, status_in: $status} orderBy: creation_date, orderDirection: desc) {
@@ -269,7 +267,6 @@ export default {
     },
 
     loadCardProposal(response) {
-        console.log(response)
         const cardsProposals = response.proposals.map((item) => {
           let amount = null
           if(item.proposal_type == "Transfer") {
@@ -309,7 +306,7 @@ export default {
 
         this.totalPages = Math.ceil(cardsProposals.length / this.cardsPerPage);
         this.proposal_list = cardsProposals;
-        console.log(this.proposal_list)
+
         this.loadPage();
         // this.cardsProposals = cardsProposals.slice(startIndex, endIndex);
 

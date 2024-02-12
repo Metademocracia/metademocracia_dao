@@ -127,10 +127,7 @@ async function getData() {
     index: nextIndex.value
   }
 
-  console.log(variables)
-
   await graphQl.getQuery(query, variables).then(async response => {
-    console.log(response.data)
     const datanft = response.data.data.datanft
 
     membersTotal.value = !datanft?.total_owners ? "0" : datanft.total_owners;
@@ -140,7 +137,6 @@ async function getData() {
     paginatedDataMembers.value = Math.ceil(totalMembersList.value / elementosPorPagina.value);
     nextIndex.value = (page.value) * elementosPorPagina.value;
 
-    console.log(datanft)
 
     dataMembers.value = datanft.owners.map((item) => {
       return {
