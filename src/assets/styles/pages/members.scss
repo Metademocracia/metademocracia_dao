@@ -3,6 +3,18 @@
   flex-direction: column;
   width: 100%;
 
+  &__content {
+    display: flex;
+    gap: clamp(20px, 3vw, 40px);
+
+    .members {
+      display: flex;
+      flex-direction:row;
+      gap: 25px;
+    }
+  }
+  
+
   .container-members {
     max-width: 1000px;
     width: 100%;
