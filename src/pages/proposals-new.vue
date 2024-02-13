@@ -144,7 +144,6 @@ export default {
     filterProposer: function(val) {
       this.nextIndex = 0;
       this.likeProposer = !val ? undefined : val.trim() == "" ? undefined : val.trim();
-      console.log("like: ",this.likeProposer)
       this.getData()
     }
   },

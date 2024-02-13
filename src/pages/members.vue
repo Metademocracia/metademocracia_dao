@@ -4,7 +4,7 @@
       Miembros Totales: <span class="text-primary">#{{ membersTotal }}</span>
     </h5>
 
-    <section class="container-members mt-4">
+    <section class="container-members mt-4 ">
       <h6>Grupos</h6>
 
       <v-tabs slider-color="transparent">
@@ -27,7 +27,17 @@
         hide-details
       ></v-select> -->
 
-      <aside class="grid">
+      <h6 class="mt-6 mb-2">Filtrar por miembro</h6>
+      <v-text-field
+        v-model="filterMember"
+        placeholder="metademocracia_dao.near"
+        append-inner-icon="mdi-magnify"
+        class="flex-grow-0"
+        variant="solo"
+        hide-details
+      ></v-text-field>
+
+      <aside class="grid mt-7">
         <v-sheet v-for="(item, i) in dataMembers" :key="i">
           <v-card class="clear-overlay">
             <v-btn
@@ -89,11 +99,12 @@ filters = [
 ],
 dataMembers = ref([]),
 page = ref(1),
-elementosPorPagina = ref(3),
+elementosPorPagina = ref(16),
 totalMembersList = ref(0),
 paginatedDataMembers = ref(0),
 nextIndex = ref(0),
-membersTotal = ref(0)
+membersTotal = ref(0),
+filterMember = ref(undefined)
 
 
 
@@ -104,13 +115,20 @@ watch(page, async (newPage, oldPage) => {
   getData()
 })
 
+watch(filterMember, async (newVal, oldVal) => {
+  nextIndex.value = 0
+  filterMember.value = !newVal ? undefined : newVal.trim() == "" ? undefined : newVal.trim();;
+  getData()
+})
+
 
 async function getData() {
+  const memberLike = !filterMember.value ? '' : ', owner_id_contains: "' + filterMember.value + '"';
   const query = `query MyQuery($limit: Int, $index: Int) {
     datanft(id: "1") {
     total_owners
     owners(
-      where: {total_mft_gt: "0"}
+      where: {total_mft_gt: "0", ${memberLike}}
       orderBy: owner_id
       orderDirection: asc
       skip: $index
