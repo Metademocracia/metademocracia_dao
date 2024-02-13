@@ -26,7 +26,7 @@
         class="custom-select my-4"
         hide-details
       ></v-select> -->
-
+      <sticky-drawer>
       <h6 class="mt-6 mb-2">Filtrar por miembro</h6>
       <v-text-field
         v-model="filterMember"
@@ -36,6 +36,7 @@
         variant="solo"
         hide-details
       ></v-text-field>
+      </sticky-drawer>
 
       <aside class="grid mt-7">
         <v-sheet v-for="(item, i) in dataMembers" :key="i">
