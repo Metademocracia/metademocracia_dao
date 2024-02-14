@@ -69,7 +69,7 @@
 						</v-btn>
 
 						<aside class="sheet-flexbar__wrapper">
-							<span>{{ item2.user }}</span>
+							<span style="word-break: break-all;">{{ item2.user }}</span>
 
 							<span>{{ item2.date }}</span>
 						</aside>
