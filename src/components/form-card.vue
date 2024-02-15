@@ -16,8 +16,8 @@
 
         <aside class="d-flex flex-wrap align-center justify-start mt-2" style="column-gap: 20px; row-gap: 10px;">
           <v-btn v-if="hasPrevEmit" class="bg-secondary" @click="emit('prev')">
+            <v-icon icon="mdi-chevron-left" />
             {{ prevText }}
-            <v-icon icon="mdi-chevron-right" />
           </v-btn>
 
           <v-btn

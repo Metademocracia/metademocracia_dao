@@ -389,16 +389,24 @@ export default {
 
         const response = this.$route.query?.response;
 
+        /* const algo = {
+          date_time: 223423424234,
+          hash: "2aemhC2nXK52QKRdnN411XXEZPS4aN197dbPomRjwhXZ"
+        }
+
+        console.log(btoa(JSON.stringify(algo))) */
+
         if(!response) return
 
         const response_json = JSON.parse(window.atob(response));
 
-        if(!response_json?.hash || !response_json?.date_time) return
+        // if(!response_json?.hash || !response_json?.date_time) return
+        if(!response_json?.hash) return
 
-        const now = moment(new Date()); //todays date
+        /* const now = moment(new Date()); //todays date
         const end = moment(response_json.date_time*1000); // another date
         const duration = moment.duration(now.diff(end));
-        const minutes = duration.asMinutes();
+        const minutes = duration.asMinutes(); */
 
         // if(minutes > 0.7) return
 
@@ -442,10 +450,12 @@ export default {
 
           const urlParams = new URLSearchParams(window.location.search);
           urlParams.delete("response");
-
+          console.log(urlParams)
           //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
+          let newUrl = window.location.pathname.split('/').at(-1);
+          newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
 
-          history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
+          history.pushState(null, "", newUrl);
 
         });
 
