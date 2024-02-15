@@ -130,6 +130,7 @@
       flex: 0 1 400px;
       position: relative;
       height: 45px!important;
+      min-width: clamp(15.625em, 30vw, 30em);
       max-height: 45px!important;
       min-height: 1px!important;
 
@@ -164,9 +165,6 @@
         min-height: 1px!important;
       }
 
-      @include media(max,810px){
-        width: 100px;
-      }
 
       input{
         margin-top: 0px; 
@@ -179,11 +177,8 @@
     .btn-donar{
       background-color: #61C2D5!important;
       min-height: 45px!important;
-      width: 130px;
+      width: clamp(4em, 8vw, 8.125em);
 
-      @include media(max,810px){
-        width: 100px;
-      }
 
       @include media(max,500px){
         width: 70px;

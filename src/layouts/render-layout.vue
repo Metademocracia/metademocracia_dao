@@ -49,7 +49,7 @@
           :rules="required"
           required
         >
-          <template #prepend>
+          <template #prepend-inner>
             <v-select
               v-model="selectedToken"
               :items="tokens"

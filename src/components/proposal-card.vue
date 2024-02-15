@@ -75,7 +75,7 @@
           >
 
           <p class="label mb-2">Proponente</p>
-          <p>{{ proposal?.proposer }}</p>
+          <p style="word-break: break-all;">{{ proposal?.proposer }}</p>
 
 
           <span v-if="proposal?.type == 'ChangeConfig'">
@@ -325,8 +325,15 @@ async function downvote(id, contractId) {
     background: transparent !important;
     box-shadow: none !important;
     border-radius: 10px !important;
+    height: max-content !important;
+    padding: 10px 5px !important;
+    margin-inline: -5px;
     * { color: #333 !important }
-    span { font-size: 1.5625em !important }
+    span {
+      font-size: 1.5625em !important;
+      white-space: initial !important;
+      text-align: left;
+    }
     i { rotate: -45deg }
   }
 
