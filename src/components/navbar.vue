@@ -27,7 +27,7 @@
             <v-menu location="bottom">
               <template v-slot:activator="{ props }">
                 <v-btn color="transparent" flat v-bind="props" class="btn-list list-font-btn mt-0">
-                  Daos <v-icon>mdi-chevron-down</v-icon>
+                  Organizaciones <v-icon>mdi-chevron-down</v-icon>
                 </v-btn>
               </template>
 
@@ -103,7 +103,7 @@
               alt="daos icon"
               class="mr-2"
               style="width: 16px;">
-            DAOs <v-icon>mdi-chevron-down</v-icon>
+              Organizaciones <v-icon>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
 
@@ -389,20 +389,48 @@ export default {
 
         const response = this.$route.query?.response;
 
+        /* const algo = {
+          date_time: 223423424234,
+          hash: "2aemhC2nXK52QKRdnN411XXEZPS4aN197dbPomRjwhXZ"
+        }
+
+        console.log(btoa(JSON.stringify(algo))) */
+
         if(!response) return
 
         const response_json = JSON.parse(window.atob(response));
 
-        if(!response_json?.hash || !response_json?.date_time) return
+        // if(!response_json?.hash || !response_json?.date_time) return
+        if(!response_json?.hash) return
 
-        const now = moment(new Date()); //todays date
+        /* const now = moment(new Date()); //todays date
         const end = moment(response_json.date_time*1000); // another date
         const duration = moment.duration(now.diff(end));
-        const minutes = duration.asMinutes();
+        const minutes = duration.asMinutes(); */
 
         // if(minutes > 0.7) return
 
-        WalletP2p.getTransaction(response_json?.hash).then(response => {
+        const dataAlert = '<p style="font-size:30px; color: white"><b>Transacción ejecutada</b></p> \
+          <p class="mt-5"> \
+            <span style="color: white"> \
+              <b>Hash:</b> \
+            </span> \
+            <a href="'+ process.env.ROUTER_EXPLORER_NEAR_HASH + response_json?.hash +'" target="_blank"> '+ response_json?.hash +' </a> \
+          </p>';
+        this.toast.success({component: formatHtml,
+          props:  {
+              html: dataAlert
+          }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.delete("response");
+        let newUrl = window.location.pathname.split('/').at(-1);
+        newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
+
+        history.pushState(null, "", newUrl);
+
+        /* WalletP2p.getTransaction(response_json?.hash).then(response => {
           const response_json = response.data.result;
           const hash = response_json?.transaction.hash;
           const status_json = response_json?.receipts_outcome[0]?.outcome?.status;
@@ -442,12 +470,13 @@ export default {
 
           const urlParams = new URLSearchParams(window.location.search);
           urlParams.delete("response");
-
           //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
+          let newUrl = window.location.pathname.split('/').at(-1);
+          newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
 
-          history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
+          history.pushState(null, "", newUrl);
 
-        });
+        }); */
 
 
         // location.href = 'http://127.0.0.1:3002/metademocracia/proposals';
@@ -463,6 +492,13 @@ export default {
 
 
       if(dataSession) {
+        const account = WalletP2p.getAccount();
+
+        if(!account.address || !account.privateKey) {
+          this.logout()
+          return
+        }
+
         const dataSessionJson = JSON.parse(dataSession);
         const wallet = dataSessionJson.email || dataSessionJson.wallet
         this.initSession(wallet)
@@ -486,8 +522,11 @@ export default {
 
       const urlParams = new URLSearchParams(window.location.search);
       urlParams.delete("token");
+      //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
+      let newUrl = window.location.pathname.split('/').at(-1);
+      newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
 
-      history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
+      history.pushState(null, "", newUrl);
     },
 
     initSession(wallet) {

@@ -145,7 +145,7 @@ export default {
     return {
       globalRules,
       proposalTypes: ref([
-        "Votos",
+        "Votación",
         "Agregar miembros",
         "Eliminar miembros",
         "Transferencia"
@@ -224,7 +224,7 @@ export default {
         const bounty_bond = (BigInt(responsePolicy?.bounty_bond.toString()) + BigInt(response)).toString()
 
         switch (this.typeSelect) {
-          case "Votos": this.addVote(bounty_bond);
+          case "Votación": this.addVote(bounty_bond);
             break;
 
           case "Agregar miembros": this.addMembers(bounty_bond);

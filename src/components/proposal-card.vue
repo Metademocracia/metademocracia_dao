@@ -8,7 +8,7 @@
     <v-card class="flex-column" elevation="3" color="#FAFAFA">
       <v-card-title class="flex-column pa-0" style="gap: 20px; overflow: visible;">
         <div class="flex-space-center">
-          <label>Proposal type: {{ proposal?.type }}</label>
+          <label>Tipo de propuesta: {{ mapType() }}</label>
 
           <!--<v-btn icon color="transparent" elevation="0" size="20px" class="relative clear-overlay" :ripple="false">
             <v-icon
@@ -190,7 +190,7 @@ import FailedIcon from '@/assets/sources/images/failed.svg'
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 import utilsDAO from '@/services/utils-dao';
-import { mergeProps } from 'vue'
+import { mergeProps, computed } from 'vue';
 
 
 const
@@ -210,6 +210,21 @@ function copy(id) {
   }
   const link = window.location.origin + process.env.BASE_URL + route + "?dao="+props.proposal.contractId+"&id=" + id
   navigator.clipboard.writeText(link);
+}
+
+function mapType() {
+  const map = [
+    {id: "Vote", value: "Votación"},
+    {id: "Transfer", value: "Transferencia"},
+    {id: "AddMemberToRole", value: "Agregar miembro"},
+    {id: "RemoveMemberFromRole", value: "Eliminar miembro"},
+  ];
+  let typeId = props.proposal?.type;
+  typeId = !typeId ? "" : typeId;
+
+  const type = map.find((item) => item.id == typeId)?.value;
+
+  return !type ? typeId : type;
 }
 
 function onPressProposal() {

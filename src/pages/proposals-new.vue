@@ -87,10 +87,11 @@ export default {
       proposals: ref([]),
       tabs: [
         {name:"Todos", value: "todos"},
-        {name:"Votos", value: "Vote"},
+        {name:"Votación", value: "Vote"},
         /*{name:"Llamada de función", value: "FunctionCall"},*/
         {name:"Transferencia", value: "Transfer"},
-        {name:"Miembros", value: "AddMemberToRole"}
+        {name:"Agregar miembro", value: "AddMemberToRole"},
+        {name:"Eliminar miembro", value: "RemoveMemberFromRole"}
       ],
       filters: [
         {
@@ -221,8 +222,8 @@ export default {
           } catch (error) {
             kind = item.kind;
           }
-
-          const type = typeof kind === "object" ? Object.keys(kind)[0] : item.kind;
+          
+          const type = typeof kind === "object" ? Object.keys(kind)[0] : item.kind.replace('"', '').replace('"', '').toString();
           const objectProposal = typeof kind === "object" ? kind[type] : undefined;
           const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
 
