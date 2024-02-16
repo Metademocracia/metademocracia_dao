@@ -85,6 +85,8 @@ import '@/assets/styles/pages/proposal-details-new.scss'
 import voteIcon from '@/assets/sources/icons/vote-icon.svg'
 import ProposalCard from '@/components/proposal-card.vue'
 import SliderLiked from '@/components/slider-liked.vue'
+import graphQl from '@/services/graphQl';
+import moment from 'moment';
 import { ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
@@ -107,6 +109,122 @@ function getData() {
 }
 
 async function getProposal() {
+  const query = `query MyQuery($contractId: String) {
+    proposal(id: $contractId) {
+      description
+      contract_id
+      creation_date
+      approval_date
+      id
+      kind
+      link
+      proposal_id
+      proposer
+      status
+      title
+      upvote
+      downvote
+    }
+  }`;
+
+  const variables = {
+    contractId: route.query.dao + "|" + route.query.id
+  }
+
+  await graphQl.getQueryDaoV2(query, variables).then(async response => {
+    const item = response.data.data.proposal
+    console.log("aqui si va: ", item)
+
+    let kind;
+    try {
+      kind = JSON.parse(item.kind);
+    } catch (error) {
+      kind = item.kind;
+    }
+
+    const type = typeof kind === "object" ? Object.keys(kind)[0] : item.kind.replace('"', '').replace('"', '').toString();
+    const objectProposal = typeof kind === "object" ? kind[type] : undefined;
+    const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+
+    const date = moment(item.approval_date/1000000)
+    const date_format = ' ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
+    const date_final = item.approval_date ? date_format : item.approval_date;
+
+    proposal.value = {
+      id: item.proposal_id,
+      contractId: item.contract_id,
+      type,
+      objectProposal,
+      configMetadata,
+      title: atob(item.title),
+      date: date_final,
+      proposer: item.proposer,
+      description: atob(item.description),
+      approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
+      link: item.link,
+      amount: null,
+      claims: null,
+      remainingTime: "una semana",
+      likes: item.upvote,
+      dislikes: item.downvote,
+    };
+
+  });
+
+/*
+  panels.value = Object.keys(item.vote_counts).map((map) => {
+    const walletVote = Object.keys(item.votes).map((mapWallet) => { return {wallet: mapWallet, action: item.votes[mapWallet] }})
+
+    let childrens = [];
+    let voices = "0/0";
+		let percent = 0;
+    if(map == "all") {
+      const group = [];
+      for(const role of responsePolicy.roles) {
+        if(typeof role.kind === "object") {
+          for(const itemGroup of role.kind.Group) {
+            group.push(itemGroup)
+          }
+        }
+      }
+      const walletsGroup = group
+
+      const noMembers = walletVote.filter((itemMember) => !walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
+      const members = walletVote.filter((itemMember) => walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
+      const countVotes = item.vote_counts[map][0] + item.vote_counts[map][1] + item.vote_counts[map][2]
+
+      if(noMembers.length < countVotes) {
+        childrens = formatChildrens(members);
+        voices = members.length + "/" + walletsGroup.length;
+        percent = Number(((members.length * 100) / walletsGroup.length).toFixed(2));
+      } else {
+        childrens = formatChildrens(noMembers);
+        voices = noMembers.length + "/" + walletsGroup.length;
+        percent = Number(((noMembers.length * 100) / walletsGroup.length).toFixed(2));
+      }
+    } else {
+      const walletsGroup = responsePolicy.roles.filter((search) => search.name == map)[0].kind.Group
+
+      const members = walletVote.filter((itemMember) => walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
+
+      childrens = formatChildrens(members);
+      voices = members.length + "/" + walletsGroup.length;
+      percent = Number(((members.length * 100) / walletsGroup.length).toFixed(2));
+      console.log(walletsGroup.length, members.length)
+    }
+
+    return {
+			title: map,
+			voices,
+			percent,
+			children: childrens
+		} // item.vote_counts[map]
+  })
+  */
+
+
+
+
 	const response = await WalletP2p.view({
     contractId: route.query.dao,
     methodName: "get_proposal",
@@ -120,9 +238,6 @@ async function getProposal() {
     methodName: "get_policy",
   });
 
-  console.log(response)
-
-  console.log(responsePolicy.roles.filter((search) => search.name == 'all')[0])
 
   const item = response;
 
@@ -136,7 +251,7 @@ async function getProposal() {
     votesdown += vote[1]
   }
 
-  const type = typeof item.kind === "object" ? Object.keys(item.kind)[0] : item.kind;
+  /* const type = typeof item.kind === "object" ? Object.keys(item.kind)[0] : item.kind;
   const objectProposal = typeof item.kind === "object" ? item.kind[type] : undefined;
   const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
 
@@ -147,7 +262,7 @@ async function getProposal() {
     objectProposal,
     configMetadata,
     title: atob(item.title),
-    date: null/*item.submission_time*/,
+    date: null,
     proposer: item.proposer,
     description: atob(item.description),
     approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
@@ -157,7 +272,7 @@ async function getProposal() {
     remainingTime: "una semana",
     likes: votesup,
     dislikes: votesdown,
-  };
+  }; */
 
 
   /////////////////data panel/////////////////////////////////////////
