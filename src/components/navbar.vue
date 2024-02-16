@@ -389,12 +389,12 @@ export default {
 
         const response = this.$route.query?.response;
 
-        const algo = {
+        /* const algo = {
           date_time: 223423424234,
           hash: "2aemhC2nXK52QKRdnN411XXEZPS4aN197dbPomRjwhXZ"
         }
 
-        console.log(btoa(JSON.stringify(algo)))
+        console.log(btoa(JSON.stringify(algo))) */
 
         if(!response) return
 
@@ -410,9 +410,27 @@ export default {
 
         // if(minutes > 0.7) return
 
+        const dataAlert = '<p style="font-size:30px; color: white"><b>Felicidades</b></p> \
+          <p class="mt-5"> \
+            <span style="color: white"> \
+              <b>Hash:</b> \
+            </span> \
+            <a href="'+ process.env.ROUTER_EXPLORER_NEAR_HASH + response_json?.hash +'" target="_blank"> '+ response_json?.hash +' </a> \
+          </p>';
+        this.toast.success({component: formatHtml,
+          props:  {
+              html: dataAlert
+          }
+        });
 
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.delete("response");
+        let newUrl = window.location.pathname.split('/').at(-1);
+        newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
 
-        WalletP2p.getTransaction(response_json?.hash).then(response => {
+        history.pushState(null, "", newUrl);
+
+        /* WalletP2p.getTransaction(response_json?.hash).then(response => {
           const response_json = response.data.result;
           const hash = response_json?.transaction.hash;
           const status_json = response_json?.receipts_outcome[0]?.outcome?.status;
@@ -458,7 +476,7 @@ export default {
 
           history.pushState(null, "", newUrl);
 
-        });
+        }); */
 
 
         // location.href = 'http://127.0.0.1:3002/metademocracia/proposals';
