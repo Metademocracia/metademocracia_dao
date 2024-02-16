@@ -410,14 +410,14 @@ export default {
 
         // if(minutes > 0.7) return
 
-        console.log("aqui", response_json?.hash)
+        
 
         WalletP2p.getTransaction(response_json?.hash).then(response => {
           const response_json = response.data.result;
           const hash = response_json?.transaction.hash;
           const status_json = response_json?.receipts_outcome[0]?.outcome?.status;
           const receipts_outcome = !response_json?.receipts_outcome ? [] : response_json?.receipts_outcome;
-          console.log("aqui si va: ", response)
+
           let error = undefined;
           for(const item of receipts_outcome) {
             if(item?.outcome?.status?.Failure){
