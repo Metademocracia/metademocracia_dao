@@ -126,11 +126,15 @@ function getTransaction(hash, account_id) {
     });
 }
 
+function parseNearAmount(amount) {
+  return utils.format.parseNearAmount(amount)
+}
 
 export default {
   login,
   call,
   view,
   getAccount,
-  getTransaction
+  getTransaction,
+  parseNearAmount
 }

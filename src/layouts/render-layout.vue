@@ -359,8 +359,9 @@ export default {
           const contractId = this.walletDao == process.env.CONTRACT_DAO ? process.env.CONTRACT_DAO : process.env.CONTRACT_FACTORY;
           const delegateAccount = this.walletDao == process.env.CONTRACT_DAO ? WalletP2p.getAccount().address : this.walletDao;
 
-          const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000000000000000000000")).toString()
-          const deposit = (BigInt(amount) + BigInt("1000000000000000000000")).toString()
+          const amount = WalletP2p.parseNearAmount(this.amount_near).toString();
+          const deposit = WalletP2p.parseNearAmount(this.amount_near).toString();
+
 
           const json = {
             contractId: contractId,
@@ -381,7 +382,8 @@ export default {
         case 'USDT': {
           // console.log("deposit usdt")
 
-          const amount = (BigInt(this.amount_near.toString()) * BigInt("1000000")).toString()
+          const amount = BigInt(Math.round(Number(this.amount_near) * Math.pow(10, 6))).toString(); //(BigInt(this.amount_near.toString()) * BigInt("1000000")).toString()
+
 
           const usdtIsActive = await WalletP2p.view({
             contractId: process.env.CONTRACT_USDT,
