@@ -410,7 +410,7 @@ export default {
 
         // if(minutes > 0.7) return
 
-        const dataAlert = '<p style="font-size:30px; color: white"><b>Felicidades</b></p> \
+        const dataAlert = '<p style="font-size:30px; color: white"><b>Transacción ejecutada</b></p> \
           <p class="mt-5"> \
             <span style="color: white"> \
               <b>Hash:</b> \
