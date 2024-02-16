@@ -27,7 +27,7 @@
             <v-menu location="bottom">
               <template v-slot:activator="{ props }">
                 <v-btn color="transparent" flat v-bind="props" class="btn-list list-font-btn mt-0">
-                  Daos <v-icon>mdi-chevron-down</v-icon>
+                  Organizaciones <v-icon>mdi-chevron-down</v-icon>
                 </v-btn>
               </template>
 
@@ -103,7 +103,7 @@
               alt="daos icon"
               class="mr-2"
               style="width: 16px;">
-            DAOs <v-icon>mdi-chevron-down</v-icon>
+              Organizaciones <v-icon>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
 

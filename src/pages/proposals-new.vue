@@ -90,7 +90,8 @@ export default {
         {name:"Votos", value: "Vote"},
         /*{name:"Llamada de función", value: "FunctionCall"},*/
         {name:"Transferencia", value: "Transfer"},
-        {name:"Miembros", value: "AddMemberToRole"}
+        {name:"Agregar miembro", value: "AddMemberToRole"},
+        {name:"Eliminar miembro", value: "RemoveMemberFromRole"}
       ],
       filters: [
         {

@@ -87,8 +87,8 @@ router = useRouter(),
 route = useRoute(),
 dataTabs = ref([
   {
-    name: "Consejal",
-    value: "Consejal"
+    name: "Ciudadanos",
+    value: "Ciudadanos"
   }
 ]),
 filter = ref('actives'),
@@ -160,7 +160,7 @@ async function getData() {
     dataMembers.value = datanft.owners.map((item) => {
       return {
         avatar: avatarIcon,
-        group: "Consejal",
+        group: "Ciudadanos",
         user: item.owner_id,
       }
     });
