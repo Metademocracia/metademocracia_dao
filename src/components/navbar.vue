@@ -410,7 +410,7 @@ export default {
 
         // if(minutes > 0.7) return
 
-        
+
 
         WalletP2p.getTransaction(response_json?.hash).then(response => {
           const response_json = response.data.result;
@@ -474,6 +474,13 @@ export default {
 
 
       if(dataSession) {
+        const account = WalletP2p.getAccount();
+
+        if(!account.address || !account.privateKey) {
+          this.logout()
+          return
+        }
+
         const dataSessionJson = JSON.parse(dataSession);
         const wallet = dataSessionJson.email || dataSessionJson.wallet
         this.initSession(wallet)
