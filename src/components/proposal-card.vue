@@ -124,10 +124,20 @@
             <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal?.role }} </p>
           </span>
 
+          <span v-else-if="proposal?.type == 'Transfer'">
+            <p class="label mb-2">Descripción</p>
+            <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.description }} </p>
+
+            <p class="label mb-2">Usuario receptor</p>
+            <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal.receiver_id }} </p>
+          </span>
+
           <span v-else>
             <p class="label mb-2">Descripción</p>
             <v-div id="description" class="ellipsis-box" style="--lines: 6; color: black !important;" v-html="proposal?.description"></v-div>
           </span>
+
+
         </div>
 
         <a :href="proposal?.link" target="_blank" class="mb-4 mt-5">
@@ -137,16 +147,16 @@
 
         <div class="card__bottom flex-space-center mt-auto" style="gap: clamp(20px, 3vw, 40px);">
           <aside class="flex-grow-1 d-flex flex-wrap flex-spacee justify-start" style="gap: clamp(20px, 3vw, 40px);">
-            <div v-if="proposal?.claims" class="flex-column" style="gap: 10px;">
+            <div v-if="mapAmount()" class="flex-column" style="gap: 10px;">
               <label>Amount</label>
               <span class="flex-center" style="gap: 4px;">
-                {{ proposal?.amount }}
+                {{ mapAmount().amount }}
                 <img
                   src="@/assets/sources/logos/near-icon.svg"
                   alt="near logo"
                   style="width: 15px; height: 15px; translate: 0 -1px;"
                 >
-                NEAR
+                {{ mapAmount().asset }}
               </span>
             </div>
 
@@ -190,7 +200,7 @@ import FailedIcon from '@/assets/sources/images/failed.svg'
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 import utilsDAO from '@/services/utils-dao';
-import { mergeProps, computed } from 'vue';
+import { mergeProps, computed, ref } from 'vue';
 
 
 const
@@ -201,7 +211,8 @@ const
       default: undefined
     }
   }),
-  mergeProps2 = mergeProps
+  mergeProps2 = mergeProps,
+  amount = ref(undefined)
 
 function copy(id) {
   let route = "proposal-details";
@@ -225,6 +236,24 @@ function mapType() {
   const type = map.find((item) => item.id == typeId)?.value;
 
   return !type ? typeId : type;
+}
+
+function mapAmount() {
+  try {
+    if(!props.proposal?.type) return undefined
+    if(props.proposal?.type != "Transfer") return undefined
+
+    const tokenId = props.proposal?.objectProposal.token_id;
+    const asset = tokenId == "" ? "NEAR" : "USDT";
+    const decimals = asset == "NEAR" ? 24 : 6;
+    const amount = Number(props.proposal?.objectProposal.amount);
+    // const fixe = asset == "NEAR" ? 5 : 2;
+    const amountParse = amount / Math.pow(10, decimals);
+
+    return {amount: amountParse, asset: asset}
+  } catch (error) {
+    return undefined
+  }
 }
 
 function onPressProposal() {
