@@ -222,8 +222,7 @@ export default {
           } catch (error) {
             kind = item.kind;
           }
-
-          console.log(typeof kind, kind)
+          
           const type = typeof kind === "object" ? Object.keys(kind)[0] : item.kind.replace('"', '').replace('"', '').toString();
           const objectProposal = typeof kind === "object" ? kind[type] : undefined;
           const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;

@@ -389,12 +389,12 @@ export default {
 
         const response = this.$route.query?.response;
 
-        /* const algo = {
+        const algo = {
           date_time: 223423424234,
           hash: "2aemhC2nXK52QKRdnN411XXEZPS4aN197dbPomRjwhXZ"
         }
 
-        console.log(btoa(JSON.stringify(algo))) */
+        console.log(btoa(JSON.stringify(algo)))
 
         if(!response) return
 
@@ -410,12 +410,14 @@ export default {
 
         // if(minutes > 0.7) return
 
+        console.log("aqui", response_json?.hash)
+
         WalletP2p.getTransaction(response_json?.hash).then(response => {
           const response_json = response.data.result;
           const hash = response_json?.transaction.hash;
           const status_json = response_json?.receipts_outcome[0]?.outcome?.status;
           const receipts_outcome = !response_json?.receipts_outcome ? [] : response_json?.receipts_outcome;
-
+          console.log("aqui si va: ", response)
           let error = undefined;
           for(const item of receipts_outcome) {
             if(item?.outcome?.status?.Failure){
@@ -450,7 +452,6 @@ export default {
 
           const urlParams = new URLSearchParams(window.location.search);
           urlParams.delete("response");
-          console.log(urlParams)
           //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
           let newUrl = window.location.pathname.split('/').at(-1);
           newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
@@ -496,8 +497,11 @@ export default {
 
       const urlParams = new URLSearchParams(window.location.search);
       urlParams.delete("token");
+      //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
+      let newUrl = window.location.pathname.split('/').at(-1);
+      newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
 
-      history.pushState(null, "", window.location.pathname.split('/').at(-1)+"?"+urlParams.toString());
+      history.pushState(null, "", newUrl);
     },
 
     initSession(wallet) {
