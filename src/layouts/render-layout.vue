@@ -45,11 +45,15 @@
           id="amount_near"
           variant="solo"
           flat
+          type="number"
           class="container-input-search"
           :rules="required"
           required
+          @keydown="(e) => {
+            if (['e', 'E', '-'].includes(e.key)) e.preventDefault()
+          }"
         >
-          <template #prepend-inner>
+          <template #prepend>
             <v-select
               v-model="selectedToken"
               :items="tokens"
@@ -267,12 +271,6 @@ export default {
     }
   },
 
-
-  watch: {
-    amount_near: function(val) {
-      this.amount_near = val.replace(/[^0-9]/,'')
-    }
-  },
 
   beforeMount() {
     /* this.route = window.location.pathname.split('/').at(-1);
