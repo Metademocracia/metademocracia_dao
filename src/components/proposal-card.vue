@@ -211,8 +211,7 @@ const
       default: undefined
     }
   }),
-  mergeProps2 = mergeProps,
-  amount = ref(undefined)
+  mergeProps2 = mergeProps
 
 function copy(id) {
   let route = "proposal-details";
