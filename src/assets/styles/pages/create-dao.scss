@@ -6,6 +6,24 @@
   padding-bottom: 0px!important;
   padding-top: 30px;
 
+  .v-input {
+    &.v-select .v-field {
+      font-size: 13px !important;
+      &__field {
+        height: 42px;
+        font-size: 13px !important;
+      }
+
+      &__input {
+        padding: 0;
+        min-height: 100% !important;
+        height: 100% !important;
+        padding-left: 5px !important;
+        font-size: 13px !important;
+      }
+    }
+  }
+
   &__content {
     display: flex;
     gap: 20px;
@@ -54,7 +72,6 @@
         }
       }
     }
-
 
     .v-window {
       flex-grow: 1;
