@@ -36,7 +36,7 @@
         variant="solo"
         hide-details
       ></v-text-field>
-      
+
 
       <aside class="grid mt-7">
         <v-sheet v-for="(item, i) in dataMembers" :key="i">
@@ -81,10 +81,12 @@ import avatarIcon from '@/assets/sources/images/avatar.jpg'
 import { ref, onBeforeMount, watch  } from 'vue'
 import graphQl from '@/services/graphQl';
 import { useRouter, useRoute } from 'vue-router';
+import variables from '@/mixins/variables';
 
 const
 router = useRouter(),
 route = useRoute(),
+{ groupsDefaults, groupAllDefault, groupAlls } = variables,
 tab = ref(0),
 dataTabs = ref([
   /*{
@@ -160,7 +162,7 @@ async function getData() {
 
   if(groups.length <= 0) return
 
-  const excludeGroup = ["Todos", "todos", "all", "All"]
+  const excludeGroup = groupAlls
   dataTabs.value = groups.filter((item) => !excludeGroup.find((elem) => elem == item.group)).map((item) => {
     return {
       name: item.group,

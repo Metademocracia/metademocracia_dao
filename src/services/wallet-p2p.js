@@ -21,7 +21,7 @@ function login (contract) {
     success: window.location.origin + window.location.pathname,
   }))
 
-  const route = _routeWallet+"/execute?token="+token;
+  const route = _routeWallet+"/login?token="+token;
   // console.log(route)
   window.open(route, "_self");
 }
@@ -60,7 +60,7 @@ function call (json, ruta, param_ruta) {
   })/*)*/);
 
   // console.log(JSON.parse(window.atob(token)));
-  window.open(_routeWallet+"/execute?token="+token, "_self");
+  window.open(_routeWallet+"/sign?token="+token, "_self");
 }
 
 function getAccount() {

@@ -3,8 +3,44 @@ import store from "@/store"
 import { useStorage } from "vue3-storage-secure"
 import { useTheme } from "vuetify/lib/framework.mjs"
 
+
+const groupAllDefault = "Publico General";
+const groupAlls = [
+  "All",
+  "all",
+  "Publico General",
+  "Todos",
+  "todos"
+];
+
+const mapGroupAlls = (text) => {
+  const result = groupAlls.find((item) => item == text)
+  return !result ? text : groupAllDefault
+};
+
 export default {
   // ? custom defines
+
+  groupAllDefault,
+  groupAlls,
+  mapGroupAlls,
+  groupsDefaults: [
+    "Fundador",
+    "Concejal",
+    "Ciudadano",
+    "Miembro",
+    "Socio",
+    "Asociado",
+    "Voluntario",
+    "Activista",
+    "Vocero",
+    "Asesor",
+    "Invitado",
+    "Colaborador",
+    "Agremiado",
+    "Representante",
+    "Consejero",
+  ],
   globalRules: {
     required: (v) => !!v || "Es requerido",
     listRequired: (v) => !!v?.length || "Es requerido",

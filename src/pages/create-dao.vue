@@ -175,20 +175,29 @@
             <label style="color: #333 !important;">Grupos predeterminados</label>
             <span class="d-block mb-3" style="color: #939393 !important;">No puedes eliminarlos</span>
             <v-text-field
-              value="Todos"
-              placeholder="Todos"
+              :value="groupAllDefault"
+              :placeholder="groupAllDefault"
               variant="solo"
               class="mb-1"
               readOnly
             />
-            <v-text-field
+            <!--<v-text-field
               v-model="groupCouncil"
               placeholder="Concejal"
               variant="solo"
               class="mb-1"
               :rules=[globalRules.required]
               @change="() => { item.type = groupCouncil }"
-            />
+            />-->
+
+            <v-select
+              v-model="groupCouncil"
+              :items="groupsDefaults"
+              variant="solo"
+              placeholder="Seleccione un grupo"
+              :rules="[(v) => !!v || 'Seleccione un grupo predeterminado']"
+              required
+            ></v-select>
 
             <p class="d-block mb-3">Grupos personalizados</p>
             <v-text-field
@@ -403,7 +412,7 @@ import {configNear} from '../services/nearConfig';
 
 const
   toast = useToast(),
-  { globalRules } = variables,
+  { globalRules, groupsDefaults, groupAllDefault } = variables,
   router = useRouter(),
   route = useRoute(),
 
@@ -494,7 +503,7 @@ async function getFee() {
 
 }
 
-function getGroups(groups=['Todos', groupCouncil.value]) {
+function getGroups(groups=[groupAllDefault, groupCouncil.value]) {
   for(let i = 0; i< customGroups.value.length; i++) {
     if(customGroups.value[i].model) {
       if(customGroups.value[i].model.trim() !== '') {
@@ -571,7 +580,7 @@ function funAddress() {
 
 async function uploadImgIpfs() {
   if(!imgDao._rawValue) return null
-  console.log("file print 1 ", imgDao._rawValue[0])
+  // console.log("file print 1 ", imgDao._rawValue[0])
   const resp = await axios.post('https://api.nft.storage/upload', imgDao._rawValue[0], {
     headers: {
       'accept': 'application/json',
@@ -596,8 +605,8 @@ function getRoles(){
   for(const group of getGroups()){
     let rol = [];
 
-    console.log(proposals._rawValue)
-    console.log(proposals.value)
+    // console.log(proposals._rawValue)
+    // console.log(proposals.value)
 
     let countPermision = 0;
     for(let index=0; index < proposals.value.length; index++) {
@@ -624,9 +633,9 @@ function getRoles(){
       rol = ["*:*"]
     }
 
-    if(group == 'all' || group == 'Todos') {
+    if(group == groupAllDefault) {
       roles.push({
-        name: "Todos",
+        name: groupAllDefault,
         permissions: rol,
         kind: "Everyone",
         vote_policy: {}
@@ -718,9 +727,9 @@ async function createDao(formValid) {
   };
 
  // 21b85007de8967c3ec3dd51060bef1a31f5f7d5cd1da82c5765c1966f286ecd7
-  console.log("json: ", objectJson)
+  /* console.log("json: ", objectJson)
   console.log("json: ", JSON.parse(atob(objectJson.args.args)))
-  console.log("json: ", JSON.parse(atob(metadata)))
+  console.log("json: ", JSON.parse(atob(metadata))) */
 
   loadingBtn.value = false;
   WalletP2p.call(objectJson, "daos")
