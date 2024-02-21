@@ -190,39 +190,46 @@
               @change="() => { item.type = groupCouncil }"
             />-->
 
-            <v-select
-              v-model="groupCouncil"
-              :items="groupsDefaults"
-              variant="solo"
-              placeholder="Seleccione un grupo"
-              :rules="[(v) => !!v || 'Seleccione un grupo predeterminado']"
-              required
-            ></v-select>
 
             <p class="d-block mb-3">Grupos personalizados</p>
-            <v-text-field
-              v-for="(item, i) in customGroups"
-              v-model="item.model"
-              :key="i"
-              placeholder="Nombre del grupo"
-              class="appened"
-              variant="solo"
-            >
-              <template #append-inner>
-                <v-btn
-                  min-width="70"
-                  height="42"
-                  :color="i == customGroups.length - 1 ? '#61C2D5' : '#505050'"
-                  style="border-radius: 8px !important;"
-                  @click="() => {
-                    if (i == customGroups.length - 1) return customGroups.push({ model: undefined })
-                    customGroups.splice(i, 1)
-                  }"
-                >
-                  <v-icon :icon="i == customGroups.length - 1 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
-                </v-btn>
-              </template>
-            </v-text-field>
+
+            <v-row v-for="(item, i) in customGroups" :key="i">
+            <v-col cols="4">
+              <v-select
+                v-model="item.groupCouncil"
+                :items="groupsDefaults"
+                id="mySelect"
+                variant="solo"
+                placeholder="   Seleccione un grupo"
+                :rules="[(v) => !!v || 'Seleccione un grupo predeterminado']"
+                required
+              ></v-select>
+            </v-col>
+
+            <v-col cols="8">
+              <v-text-field
+                v-model="item.groupCouncil"
+                placeholder="Nombre del grupo"
+                class="appened"
+                variant="solo"
+              >
+                <template #append-inner>
+                  <v-btn
+                    min-width="70"
+                    height="42"
+                    :color="i == customGroups.length - 1 ? '#61C2D5' : '#505050'"
+                    style="border-radius: 8px !important;"
+                    @click="() => {
+                      if (i == customGroups.length - 1) return customGroups.push({ model: undefined, groupCouncil: undefined })
+                      customGroups.splice(i, 1)
+                    }"
+                  >
+                    <v-icon :icon="i == customGroups.length - 1 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+                  </v-btn>
+                </template>
+              </v-text-field>
+            </v-col>
+          </v-row>
           </form-card>
         </v-window-item>
 
