@@ -190,39 +190,44 @@
               @change="() => { item.type = groupCouncil }"
             />-->
 
-            <v-select
-              v-model="groupCouncil"
-              :items="groupsDefaults"
-              variant="solo"
-              placeholder="Seleccione un grupo"
-              :rules="[(v) => !!v || 'Seleccione un grupo predeterminado']"
-              required
-            ></v-select>
-
             <p class="d-block mb-3">Grupos personalizados</p>
-            <v-text-field
-              v-for="(item, i) in customGroups"
-              v-model="item.model"
-              :key="i"
-              placeholder="Nombre del grupo"
-              class="appened"
-              variant="solo"
-            >
-              <template #append-inner>
-                <v-btn
-                  min-width="70"
-                  height="42"
-                  :color="i == customGroups.length - 1 ? '#61C2D5' : '#505050'"
-                  style="border-radius: 8px !important;"
-                  @click="() => {
-                    if (i == customGroups.length - 1) return customGroups.push({ model: undefined })
-                    customGroups.splice(i, 1)
-                  }"
+            
+            <v-row v-for="(item, i) in customGroups" :key="i">
+              <v-col cols="4"> 
+                <v-select
+                v-model="item.model"
+                :items="groupsDefaults"
+                variant="solo"
+                placeholder="Seleccione un grupo"
+                :rules="[(v) => !!v || 'Seleccione un grupo predeterminado']"
+                required
+                ></v-select>
+            </v-col>
+             <v-col cols="8">  
+                <v-text-field
+                  v-model="item.model"
+                  :key="i"
+                  placeholder="Nombre del grupo"
+                  class="appened"
+                  variant="solo"
                 >
-                  <v-icon :icon="i == customGroups.length - 1 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
-                </v-btn>
-              </template>
-            </v-text-field>
+                  <template #append-inner>
+                    <v-btn
+                      min-width="70"
+                      height="42"
+                      :color="i == customGroups.length - 1 ? '#61C2D5' : '#505050'"
+                      style="border-radius: 8px !important;"
+                      @click="() => {
+                        if (i == customGroups.length - 1) return customGroups.push({ model: undefined })
+                        customGroups.splice(i, 1)
+                      }"
+                    >
+                      <v-icon :icon="i == customGroups.length - 1 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+                    </v-btn>
+                  </template>
+                </v-text-field>
+            </v-col>
+          </v-row>
           </form-card>
         </v-window-item>
 
@@ -238,7 +243,7 @@
           >
             <p class="d-block mb-3">Agregue miembros a su DAO.</p>
 
-            <div class="d-flex" style="gap: 20px;">
+            <div style="gap: 20px; display: grid; grid-template-columns: repeat(2, 1fr);">
               <v-text-field
                 :value="addressUser"
                 placeholder="ap6ay7auhan6a78ahah8gfcvbay77a9a0han5"
@@ -253,42 +258,43 @@
                 placeholder="Sleccione un grupo"
                 readonly
               ></v-select>
-            </div>
 
+              <template v-for="(item, i) in daoMembers" :key="i">
+                <v-text-field
+                  v-model="item.member"
+                  placeholder="ap6ay7auhan6a78ahah8gfcvbay77a9a0han5"
+                  variant="solo"
+                  :error-messages="item.memberErrror"
+                  :success-messages="item.memberSuccess"
+                  @keyup="validMember(item)"
+                  @change="validMember(item)"
+                />
 
-            <div v-for="(item, i) in daoMembers" :key="i" class="d-flex" style="gap: 20px;">
-              <v-text-field
-                v-model="item.member"
-                placeholder="ap6ay7auhan6a78ahah8gfcvbay77a9a0han5"
-                variant="solo"
-                :error-messages="item.memberErrror"
-                :success-messages="item.memberSuccess"
-                @keyup="validMember(item)"
-                @change="validMember(item)"
-              />
-
-              <v-select
-                v-if="item.member"
-                v-model="item.type"
-                :items="getGroups([groupCouncil])"
-                variant="solo"
-                placeholder="Seleccione un grupo"
-                :rules="[(v) => !!v || 'Seleccione un grupo']"
-                required
-              ></v-select>
-
-              <v-btn
-                min-width="70"
-                height="42"
-                :color="i == daoMembers.length - 1 && i <= 7 ? '#61C2D5' : '#505050'"
-                style="border-radius: 8px !important;"
-                @click="() => {
-                  if (i == daoMembers.length - 1 && i <= 7) return daoMembers.push({  member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined })
-                  daoMembers.splice(i, 1)
-                }"
-              >
-                <v-icon :icon="i == daoMembers.length - 1  && i <= 7 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
-              </v-btn>
+                <v-select
+                  v-if="item.member"
+                  v-model="item.type"
+                  :items="getGroups([groupCouncil])"
+                  variant="solo"
+                  placeholder="Seleccione un grupo"
+                  :rules="[(v) => !!v || 'Seleccione un grupo']"
+                  required
+                >
+                  <template #append>
+                    <v-btn
+                      min-width="70"
+                      height="42"
+                      :color="i == daoMembers.length - 1 && i <= 7 ? '#61C2D5' : '#505050'"
+                      style="border-radius: 8px !important;"
+                      @click="() => {
+                        if (i == daoMembers.length - 1 && i <= 7) return daoMembers.push({  member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined })
+                        daoMembers.splice(i, 1)
+                      }"
+                    >
+                      <v-icon :icon="i == daoMembers.length - 1  && i <= 7 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+                    </v-btn>
+                  </template>
+                </v-select>
+              </template>
             </div>
           </form-card>
         </v-window-item>
@@ -467,8 +473,13 @@ watch(nameDao, async (newName, oldName) => {
     nameDao.value = newName.replace(" ", "-").replace(/[^a-z-0-9]/,'')
   }
 })
-//this.value.replace(/[^a-zA-Z0-9]/,'')"
 
+watch(groupCouncil, (newVal) => {
+      customGroups.value.forEach(item => {
+        item.model = newVal;
+      });
+    });
+//this.value.replace(/[^a-zA-Z0-9]/,'')"
 onBeforeMount(getFee)
 
 
