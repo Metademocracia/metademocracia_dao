@@ -87,7 +87,7 @@ const
 router = useRouter(),
 route = useRoute(),
 { groupsDefaults, groupAllDefault, groupAlls } = variables,
-tab = ref(1),
+tab = ref(0),
 dataTabs = ref([
   /*{
     name: "Concejal",
