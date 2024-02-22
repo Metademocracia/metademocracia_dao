@@ -183,33 +183,42 @@
             />
             <!--<v-text-field
               v-model="groupCouncil"
-              placeholder="Concejal"
+              :placeholder="groupCouncil"
               variant="solo"
               class="mb-1"
               :rules=[globalRules.required]
               @change="() => { item.type = groupCouncil }"
             />-->
 
+            <v-select
+              v-model="groupCouncil"
+              :items="groupsDefaults"
+              variant="solo"
+              placeholder="Seleccione un grupo"
+              :rules="[(v) => !!v || 'Seleccione un grupo predeterminado']"
+              required
+            ></v-select>
+
             <p class="d-block mb-3">Grupos personalizados</p>
-            
+
             <v-row v-for="(item, i) in customGroups" :key="i">
-              <v-col cols="4"> 
+              <v-col cols="4">
                 <v-select
                 v-model="item.model"
                 :items="groupsDefaults"
                 variant="solo"
                 placeholder="Seleccione un grupo"
-                :rules="[(v) => !!v || 'Seleccione un grupo predeterminado']"
-                required
+                @update:model-value="chargeCouncil()"
                 ></v-select>
             </v-col>
-             <v-col cols="8">  
+             <v-col cols="8">
                 <v-text-field
                   v-model="item.model"
                   :key="i"
                   placeholder="Nombre del grupo"
                   class="appened"
                   variant="solo"
+                  @update:model-value="chargeCouncil()"
                 >
                   <template #append-inner>
                     <v-btn
@@ -239,25 +248,30 @@
             :steps="steps"
             title="Agregar Miembros (Opcional)"
             @prev="windowStep--"
-            @next="() => {windowStep++; getData()}"
+            @next="() => {getData(); windowStep++}"
           >
             <p class="d-block mb-3">Agregue miembros a su DAO.</p>
 
             <div style="gap: 20px; display: grid; grid-template-columns: repeat(2, 1fr);">
               <v-text-field
                 :value="addressUser"
-                placeholder="ap6ay7auhan6a78ahah8gfcvbay77a9a0han5"
                 variant="solo"
                 readonly
               />
 
-              <v-select
+              <!--<v-select
                 v-model="groupCouncil"
                 :items="getGroups([groupCouncil])"
                 variant="solo"
                 placeholder="Sleccione un grupo"
                 readonly
-              ></v-select>
+              ></v-select>-->
+
+              <v-text-field
+                :value="groupCouncil"
+                variant="solo"
+                readonly
+              />
 
               <template v-for="(item, i) in daoMembers" :key="i">
                 <v-text-field
@@ -418,7 +432,7 @@ import {configNear} from '../services/nearConfig';
 
 const
   toast = useToast(),
-  { globalRules, groupsDefaults, groupAllDefault } = variables,
+  { globalRules, groupsDefaults, groupAllDefault, groupDefault } = variables,
   router = useRouter(),
   route = useRoute(),
 
@@ -465,7 +479,7 @@ costDeploy = ref("8000000000000000000000000"),
 contractCost = ref(""),
 contractCostNear = ref(""),
 loadingBtn = ref(false),
-groupCouncil = ref("Concejal"),
+groupCouncil = ref(groupDefault),
 addressUser = WalletP2p.getAccount().address
 
 watch(nameDao, async (newName, oldName) => {
@@ -474,14 +488,20 @@ watch(nameDao, async (newName, oldName) => {
   }
 })
 
-watch(groupCouncil, (newVal) => {
-      customGroups.value.forEach(item => {
-        item.model = newVal;
-      });
-    });
+/* watch(groupCouncil, (newVal) => {
+  customGroups.value.forEach(item => {
+    item.model = newVal;
+  });
+}); */
+
+
 //this.value.replace(/[^a-zA-Z0-9]/,'')"
 onBeforeMount(getFee)
 
+/*function chargeCouncil() {
+  console.log("aqui paso")
+  groupCouncil.value = customGroups.value[0].model;
+}*/
 
 async function validMember(item) {
   //item.memberErrror = "wallet no valida"
@@ -619,12 +639,14 @@ function getRoles(){
     // console.log(proposals._rawValue)
     // console.log(proposals.value)
 
+
+
     let countPermision = 0;
+    let totalPermision = proposals.value.length;
     for(let index=0; index < proposals.value.length; index++) {
       const proposalKey = proposals.value[index].key;
       const proposal = proposals.value[index].group.filter((search) => search.name == group )
       const action = permissions.value[index].group.filter((search) => search.name == group)
-
 
       if(proposal.length <= 0 || action.length <= 0) continue
 
@@ -640,7 +662,7 @@ function getRoles(){
       }
     }
 
-    if(rol.length == countPermision && rol.length > 0) {
+    if(totalPermision == countPermision && rol.length > 0) {
       rol = ["*:*"]
     }
 
@@ -671,7 +693,6 @@ function getRoles(){
 
 
 async function createDao(formValid) {
-  //console.log("roles: ", getRoles())
   if (!formValid) return
 
   loadingBtn.value = true;
@@ -681,7 +702,7 @@ async function createDao(formValid) {
     const resulIpfs = await uploadImgIpfs();
     img = resulIpfs.url;
   }
-  //console.log(await uploadImgIpfs())
+
 
   const social = [];
   for(let i = 0; i< daoLinks._rawValue.length; i++) {
@@ -710,6 +731,7 @@ async function createDao(formValid) {
     social: social.length > 0 ? social  : null,
     img: img ? img : null
   }));
+
 
   const objectJson = {
     contractId: process.env.CONTRACT_FACTORY,

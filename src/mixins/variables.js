@@ -24,6 +24,7 @@ export default {
   groupAllDefault,
   groupAlls,
   mapGroupAlls,
+  groupDefault: "Fundador",
   groupsDefaults: [
     "Fundador",
     "Concejal",
