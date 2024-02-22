@@ -232,11 +232,11 @@ async function getData() {
       const value = elm.permissions.includes(elm.permissions.find((search) => search.split(':')[0] == items.key || search.split(':')[0] == '*'))
       return {name: elm.name, value: value}
     });
-    console.log("-->",responsePolicy.roles)
+
     const permissionsGroupB = responsePolicy.roles.map((elm) => {
       const value = elm.permissions.includes(elm.permissions.find((search) =>
         (search.split(':')[0] == items.key && (search.split(':')[1] == 'VoteApprove' || search.split(':')[1] == 'VoteReject' || search.split(':')[1] == 'VoteRemove'))
-        || (search.split(':')[0] == items.key && search.split(':')[1] == '*')
+        || (search.split(':')[0] == items.key && search.split(':')[1] == '*' || search == '*:*')
       ))
       return {name: elm.name, value: value}
     });
@@ -263,7 +263,7 @@ async function getData() {
     });
   }
 
-  console.log(">> ", rights2)
+  
   proposalsView.value = rights1;
   permissionsView.value = rights2;
   proposals.value = rights3;
