@@ -190,7 +190,8 @@ async function getData() {
   }`;
 
 
-  const tabIndex = tab.value == 0 ? tab.value+1 : tab.value-1;
+  const tabIndex = tab.value == 0 ? 0 : tab.value-1;
+  console.log(tabIndex, tab.value)
   const variables = {
     contractId: route.query?.dao,
     group: dataTabs.value[tabIndex].value,
