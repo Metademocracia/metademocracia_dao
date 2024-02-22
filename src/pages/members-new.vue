@@ -128,7 +128,7 @@ watch(page, async (newPage, oldPage) => {
 
 watch(filterMember, async (newVal, oldVal) => {
   nextIndex.value = 0
-  filterMember.value = !newVal ? undefined : newVal.trim() == "" ? undefined : newVal.trim();;
+  filterMember.value = !newVal ? undefined : newVal.trim() == "" ? undefined : newVal.trim();
   getData()
 })
 
@@ -141,7 +141,7 @@ watch(tab, async (newTab, oldTap) => {
 watch(filterMember, async (newVal, oldVal) => {
   nextIndex.value = 0
   totalMembersList.value = 0;
-  filterMember.value = !newVal ? undefined : newVal.trim() == "" ? undefined : newVal.trim();;
+  filterMember.value = !newVal ? undefined : newVal.trim() == "" ? undefined : newVal.trim();
   getData()
 })
 
@@ -190,7 +190,7 @@ async function getData() {
   }`;
 
   const tabIndex = tab.value == 0 ? 0 : tab.value-1;
-  
+
   const variables = {
     contractId: route.query?.dao,
     group: dataTabs.value[tabIndex].value,

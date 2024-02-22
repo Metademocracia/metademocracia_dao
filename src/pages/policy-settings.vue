@@ -124,7 +124,7 @@ import WalletP2p from '../services/wallet-p2p';
 
 const
   toast = useToast(),
-  { globalRules } = variables,
+  { globalRules, proposalKind } = variables,
   router = useRouter(),
   route = useRoute(),
 
@@ -145,17 +145,15 @@ permissionsView = ref([]),
 proposals = ref([]),
 permissions = ref([]),
 rights = ref([
-  { name: "Cambiar configuración de DAO", key: "ChangeConfig"},
-  { name: "Cambiar la política de DAO", key: "ChangePolicy"},
+  { name: "Cambiar configuración de DAO", key: proposalKind.find((item) => item.key == "ChangeConfig")?.value},
+  { name: "Cambiar la política de DAO", key: proposalKind.find((item) => item.key == "ChangePolicy")?.value},
   // { name: "Recompensa", key: ""},
-  { name: "Transferencia", key: "Transfer"},
-  { name: "Encuestas", key: "Vote"},
-  { name: "Eliminar miembros", key: "RemoveMemberFromRole"},
-  { name: "Agregar miembros", key: "AddMemberToRole"},
-  { name: "Llamada de función", key: "FunctionCall"},
-  /* { name: "Actualizar auto", key: ""},
-  { name: "Actualizar remoto", key: ""},
-  { name: "Establecer token de voto", key: ""}, */
+  { name: "Transferencia", key: proposalKind.find((item) => item.key == "Transfer")?.value},
+  // { name: "Encuestas", key: "Vote"},
+  { name: "Votación", key: proposalKind.find((item) => item.key == "Vote")?.value},
+  { name: "Eliminar miembros", key: proposalKind.find((item) => item.key == "RemoveMemberFromRole")?.value},
+  { name: "Agregar miembros", key: proposalKind.find((item) => item.key == "AddMemberToRole")?.value},
+  { name: "Llamada de función", key: proposalKind.find((item) => item.key == "FunctionCall")?.value},
 ]),
 headerRights = ref([]),
 groupsList = ref([]),
@@ -263,7 +261,7 @@ async function getData() {
     });
   }
 
-  
+
   proposalsView.value = rights1;
   permissionsView.value = rights2;
   proposals.value = rights3;

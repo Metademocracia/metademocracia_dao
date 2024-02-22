@@ -432,7 +432,7 @@ import {configNear} from '../services/nearConfig';
 
 const
   toast = useToast(),
-  { globalRules, groupsDefaults, groupAllDefault, groupDefault } = variables,
+  { globalRules, groupsDefaults, groupAllDefault, groupDefault, proposalKind } = variables,
   router = useRouter(),
   route = useRoute(),
 
@@ -454,14 +454,15 @@ daoMembers = ref([ { member: undefined, type: undefined, memberErrror: undefined
 proposals = ref([]),
 permissions = ref([]),
 rights = ref([
-  { name: "Cambiar configuración de DAO", key: "ChangeConfig"},
-  { name: "Cambiar la política de DAO", key: "ChangePolicy"},
+  { name: "Cambiar configuración de DAO", key: proposalKind.find((item) => item.key == "ChangeConfig")?.value},
+  { name: "Cambiar la política de DAO", key: proposalKind.find((item) => item.key == "ChangePolicy")?.value},
   // { name: "Recompensa", key: ""},
-  { name: "Transferencia", key: "Transfer"},
-  { name: "Encuestas", key: "Vote"},
-  { name: "Eliminar miembros", key: "RemoveMemberFromRole"},
-  { name: "Agregar miembros", key: "AddMemberToRole"},
-  { name: "Llamada de función", key: "FunctionCall"},
+  { name: "Transferencia", key: proposalKind.find((item) => item.key == "Transfer")?.value},
+  // { name: "Encuestas", key: "Vote"},
+  { name: "Votación", key: proposalKind.find((item) => item.key == "Vote")?.value},
+  { name: "Eliminar miembros", key: proposalKind.find((item) => item.key == "RemoveMemberFromRole")?.value},
+  { name: "Agregar miembros", key: proposalKind.find((item) => item.key == "AddMemberToRole")?.value},
+  { name: "Llamada de función", key: proposalKind.find((item) => item.key == "FunctionCall")?.value},
   /* { name: "Actualizar auto", key: ""},
   { name: "Actualizar remoto", key: ""},
   { name: "Establecer token de voto", key: ""}, */
@@ -732,7 +733,7 @@ async function createDao(formValid) {
     img: img ? img : null
   }));
 
-
+  console.log(getRoles())
   const objectJson = {
     contractId: process.env.CONTRACT_FACTORY,
     methodName: "create",

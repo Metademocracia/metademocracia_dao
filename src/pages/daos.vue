@@ -1,6 +1,31 @@
 <template>
   <div id="daos">
-    <toolbar-search />
+    <aside class="toolbar-search">
+    <div class="toolbar-search__wrapper">
+      <v-text-field
+        v-model="likeWalletDao"
+        placeholder="Buscar"
+        variant="solo"
+        hide-details
+      >
+        <template #prepend-inner>
+          <v-icon icon="mdi-magnify" size="23" class="text-primary" />
+
+          <v-divider vertical thickness="1" color="#000" class="mx-2 my-auto" style="opacity: 1; height: 70%;" />
+        </template>
+
+        <template #append-inner>
+          <v-btn
+            height="38"
+            class="bg-secondary px-7"
+            @click="getData()"
+          >Buscar</v-btn>
+        </template>
+      </v-text-field>
+    </div>
+  </aside>
+
+
 
     <toolbar title="DAOs" content-class="flex-spaceb">
       <v-tabs v-model="tab" slider-color="transparent">
@@ -42,7 +67,7 @@
 import '@/assets/styles/pages/daos.scss'
 import DaoCard from '@/components/dao-card.vue'
 import MetademocraciaImage from '@/assets/sources/images/metademocracia-image.png'
-import { ref, computed, onBeforeMount } from 'vue';
+import { ref, computed, onBeforeMount, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import graphQl from '@/services/graphQl';
 import WalletP2p from '../services/wallet-p2p';
@@ -52,11 +77,16 @@ const
   router = useRouter(),
 
 tab = ref(0),
-tabs = ["Más Activos", "Más Nuevos", "Más Viejos", "N° Miembros", "Con mayores fondos"],
+tabs = [/*"Más Activos",*/ "Más Nuevos", "Más Viejos", "N° Miembros"],
 page = ref(1),
 daos = ref([]),
-paginatedDaos = computed(() => (daos.value.length || 9) / 9)
+paginatedDaos = computed(() => (daos.value.length || 9) / 9),
+likeWalletDao = ref(undefined),
+listDaos = ref([])
 
+watch(tab, async (newVal, oldVal) => {
+  getData()
+})
 
 onBeforeMount(getData)
 
@@ -69,10 +99,46 @@ function view(item) {
 }
 
 async function getData() {
+  listDaos.value = [];
+  if(likeWalletDao.value) {
+    likeWalletDao.value = likeWalletDao.value.trim() == "" ? undefined : likeWalletDao.value;
+  }
+
+  // "Más Nuevos", "Más Viejos", "N° Miembros"
+  let orderDirection;
+  let orderBy;
+  switch (tabs[tab.value]) {
+    case "Más Nuevos":
+      orderDirection = 'desc'
+      orderBy = 'creation_date'
+      break;
+
+    case "Más Viejos":
+      orderDirection = 'asc'
+      orderBy = 'creation_date'
+      break;
+
+    case "N° Miembros":
+      orderDirection = 'desc'
+      orderBy = 'total_members'
+      break;
+
+    default:
+      orderDirection = 'desc'
+      orderBy = 'creation_date'
+      break;
+  }
+
+  const _likeWalletDao = !likeWalletDao.value ? '' : 'where: {wallet_dao_contains: "' + likeWalletDao.value + '"},';
+
   const query = `query dao {
-    daos {
+    daos(${_likeWalletDao} orderBy: ${orderBy}, orderDirection: ${orderDirection}) {
       owner_id
       wallet_dao
+      total_members
+      creation_date
+      proposal_total
+      proposal_actives
     }
   }`;
 
@@ -92,39 +158,38 @@ async function getData() {
     }
   }`;
 
-
   /// dao metademocracia
-  await graphQl.getQuery(queryMeta).then(async response => {
-    let total_balance = 0;
-    const delegation_near = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000 : 0;
-    const delegation_usdt = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000 : 0;
+  // if("Metademocracia".toUpperCase().includes(!_likeWalletDao ? "Metademocracia".toUpperCase() : _likeWalletDao.toUpperCase())) {
+    await graphQl.getQuery(queryMeta).then(async response => {
+      let total_balance = 0;
+      const delegation_near = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000 : 0;
+      const delegation_usdt = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000 : 0;
 
-    const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
-    total_balance += !balanceNearUsd ? 0 : Number((delegation_near * balanceNearUsd.data[0].value).toFixed(2));
+      const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
+      total_balance += !balanceNearUsd ? 0 : Number((delegation_near * balanceNearUsd.data[0].value).toFixed(2));
 
-    const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
-    total_balance += !balanceUsdtUsd ? 0 : Number((delegation_usdt * balanceUsdtUsd.data[0].value).toFixed(2));
+      const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
+      total_balance += !balanceUsdtUsd ? 0 : Number((delegation_usdt * balanceUsdtUsd.data[0].value).toFixed(2));
 
-
-    daos.value.push({
-      wallet_dao: process.env.CONTRACT_DAO,
-      image: MetademocraciaImage,
-      name: "Metademocracia",
-      account: process.env.CONTRACT_DAO,
-      description: "Metademocracia",
-      funds: total_balance.toFixed(2),
-      members: response.data.data?.proposaldata ? response.data.data?.serie?.supply : 0,
-      groups: 1,
-      activeProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_actives : 0,
-      totalProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_total : 0,
+      listDaos.value.push({
+        wallet_dao: process.env.CONTRACT_DAO,
+        image: MetademocraciaImage,
+        name: "Metademocracia",
+        account: process.env.CONTRACT_DAO,
+        description: "Metademocracia",
+        funds: total_balance.toFixed(2),
+        members: response.data.data?.proposaldata ? response.data.data?.serie?.supply : 0,
+        groups: 1,
+        activeProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_actives : 0,
+        totalProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_total : 0,
+      })
     })
-  })
+  //}
 
 
   //// daos factory
   await graphQl.getQueryDaoV2(query).then(async response => {
     const data = response.data.data.daos
-
     for(let i = 0; i < data.length; i++) {
       const responseNearAmount = await WalletP2p.view({
         contractId: data[i].wallet_dao,
@@ -158,36 +223,99 @@ async function getData() {
         methodName: "get_policy"
       });
 
-      const responseSupply = await WalletP2p.view({
+      /*const responseSupply = await WalletP2p.view({
         contractId: data[i].wallet_dao,
         methodName: "get_supply"
-      });
+      });*/
 
-      let members = 0;
+      /* let members = 0;
       for(let j=0; j < responsePolicy.roles.length; j++) {
         if(responsePolicy.roles[j].kind?.Group) {
           members += responsePolicy.roles[j].kind?.Group.length;
         }
-      }
+      } */
 
       const metadata = JSON.parse(atob(responseConfig.metadata))
 
-      daos.value.push({
+      listDaos.value.push({
         wallet_dao: data[i].wallet_dao,
         image: metadata?.img ? metadata.img : MetademocraciaImage,
         name: responseConfig.name,
         account: data[i].wallet_dao,
         description: atob(responseConfig.purpose),
         funds: total_balance.toFixed(2),
-        members: members,
+        members: data[i].total_members, // members,
         groups: responsePolicy.roles.length,
-        activeProposals: responseSupply ? responseSupply[1] : 0,
-        totalProposals: responseSupply ? responseSupply[0] : 0,
+        activeProposals: data[i].proposal_actives, // responseSupply ? responseSupply[1] : 0,
+        totalProposals: data[i].proposal_total, // responseSupply ? responseSupply[0] : 0,
       })
     }
+
+
   });
 
+  daos.value = listDaos.value
 
 
 }
 </script>
+<style lang="scss">
+@import '@/assets/styles/main.scss';
+
+.toolbar-search {
+  // position: sticky;
+  // top: 20px;
+
+  position: relative;
+  isolation: isolate;
+  background: $primary !important;
+  width: 100vw !important;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  margin-inline: calc(50% - 50vw) !important;
+  z-index: 2;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgb(#62C3D7, .58);
+    translate: 20px 0px;
+    scale: 1 2;
+    filter: blur(50px);
+    z-index: -1;
+  }
+
+
+  &__wrapper {
+    max-width: calc(880px + var(--margin-global));
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--margin-global);
+    padding-block: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .v-input {
+    .v-field {
+      padding-right: 0;
+      border-radius: 30px;
+
+      &__field {
+        height: 38px;
+      }
+
+      input {
+        min-height: 100% !important;
+        height: 100% !important;
+        font-size: 14px;
+      }
+    }
+
+    i { color: $primary }
+  }
+}
+</style>
