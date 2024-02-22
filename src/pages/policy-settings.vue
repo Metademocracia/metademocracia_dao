@@ -273,9 +273,6 @@ function setRoles(){
   for(let i in policy.value.roles){
     let rol = [];
 
-    console.log(proposals._rawValue)
-    console.log(proposals.value)
-
     let countPermision = 0;
     for(let index=0; index < proposals.value.length; index++) {
       const proposalKey = proposals.value[index].key;

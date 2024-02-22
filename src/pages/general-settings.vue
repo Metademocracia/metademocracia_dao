@@ -305,13 +305,13 @@
 
 
         <label>Nombre del DAO:</label>
-        <p class="mt-1" style="font-size: 16px !important;">{{ dataConfig?.name }}</p>
+        <p class="mt-1" style="font-size: 16px !important;">{{ dataDao?.name }}</p>
 
         <label>Dirección DAO:</label>
         <p class="mt-1">{{ walletDao }}</p>
 
         <label>Propósito:</label>
-        <p class="mt-1 mb-0">{{ dataConfig?.purpose }}</p>
+        <p class="mt-1 mb-0">{{ dataDao?.purpose }}</p>
       </form-card>
 
 
@@ -478,6 +478,7 @@ daoLogo = ref(null),
 walletDao = ref(null),
 metadataDao = ref(null),
 dataConfig = ref(null),
+dataDao = ref(null),
 nameDao = ref(null),
 daoProposalKyc = ref([ { model: undefined } ])
 
@@ -511,6 +512,10 @@ async function getData() {
   const metadata = JSON.parse(atob(responseConfig.metadata))
   metadataDao.value = metadata;
   dataConfig.value = responseConfig;
+  dataDao.value = {
+    name: dataConfig.value?.name,
+    purpose: atob(dataConfig.value?.purpose)
+  }
   links.value = metadataDao.value.social.map((item) => {return {text: item, href: item}});
   daoLogo.value = !metadataDao.value?.img ? MetademocraciaImage : metadataDao.value?.img
 

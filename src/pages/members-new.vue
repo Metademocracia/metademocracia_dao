@@ -87,7 +87,7 @@ const
 router = useRouter(),
 route = useRoute(),
 { groupsDefaults, groupAllDefault, groupAlls } = variables,
-tab = ref(0),
+tab = ref(1),
 dataTabs = ref([
   /*{
     name: "Concejal",
@@ -170,6 +170,7 @@ async function getData() {
     }
   });
 
+
   //buscar miembros
   const memberLike = !filterMember.value ? '' : 'where: {member_contains: "' + filterMember.value + '"},';
   const query = `query MyQuery($contractId: String, $group: String, $limit: Int, $index: Int) {
@@ -188,9 +189,11 @@ async function getData() {
     }
   }`;
 
+
+  const tabIndex = tab.value == 0 ? tab.value+1 : tab.value-1;
   const variables = {
     contractId: route.query?.dao,
-    group: dataTabs.value[tab.value].value,
+    group: dataTabs.value[tabIndex].value,
     limit: elementosPorPagina.value,
     index: nextIndex.value
   }
@@ -211,7 +214,7 @@ async function getData() {
     nextIndex.value = (page.value) * elementosPorPagina.value;
     const variablesLast = {
       contractId: route.query?.dao,
-      group: dataTabs.value[tab.value].value,
+      group: dataTabs.value[tabIndex].value,
       limit: elementosPorPagina.value,
       index: nextIndex.value
     }
