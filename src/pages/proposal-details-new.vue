@@ -247,7 +247,6 @@ async function getProposal() {
   let votesdown = 0
 
   for(const vote of votes){
-    console.log(vote[0])
     votesup += vote[0]
     votesdown += vote[1]
   }
@@ -309,15 +308,17 @@ async function getProposal() {
       const members = walletVote.filter((itemMember) => walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
       const countVotes = item.vote_counts[map][0] + item.vote_counts[map][1] + item.vote_counts[map][2]
 
-      if(noMembers.length < countVotes) {
+      console.log(noMembers.length, countVotes)
+      /*if(noMembers.length < countVotes) {
         childrens = formatChildrens(members);
         voices = members.length + "/" + walletsGroup.length;
         percent = Number(((members.length * 100) / walletsGroup.length).toFixed(2));
-      } else {
+      } else {*/
         childrens = formatChildrens(noMembers);
         voices = noMembers.length + "/" + walletsGroup.length;
         percent = Number(((noMembers.length * 100) / walletsGroup.length).toFixed(2));
-      }
+      //}
+
     } else {
       const walletsGroup = responsePolicy.roles.filter((search) => search.name == map)[0].kind.Group
 
