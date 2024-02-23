@@ -228,6 +228,7 @@ function mapType() {
     {id: "Transfer", value: "Transferencia"},
     {id: "AddMemberToRole", value: "Agregar miembro"},
     {id: "RemoveMemberFromRole", value: "Eliminar miembro"},
+    {id: "ChangePolicy", value: "Cambio de politicas"},
   ];
   let typeId = props.proposal?.type;
   typeId = !typeId ? "" : typeId;

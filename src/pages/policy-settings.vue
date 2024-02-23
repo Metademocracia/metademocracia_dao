@@ -176,8 +176,6 @@ async function getData() {
 
   policy.value = responsePolicy;
 
-  console.log("ajajaja: ", groups, responsePolicy)
-
   const header = [{ key: 'name', sortable: false },];
   for(let i=0; i<groups.length; i++){
     header.push({ key: groups[i], title: groups[i], align: 'center', sortable: false });
@@ -304,10 +302,11 @@ function setRoles(){
 }
 
 async function onCompleted({ formValid }) {
+  console.log("paso 1")
   if (!formValid) return
+  console.log("paso 2")
 
   setRoles();
-  console.log('here', policy.value)
   const responsePolicy = await WalletP2p.view({
     contractId: route.query?.dao,
     methodName: "get_policy"
@@ -319,8 +318,7 @@ async function onCompleted({ formValid }) {
   });
 
   const bounty_bond = (BigInt(responsePolicy?.bounty_bond.toString()) + BigInt(response)).toString()
-
-  switch (tab) {
+  switch (tab.value) {
     // proposal creation
     case 0: {
       const title = btoa("Cambio permisos creación de propuesta");
@@ -342,7 +340,7 @@ async function onCompleted({ formValid }) {
 
 function addProposal(bounty_bond, title) {
   const json = {
-    contractId: walletDao.value,
+    contractId: route.query?.dao,
     methodName: "add_proposal",
     args: {
       proposal: {
@@ -360,7 +358,7 @@ function addProposal(bounty_bond, title) {
 
   console.log("json", json);
 
-  WalletP2p.call(json, "proposals", ("?dao="+walletDao.value));
+  WalletP2p.call(json, "proposals", ("?dao="+route.query?.dao));
 
   // clearEditing();
 }
