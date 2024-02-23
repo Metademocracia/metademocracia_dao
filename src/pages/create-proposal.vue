@@ -56,7 +56,7 @@
               <v-text-field
                 id="member"
                 variant="solo"
-                placeholder="member.testnet"
+                placeholder="member.near"
                 :rules="[globalRules.required]"
               />
 
