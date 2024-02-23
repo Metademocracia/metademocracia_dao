@@ -1,6 +1,29 @@
 <template>
   <div id="my-daos">
-    <toolbar-search />
+    <aside class="toolbar-search">
+    <div class="toolbar-search__wrapper">
+      <v-text-field
+        v-model="likeWalletDao"
+        placeholder="Buscar"
+        variant="solo"
+        hide-details
+      >
+        <template #prepend-inner>
+          <v-icon icon="mdi-magnify" size="23" class="text-primary" />
+
+          <v-divider vertical thickness="1" color="#000" class="mx-2 my-auto" style="opacity: 1; height: 70%;" />
+        </template>
+
+        <template #append-inner>
+          <v-btn
+            height="38"
+            class="bg-secondary px-7"
+            @click="getData()"
+          >Buscar</v-btn>
+        </template>
+      </v-text-field>
+    </div>
+  </aside>
 
     <toolbar title="Mis DAOs" content-class="flex-spaceb">
       <v-btn class="bg-tertiary px-2 ml-auto" style="font-size: 12px;" @click="router.push({ name: 'CreateDao' })">
@@ -45,7 +68,9 @@ const
 
 page = ref(1),
 daos = ref([]),
-paginatedDaos = computed(() => (daos.value.length || 3) / 3)
+paginatedDaos = computed(() => (daos.value.length || 3) / 3),
+listDaos = ref([]),
+likeWalletDao = ref(undefined)
 
 
 onBeforeMount(getData)
@@ -55,12 +80,22 @@ function view(item) {
 }
 
 async function getData() {
+  listDaos.value = [];
+  if(likeWalletDao.value) {
+    likeWalletDao.value = likeWalletDao.value.trim() == '' ? undefined : likeWalletDao.value;
+  }
+
+  const _likeWalletDao = !likeWalletDao.value ? '' : 'where: {wallet_dao_contains: "' + likeWalletDao.value + '"},';
 
   const query = `query dao($owner_id: String) {
-    members(where: {member: $owner_id}) {
-      dao {
+    members(where: {member: $owner_id }) {
+      dao(${_likeWalletDao} orderBy: creation_date, orderDirection: desc) {
         owner_id
         wallet_dao
+        total_members
+        creation_date
+        proposal_total
+        proposal_actives
       }
     }
   }`;
@@ -117,7 +152,7 @@ async function getData() {
 
       const metadata = JSON.parse(atob(responseConfig.metadata))
 
-      daos.value.push({
+      listDaos.value.push({
         wallet_dao: data[i].dao.wallet_dao,
         image: metadata?.img ? metadata.img : MetademocraciaImage,
         name: responseConfig.name,
@@ -132,5 +167,67 @@ async function getData() {
     }
   });
 
+  daos.value = listDaos.value;
+
 }
 </script>
+<style lang="scss">
+@import '@/assets/styles/main.scss';
+
+.toolbar-search {
+  // position: sticky;
+  // top: 20px;
+
+  position: relative;
+  isolation: isolate;
+  background: $primary !important;
+  width: 100vw !important;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  margin-inline: calc(50% - 50vw) !important;
+  z-index: 2;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgb(#62C3D7, .58);
+    translate: 20px 0px;
+    scale: 1 2;
+    filter: blur(50px);
+    z-index: -1;
+  }
+
+
+  &__wrapper {
+    max-width: calc(880px + var(--margin-global));
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--margin-global);
+    padding-block: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .v-input {
+    .v-field {
+      padding-right: 0;
+      border-radius: 30px;
+
+      &__field {
+        height: 38px;
+      }
+
+      input {
+        min-height: 100% !important;
+        height: 100% !important;
+        font-size: 14px;
+      }
+    }
+
+    i { color: $primary }
+  }
+}
+</style>
