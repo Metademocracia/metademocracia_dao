@@ -733,7 +733,7 @@ async function createDao(formValid) {
     img: img ? img : null
   }));
 
-  console.log(getRoles())
+
   const objectJson = {
     contractId: process.env.CONTRACT_FACTORY,
     methodName: "create",

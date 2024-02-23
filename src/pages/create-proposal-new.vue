@@ -141,7 +141,7 @@ import variables from '@/mixins/variables';
 
 export default {
   setup() {
-    const  { globalRules } = variables
+    const  { globalRules, groupAllDefault } = variables
     return {
       globalRules,
       proposalTypes: ref([
@@ -189,7 +189,7 @@ export default {
       contractId: this.walletDao,
       methodName: "get_policy"
     }).then((response) => {
-      const indexDelete = response.roles.indexOf(response.roles.find((element) => element.name === "all"))
+      const indexDelete = response.roles.indexOf(response.roles.find((element) => element.name === groupAllDefault))
       if(indexDelete >= 0) {
         response.roles.splice(indexDelete, 1);
       }
