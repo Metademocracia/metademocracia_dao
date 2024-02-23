@@ -553,9 +553,9 @@ export default {
       this.titleBtnLogin = "Conectar Wallet";
       this.dialogConnect = false;
 
-      this.$router.push({path: ''})
+      this.$router.push({path: '/'})
 
-      window.open(window.location.origin + window.location.pathname, "_self");
+      // window.open(window.location.origin + window.location.pathname, "_self");
     }
   }
 }

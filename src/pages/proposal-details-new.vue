@@ -90,10 +90,11 @@ import moment from 'moment';
 import { ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
+import variables from '@/mixins/variables';
 
 const
 	route = useRoute(),
-
+  { globalRules, groupsDefaults, groupAllDefault, groupDefault, proposalKind } = variables,
 proposal = ref(null),
 dataLikes = ref(null),
 panels = ref(null),
@@ -133,7 +134,7 @@ async function getProposal() {
 
   await graphQl.getQueryDaoV2(query, variables).then(async response => {
     const item = response.data.data.proposal
-    console.log("aqui si va: ", item)
+    // console.log("aqui si va: ", item)
 
     let kind;
     try {
@@ -292,7 +293,7 @@ async function getProposal() {
     let childrens = [];
     let voices = "0/0";
 		let percent = 0;
-    if(map == "all") {
+    if(map == groupAllDefault) {
       const group = [];
       for(const role of responsePolicy.roles) {
         if(typeof role.kind === "object") {
@@ -302,7 +303,7 @@ async function getProposal() {
         }
       }
       const walletsGroup = group
-      console.log("all: ", walletsGroup)
+      /// console.log("all: ", walletsGroup)
 
       const noMembers = walletVote.filter((itemMember) => !walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
       const members = walletVote.filter((itemMember) => walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )

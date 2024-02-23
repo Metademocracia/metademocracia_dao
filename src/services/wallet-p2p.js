@@ -40,7 +40,7 @@ function call (json, ruta, param_ruta) {
         attachedDeposit: "10000000000000000000",
       }
   */
- console.log("json: ", json)
+ 
   const dataWallet = JSON.parse(localStorage.getItem("session"))
   const wallet = dataWallet ? dataWallet.wallet : undefined;
   const urlParams = new URLSearchParams(window.location.search);
