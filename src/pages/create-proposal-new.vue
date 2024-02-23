@@ -143,6 +143,7 @@ export default {
   setup() {
     const  { globalRules, groupAllDefault } = variables
     return {
+      groupAllDefault,
       globalRules,
       proposalTypes: ref([
         "Votación",
@@ -189,7 +190,7 @@ export default {
       contractId: this.walletDao,
       methodName: "get_policy"
     }).then((response) => {
-      const indexDelete = response.roles.indexOf(response.roles.find((element) => element.name === groupAllDefault))
+      const indexDelete = response.roles.indexOf(response.roles.find((element) => element.name === this.groupAllDefault))
       if(indexDelete >= 0) {
         response.roles.splice(indexDelete, 1);
       }
