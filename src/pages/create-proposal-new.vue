@@ -55,7 +55,7 @@
               <v-text-field
                 id="member"
                 variant="solo"
-                placeholder="member.testnet"
+                placeholder="member.near"
                 :rules="[globalRules.required]"
               />
 
@@ -97,7 +97,7 @@
               <v-text-field
                 id="receiverId"
                 variant="solo"
-                placeholder="member.testnet"
+                placeholder="member.near"
                 :rules="[globalRules.required]"
               />
 

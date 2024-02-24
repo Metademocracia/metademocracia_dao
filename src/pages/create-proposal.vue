@@ -98,7 +98,7 @@
               <v-text-field
                 id="receiverId"
                 variant="solo"
-                placeholder="member.testnet"
+                placeholder="member.near"
                 :rules="[globalRules.required]"
               />
 
