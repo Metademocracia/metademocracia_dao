@@ -221,7 +221,7 @@ export default {
     loadData(response){
       if(response){
         const data = response.proposal;
-        console.log(data)
+
         let amount = null
         if(data.proposal_type == "Transfer") {
           amount = Number((JSON.parse(data.kind).Transfer.amount / 1000000000000000000000000).toFixed(2));
@@ -240,10 +240,6 @@ export default {
           });
         }
 
-        console.log("//////////////////////////////////////")
-        console.log(dataLikes)
-        console.log(dataVoice)
-        console.log("//////////////////////////////////////")
         //this.dataLikes = dataLikes;
         //this.dataVoice = dataVoice;
         //this.voices_goal = response.serie.supply;
@@ -276,7 +272,6 @@ export default {
           dislikes: data.downvote,
         };
 
-        console.log("aqui: ", this.cardsProposals)
 
         this.panels = [{
           title: "Concejales",

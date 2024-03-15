@@ -81,6 +81,61 @@ function view(item) {
 
 async function getData() {
   listDaos.value = [];
+
+  const queryMeta = `query dao($owner_id: String) {
+    proposaldata(id: "1") {
+      proposal_actives
+      proposal_total
+    }
+
+    delegations {
+      total_amount
+      id
+    }
+
+    serie(id: "1") {
+      supply
+    }
+
+    owner(id: $owner_id) {
+      total_mft
+    }
+  }`;
+
+  const variables = { owner_id: WalletP2p.getAccount().address };
+
+  /// dao metademocracia
+  await graphQl.getQuery(queryMeta, variables).then(async response => {
+    const owner = response.data.data?.owner;
+
+    if(!owner) return
+    if(Number(owner.total_mft) <= 0) return
+
+    let total_balance = 0;
+    const delegation_near = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000 : 0;
+    const delegation_usdt = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000 : 0;
+
+    const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
+    total_balance += !balanceNearUsd ? 0 : Number((delegation_near * balanceNearUsd.data[0].value).toFixed(2));
+
+    const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
+    total_balance += !balanceUsdtUsd ? 0 : Number((delegation_usdt * balanceUsdtUsd.data[0].value).toFixed(2));
+
+    listDaos.value.push({
+      wallet_dao: process.env.CONTRACT_DAO,
+      image: MetademocraciaImage,
+      name: "Metademocracia",
+      account: process.env.CONTRACT_DAO,
+      description: "Metademocracia",
+      funds: total_balance.toFixed(2),
+      members: response.data.data?.proposaldata ? response.data.data?.serie?.supply : 0,
+      groups: 1,
+      activeProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_actives : 0,
+      totalProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_total : 0,
+    })
+  })
+
+
   if(likeWalletDao.value) {
     likeWalletDao.value = likeWalletDao.value.trim() == '' ? undefined : likeWalletDao.value;
   }
@@ -100,7 +155,7 @@ async function getData() {
     }
   }`;
 
-  const variables = { owner_id: WalletP2p.getAccount().address };
+
 
   await graphQl.getQueryDaoV2(query, variables).then(async response => {
     const data = response.data.data.members
