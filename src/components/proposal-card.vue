@@ -152,7 +152,14 @@
               <span class="flex-center" style="gap: 4px;">
                 {{ mapAmount().amount }}
                 <img
+                  v-show="mapAmount().asset === 'NEAR'"
                   src="@/assets/sources/logos/near-icon.svg"
+                  alt="near logo"
+                  style="width: 15px; height: 15px; translate: 0 -1px;"
+                >
+                <img
+                  v-show="mapAmount().asset === 'USDT'"
+                  src="@/assets/sources/icons/tether-icon.svg"
                   alt="near logo"
                   style="width: 15px; height: 15px; translate: 0 -1px;"
                 >
