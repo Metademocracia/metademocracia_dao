@@ -1,6 +1,6 @@
 <template>
   <div id="proposals">
-    <toolbar title="Propuestas">
+    <toolbar title="Filtrar Propuestas">
       <v-tabs v-model="filterTypeProposalSelected" slider-color="transparent">
         <v-tab v-for="(item, i) in typeProposal" :key="i" @click="loadProposal()">
           <div class="custom-checkbox mr-2" :class="{ active: filterTypeProposalSelected == i }" />
@@ -54,40 +54,6 @@
 
       <!-- proposals -->
       <aside class="flex-grow-1">
-        <!-- <v-tabs
-          v-model="tab"
-          align-tabs="end"
-          color="deep-purple-accent-4"
-        >
-          <v-tab :value="1">Por Votar</v-tab>
-          <v-tab :value="2">En Votación</v-tab>
-          <v-tab :value="3">Aprobadas</v-tab>
-        </v-tabs>
-        <v-window v-model="tab">
-          <v-window-item
-            v-for="n in 3"
-            :key="n"
-            :value="n"
-          >
-            <v-container fluid>
-              <v-row>
-                <v-col
-                  v-for="i in 6"
-                  :key="i"
-                  cols="12"
-                  md="4"
-                >
-                  <v-img
-                    :lazy-src="`https://picsum.photos/10/6?image=${i * n * 5 + 10}`"
-                    :src="`https://picsum.photos/500/300?image=${i * n * 5 + 10}`"
-                    aspect-ratio="1"
-                  ></v-img>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-window-item>
-        </v-window> -->
-
             <div class="proposals">
               <proposal-card
                 v-for="(item, i) in proposal_list" :key="i"
@@ -141,6 +107,9 @@ const QUERY = gql`
 `;
 
 export default {
+  data: () => ({
+      tab: null,
+    }),
   components: { ProposalCard },
   setup(){
     const { result, loading,  error } = useQuery(QUERY);
@@ -157,11 +126,11 @@ export default {
       session: WalletP2p.getAccount(),
       isMember: ref(utilsDAO.isMember()),
       typeProposal: [
-        {id: "*", desc: "Todos"},
-        // {id: "FunctionCall", desc: "Llamadas a Funciones"},
-        //{id: "Gobernancia", desc: "Gobernancia"},
-        {id: "Transfer", desc: "Solicitud de fondos"},
-        {id: "Voting", desc: "Votación"},
+        {id: "*", desc: "Por votar"},
+        {id: "FunctionCall", desc: "En votación"},
+        {id: "Gobernancia", desc: "Aprobadas"},
+        {id: "Transfer", desc: "Rechazadas"},
+        {id: "Voting", desc: "Todas"},
         // {id: "ChangePolicyUpdateVotePolicy", desc: "Actualizar política de votación"},
         //{id: "ChangePolicyUpdateParameters", desc: "Actualización parámetros de políticas"},
         //{id: "Miembros", desc: "Miembros"},
@@ -180,7 +149,6 @@ export default {
 			cardsProposals: ref([]),
       totalPages: ref(Math.ceil(0 / 0)),
       proposer: ref(null),
-      tab: 1,
     }
   },
 
@@ -221,7 +189,7 @@ export default {
             id: Number(id),
             action: "VoteApprove"
           },
-          gas: "56000000000000",
+          gas: "36000000000000",
           // attachedDeposit: "1000000000000000000"
         };
 
@@ -240,7 +208,7 @@ export default {
             id: Number(id),
             action: "VoteReject"
           },
-          gas: "56000000000000"
+          gas: "36000000000000"
           // attachedDeposit: "100000000000000000000"
         };
 
