@@ -232,7 +232,6 @@ export default{
         // toast('¡Tu propuesta ha sido creada\n con éxito!')
       } catch (error) {
         this.loadingBtn = false;
-        console.log(error)
         toast.error(error.toString())
       }
 
@@ -249,7 +248,6 @@ export default{
 
 
       return graphQl.getQuery(query).then(response => {
-        console.log(response.data.data)
         const bond_json = JSON.parse(response.data.data.proposaldata.proposal_bond);
         return bond_json[tipo_proposal];
       });

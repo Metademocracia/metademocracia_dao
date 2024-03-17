@@ -180,7 +180,7 @@
 
           <aside class="flex-center" style="gap: 20px;">
             <div class="flex-center" style="gap: 10px;">
-              <v-btn icon color="#EEE6F1" elevation="0" size="29" @click="upvote(proposal?.id, proposal?.contractId)">
+              <v-btn icon color="#EEE6F1" elevation="0" size="29" @click="upvote(proposal?.id, proposal?.contractId, proposal?.type)">
                 <v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />
               </v-btn>
 
@@ -188,7 +188,7 @@
             </div>
 
             <div class="flex-center" style="gap: 10px;">
-              <v-btn icon color="#EEE6F1" elevation="0" size="29" @click="downvote(proposal?.id, proposal?.contractId)">
+              <v-btn icon color="#EEE6F1" elevation="0" size="29" @click="downvote(proposal?.id, proposal?.contractId, proposal?.type)">
                 <v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />
               </v-btn>
 
@@ -273,9 +273,10 @@ function onPressProposal() {
   //router.push({ name: 'ProposalDetails', query: { dao: props.proposal.contractId, id: props.proposal.id } })
 }
 
-async function upvote(id, contractId) {
+async function upvote(id, contractId, type) {
   if(!id && !contractId) return
 
+  const gas = type == "Transfer" ? "50000000000000" : undefined;
   let json = {
     contractId: contractId,
     methodName: "act_proposal",
@@ -283,8 +284,8 @@ async function upvote(id, contractId) {
       id: Number(id),
       action: "VoteApprove"
     },
-    // gas: "56000000000000",
-    // attachedDeposit: "1000000000000000000"
+    gas,
+    // attachedDeposit: "1"
   };
 
   if(contractId == process.env.CONTRACT_DAO) {
@@ -309,9 +310,10 @@ async function upvote(id, contractId) {
 
 
 
-async function downvote(id, contractId) {
+async function downvote(id, contractId, type) {
   if(!id && !contractId) return
 
+  const gas = type == "Transfer" ? "50000000000000" : undefined;
   let json = {
     contractId: contractId,
     methodName: "act_proposal",
@@ -319,8 +321,8 @@ async function downvote(id, contractId) {
       id: Number(id),
       action: "VoteReject"
     },
-    // gas: "36000000000000"
-    // attachedDeposit: "100000000000000000000"
+    gas,
+    // attachedDeposit: "1"
   };
 
   if(contractId == process.env.CONTRACT_DAO) {

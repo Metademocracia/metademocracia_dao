@@ -121,7 +121,7 @@ export default {
       page2: ref(1),
       wallet_dao: ref(null),
       typeDao: ref(false),
-      paginatedDataProposal: ref(3),
+      paginatedDataProposal: ref(0),
       elementosPorPagina: ref(4),
       totalProposalList: ref(0),
       nextIndex: ref(0),
@@ -136,7 +136,7 @@ export default {
     page: function(val) {
       if(this.totalProposalList.length <= 0) return
       this.nextIndex = (val - 1) * this.elementosPorPagina;
-      
+
       this.getData()
     },
     tab: function(val) {

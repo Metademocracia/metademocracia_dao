@@ -154,7 +154,7 @@ export default {
 			cardsProposals: ref([]),
       totalPages: ref(Math.ceil(0 / 0)),
       proposer: ref(null),
-      paginatedDataProposal: ref(3),
+      paginatedDataProposal: ref(0),
       elementosPorPagina: ref(4),
       totalProposalList: ref(0),
       nextIndex: ref(0),
@@ -303,8 +303,6 @@ export default {
         this.totalProposalList = response.proposals.length <= 0 ? 0 : response.proposaldata.proposal_total;
         this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
         this.nextIndex = (this.page) * this.elementosPorPagina;
-
-        console.log(this.totalProposalList, this.paginatedDataProposal, this.nextIndex)
 
 
         const cardsProposals = response.proposals.map((item) => {
