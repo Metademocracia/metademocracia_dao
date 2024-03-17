@@ -139,6 +139,7 @@ import { ref } from 'vue';
 import WalletP2p from '../services/wallet-p2p';
 import graphQl from '@/services/graphQl';
 import variables from '@/mixins/variables';
+import { useToast } from 'vue-toastification';
 
 export default{
   setup(){
@@ -212,9 +213,9 @@ export default{
       try {
         switch (this.typeSelect) {
           case "Votación": {
-            const bound = await this.searchBond("addVote")
+            const bound = await this.searchBond("Voting")
             if(!bound) return
-            this.addTransfer(bound)
+            this.addVote(bound)
           }
             break;
 
@@ -230,7 +231,8 @@ export default{
         // this.addVote();
         // toast('¡Tu propuesta ha sido creada\n con éxito!')
       } catch (error) {
-        loadingBtn.value = false;
+        this.loadingBtn = false;
+        console.log(error)
         toast.error(error.toString())
       }
 
@@ -244,7 +246,10 @@ export default{
         }
       }`;
 
+
+
       return graphQl.getQuery(query).then(response => {
+        console.log(response.data.data)
         const bond_json = JSON.parse(response.data.data.proposaldata.proposal_bond);
         return bond_json[tipo_proposal];
       });
@@ -290,7 +295,7 @@ export default{
         attachedDeposit: bond.toString()
       };
 
-      WalletP2p.call(json, "proposals-meta");
+      WalletP2p.call(json, "proposals-meta", ("?dao="+process.env.CONTRACT_DAO));
     },
 
     addFunctionCall(bond){
@@ -322,11 +327,10 @@ export default{
         attachedDeposit: bond.toString()
       };
 
-      WalletP2p.call(json, "proposals-meta");
+      WalletP2p.call(json, "proposals-meta", ("?dao="+process.env.CONTRACT_DAO));
     },
 
     addVote(bond) {
-      console.log("bond", bond)
       const json = {
         contractId: process.env.CONTRACT_DAO,
         methodName: "set_proposal",
@@ -343,7 +347,7 @@ export default{
         attachedDeposit: bond.toString()
       };
 
-      WalletP2p.call(json, "proposals-meta");
+      WalletP2p.call(json, "proposals-meta", ("?dao="+process.env.CONTRACT_DAO));
     },
 
 

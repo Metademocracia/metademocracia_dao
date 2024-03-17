@@ -136,6 +136,7 @@ async function getData() {
       first: $limit
     ) {
       owner_id
+      votes
     }
   }
   }`;
@@ -162,6 +163,7 @@ async function getData() {
         avatar: avatarIcon,
         group: "Ciudadanos",
         user: item.owner_id,
+        votes: item.votes,
       }
     });
 

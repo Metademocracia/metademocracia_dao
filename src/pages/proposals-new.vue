@@ -52,6 +52,12 @@
 
       <!-- proposals -->
       <aside class="flex-grow-1">
+        <v-pagination
+          v-model="page"
+          class="mt-10 mb-16"
+          :length="paginatedDataProposal"
+        ></v-pagination>
+
         <div class="proposals">
           <proposal-card
             v-for="(item, i) in proposals" :key="i"
@@ -112,9 +118,10 @@ export default {
         }
       ],
       page: ref(1),
+      page2: ref(1),
       wallet_dao: ref(null),
       typeDao: ref(false),
-      paginatedDataProposal: ref(0),
+      paginatedDataProposal: ref(3),
       elementosPorPagina: ref(4),
       totalProposalList: ref(0),
       nextIndex: ref(0),
@@ -127,7 +134,9 @@ export default {
 
   watch: {
     page: function(val) {
+      if(this.totalProposalList.length <= 0) return
       this.nextIndex = (val - 1) * this.elementosPorPagina;
+      
       this.getData()
     },
     tab: function(val) {
@@ -163,9 +172,6 @@ export default {
 
     this.getData()
     //this.getData2()
-
-    const a = "algo.factoryv4.metademocracia.testnet"
-    const b = "factoryv4.metademocracia.testnet"
   },
 
 
@@ -213,6 +219,7 @@ export default {
         //paginacion
         this.totalProposalList = proposals.length <= 0 ? 0 : dao.proposal_total;
         this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+
         this.nextIndex = (this.page) * this.elementosPorPagina;
 
         this.proposals = proposals.map((item) => {
@@ -222,7 +229,7 @@ export default {
           } catch (error) {
             kind = item.kind;
           }
-          
+
           const type = typeof kind === "object" ? Object.keys(kind)[0] : item.kind.replace('"', '').replace('"', '').toString();
           const objectProposal = typeof kind === "object" ? kind[type] : undefined;
           const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;

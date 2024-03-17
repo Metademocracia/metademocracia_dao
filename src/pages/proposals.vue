@@ -24,7 +24,7 @@
             min-height="30"
             class="clear-overlay pa-0"
             :ripple="false"
-            @click="() => {filterStatusSelected = item.id; loadProposal()}"
+            @click="() => {filterStatusSelected = item.id}"
           >
             <div class="custom-checkbox mr-2" style="--size: 10px" :class="{ active: filterStatusSelected === item.id }" />
             {{ item.desc }}
@@ -33,13 +33,12 @@
 
         <h6 class="mt-6 mb-2">Filtrar por proponente</h6>
         <v-text-field
-          v-model="proposer"
+          v-model="filterProposer"
           placeholder="andresdom.near"
           append-inner-icon="mdi-magnify"
           class="flex-grow-0"
           variant="solo"
           hide-details
-          @keyup="loadProposal()"
         ></v-text-field>
 
         <!--<h6 class="mt-6 mb-2">Filtrar por categoría</h6>
@@ -54,21 +53,27 @@
 
       <!-- proposals -->
       <aside class="flex-grow-1">
-            <div class="proposals">
-              <proposal-card
-                v-for="(item, i) in proposal_list" :key="i"
-                :proposal="item"
-              />
-            </div>
+        <v-pagination
+            v-model="page"
+            class="mt-10 mb-16"
+            :length="paginatedDataProposal"
+          ></v-pagination>
 
-            <v-pagination
-              v-model="page"
-              class="mt-10 mb-16"
-              :length="paginatedProposals"
-            ></v-pagination>
-          </aside>
-        </section>
-      </div>
+          <div class="proposals">
+            <proposal-card
+              v-for="(item, i) in proposal_list" :key="i"
+              :proposal="item"
+            />
+          </div>
+
+          <v-pagination
+            v-model="page"
+            class="mt-10 mb-16"
+            :length="paginatedDataProposal"
+          ></v-pagination>
+        </aside>
+      </section>
+    </div>
 </template>
 
 <script>
@@ -149,11 +154,39 @@ export default {
 			cardsProposals: ref([]),
       totalPages: ref(Math.ceil(0 / 0)),
       proposer: ref(null),
+      paginatedDataProposal: ref(3),
+      elementosPorPagina: ref(4),
+      totalProposalList: ref(0),
+      nextIndex: ref(0),
+      filterProposer: ref(undefined),
     }
   },
 
+  watch: {
+    page: function(val) {
+      if(this.totalProposalList.length <= 0) return
+      this.nextIndex = (val - 1) * this.elementosPorPagina;
+
+      this.loadProposal()
+    },
+    filterTypeProposalSelected: function(val) {
+      this.nextIndex = 0;
+      this.loadProposal()
+    },
+    filterStatusSelected: function(val) {
+      this.nextIndex = 0;
+      this.loadProposal()
+    },
+    filterProposer: function(val) {
+      this.nextIndex = 0;
+      this.proposer = !val ? undefined : val.trim() == "" ? undefined : val.trim();
+      this.loadProposal()
+    }
+  },
+
+
   mounted() {
-    this.loadProposal(this.typeProposal[0]);
+    this.loadProposal();
   },
 
 	computed: {
@@ -223,8 +256,14 @@ export default {
       status = this.filterStatusSelected != '*' ? [this.filterStatusSelected] : status;
       type = this.typeProposal[this.filterTypeProposalSelected].id != '*' ? [this.typeProposal[this.filterTypeProposalSelected].id] : type;
 
-      const query1 = `query Proposals($type: [String], $status: [String]) {
-        proposals(where: {proposal_type_in: $type, status_in: $status} orderBy: creation_date, orderDirection: desc) {
+      //const proposalType = !this.type ? '' : ', proposal_type: "' + this.type + '"';
+      //const statusProposal = !this.status ? '' : ', status: "' + this.status + '"';
+      //const proposerLike = !this.likeProposer ? '' : ', proposer_contains: "' + this.likeProposer + '"';
+
+      const searchProposer = !this.proposer ? `` : `, proposer_contains_nocase: "${this.proposer}"`;
+
+      const query = `query Proposals($type: [String], $status: [String], $limit: Int, $index: Int) {
+        proposals(where: {proposal_type_in: $type, status_in: $status ${searchProposer}} orderBy: creation_date, orderDirection: desc, skip: $index, first: $limit ) {
           approval_date
           creation_date
           description
@@ -240,37 +279,34 @@ export default {
           upvote
           user_creation
         }
-      }`;
 
-      const query2 = `query Proposals($type: [String], $status: [String], $proposer: String) {
-        proposals(where: {proposal_type_in: $type, status_in: $status, proposer_contains_nocase: $proposer} orderBy: creation_date, orderDirection: desc) {
-          approval_date
-          creation_date
-          description
-          downvote
-          id
-          kind
-          link
-          proposer
-          proposal_type
-          status
-          submission_time
-          title
-          upvote
-          user_creation
+        proposaldata(id: "1") {
+          proposal_total
         }
       }`;
 
-      const querys = !this.proposer ? query1 : query2;
+      const variables = {
+        type: type,
+        status: status,
+        limit: this.elementosPorPagina,
+        index:this.nextIndex
+      };
 
-      const variables = { type: type, status: status, proposer: this.proposer };
-
-      await graphQl.getQuery(querys, variables).then(response => {
+      await graphQl.getQuery(query, variables).then(response => {
         this.loadCardProposal(response.data.data);
       });
     },
 
     loadCardProposal(response) {
+
+        //paginacion
+        this.totalProposalList = response.proposals.length <= 0 ? 0 : response.proposaldata.proposal_total;
+        this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+        this.nextIndex = (this.page) * this.elementosPorPagina;
+
+        console.log(this.totalProposalList, this.paginatedDataProposal, this.nextIndex)
+
+
         const cardsProposals = response.proposals.map((item) => {
           let amount = null
           if(item.proposal_type == "Transfer") {
