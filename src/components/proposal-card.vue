@@ -68,8 +68,8 @@
         <div class="card__content">
           <img
             v-if="proposal?.status != 'InProgress'"
-            :src="proposal?.status == 'Approved' ? ApprovedIcon : FailedIcon"
-            :alt="proposal?.status == 'Approved' ? 'proposal approved' : 'proposal failed'"
+            :src="loadSrcLogo().src"
+            :alt="loadSrcLogo().alt"
             class="mr-5"
             style="--w: clamp(4em, 12vw, 6.25em); width: var(--w); height: var(--w); float: right;"
           >
@@ -180,7 +180,14 @@
 
           <aside class="flex-center" style="gap: 20px;">
             <div class="flex-center" style="gap: 10px;">
-              <v-btn icon :disabled="proposal?.vote" :color="(proposal?.vote == 'VoteApprove' ? '#77f1a4' : '#EEE6F1')" elevation="0" size="29" @click="upvote(proposal?.id, proposal?.contractId, proposal?.type)">
+              <v-btn
+                icon
+                :disabled="proposal?.vote || !['InProgress', 'Failed'].includes(proposal?.status)"
+                :color="(proposal?.vote == 'VoteApprove' ? '#77f1a4' : '#EEE6F1')"
+                elevation="0"
+                size="29"
+                @click="upvote(proposal?.id, proposal?.contractId, proposal?.type)"
+              >
                 <v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />
               </v-btn>
 
@@ -188,7 +195,14 @@
             </div>
 
             <div class="flex-center" style="gap: 10px;">
-              <v-btn icon :disabled="proposal?.vote" :color="proposal?.vote == 'VoteReject' ? '#77f1a4' : '#EEE6F1'" elevation="0" size="29" @click="downvote(proposal?.id, proposal?.contractId, proposal?.type)">
+              <v-btn
+                icon
+                :disabled="proposal?.vote || !['InProgress', 'Failed'].includes(proposal?.status)"
+                :color="proposal?.vote == 'VoteReject' ? '#77f1a4' : '#EEE6F1'"
+                elevation="0"
+                size="29"
+                @click="downvote(proposal?.id, proposal?.contractId, proposal?.type)"
+              >
                 <v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />
               </v-btn>
 
@@ -202,7 +216,10 @@
 </template>
 
 <script setup>
-import ApprovedIcon from '@/assets/sources/images/approved.svg'
+// import ApprovedIcon from '@/assets/sources/images/approved.svg'
+import ApprovedIcon from '@/assets/sources/images/Iconos-propuestas-metadao-aprobado.png'
+import ExpiradoIcon from '@/assets/sources/images/Iconos-propuestas-metadao-expirado.png'
+import RechazadoIcon from '@/assets/sources/images/Iconos-propuestas-metadao-rechazado.png'
 import FailedIcon from '@/assets/sources/images/failed.svg'
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
@@ -220,6 +237,22 @@ const
   }),
   mergeProps2 = mergeProps
 
+function loadSrcLogo() {
+  let result;
+  switch(props.proposal?.status) {
+    case 'Approved': result = {src: ApprovedIcon, atl: 'proposal approved'}
+      break;
+    case 'Expired': result = {src: ExpiradoIcon, atl: 'proposal Expired'}
+      break;
+    case 'Rejected': result = {src: RechazadoIcon, atl: 'proposal Rejected'}
+      break;
+
+    default: result = {src: FailedIcon, atl: 'proposal Failed'}
+      break;
+  }
+
+  return result
+}
 function copy(id) {
   let route = "proposal-details";
   if(process.env.CONTRACT_DAO == props.proposal.contractId) {
