@@ -1,137 +1,150 @@
 <template>
   <div id="home">
-    <hr class="mt-8 mb-8" style="width: 100%; border-bottom: 1px solid #fff;">
+    <aside class="toolbar-search">
+    <div class="toolbar-search__wrapper">
+      <v-text-field
+        v-model="likeWalletDao"
+        placeholder="Buscar"
+        variant="solo"
+        hide-details
+      >
+        <template #prepend-inner>
+          <v-icon icon="mdi-magnify" size="23" class="text-primary" />
 
-    <span class="tcenter mb-8">
-      Tu voz importa. Levantarla depende de ti. Esta es una revolución en política que se empodera gracias a las nuevas tecnologías de la web3. Los ciudadanos tienen un papel activo en la formación de políticas y proyectos, lo que fortalece su sentido de pertenencia y empoderamiento en la sociedad.
-    </span>
+          <v-divider vertical thickness="1" color="#000" class="mx-2 my-auto" style="opacity: 1; height: 70%;" />
+        </template>
 
-    <v-row style="max-width: 1660px; width: 100%;">
-      <v-col xl="8" lg="8" md="8" cols="12">
-        <div class="wrapper-chart">
-          <div class="jspace acenter mobile-col mb-8" style="width: 100%;">
-            <h5 style="font-weight: 700!important;">
-              Fondos NEAR DAO
-            </h5>
+        <template #append-inner>
+          <v-btn
+            height="38"
+            class="bg-secondary px-7"
+            @click="getData()"
+          >Buscar</v-btn>
+        </template>
+      </v-text-field>
+    </div>
+  </aside>
 
-            <!--<v-btn-toggle v-model="toggle" style="background-color: transparent; border-radius: 0px!important;">
-              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-                7D
-              </v-btn>
 
-              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-                1W
-              </v-btn>
+    <toolbar title="DAOs" content-class="flex-spaceb">
+      <v-tabs v-model="tab" slider-color="transparent">
+        <v-tab v-for="(item, i) in tabs" :key="i">
+          <div class="custom-checkbox mr-2" :class="{ active: tab == i }" />
+          {{ item }}
+        </v-tab>
+      </v-tabs>
 
-              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-                1M
-              </v-btn>
+      <v-btn class="bg-tertiary px-2 ml-auto" style="font-size: 12px;" @click="router.push({ name: 'CreateDao' })">
+        <v-icon icon="mdi-plus" class="text-white" />
+        Crear Dao
+      </v-btn>
+    </toolbar>
 
-              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-                1Y
-              </v-btn>
+    <v-divider thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
 
-              <v-btn class="btn-toggle" style="background-color: transparent; border-radius: 5px!important;">
-                ALL
-              </v-btn>
-            </v-btn-toggle>-->
-          </div>
-          <div class="apexchart-container">
-            <apexchart type="area" :height="chartHeight" :options="chartOptions" :series="series"></apexchart>
-          </div>
-        </div>
-      </v-col>
+    <section id="daos__content">
+      <div class="daos" >
+        <dao-card
+          v-for="(item, i) in daos"
+          :key="i"
+          :dao="item"
+          :class="{ limited: daos.length <= 2 }"
+          @pressed="view(item)"
+        />
+      </div>
 
-      <v-col xl="4" lg="4" md="4" cols="12">
-        <div class="container-multiple-charts">
-          <v-card class="card-charts">
-            <div class="jspace" style="width: 100%;">
-              <span style="font-weight: 700!important;">
-                Fondos DAO
-              </span>
-              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
-            </div>
-            <h5 style="margin-bottom: 0;">
-              {{ delegationNear }} NEAR
-            </h5>
-            <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
-          </v-card>
-
-          <v-card class="card-charts">
-            <div class="jspace" style="width: 100%;">
-              <span style="font-weight: 700!important;">
-                Fondos DAO
-              </span>
-              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
-            </div>
-            <h5 style="margin-bottom: 0;">
-              {{ delegationUsdt }} USDT
-            </h5>
-            <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
-          </v-card>
-
-          <v-card class="card-charts">
-            <div class="jspace" style="width: 100%;">
-              <span style="font-weight: 700!important;">
-                NFTs
-              </span>
-              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
-            </div>
-            <h5 style="margin-bottom: 0;">
-              {{ result?.serie?.supply }}
-            </h5>
-            <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
-          </v-card>
-
-          <v-card class="card-charts">
-            <div class="jspace" style="width: 100%;">
-              <span style="font-weight: 700!important;">
-                Propuestas Activas
-              </span>
-              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
-            </div>
-            <h5 style="margin-bottom: 0;">
-              {{ result?.proposaldata?.proposal_actives }}
-            </h5>
-            <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
-          </v-card>
-
-          <v-card class="card-charts">
-            <div class="jspace" style="width: 100%;">
-              <span style="font-weight: 700!important;">
-                Propuestas Totales
-              </span>
-              <!--<v-sheet class="sheet-card">+ 12.34 %</v-sheet>-->
-            </div>
-            <h5 style="margin-bottom: 0;">
-              {{ result?.proposaldata?.proposal_total }}
-            </h5>
-            <apexchart type="area" :options="chartOptions2" :series="chartSeries2" height="100" style="margin-top: -40px;"/>
-          </v-card>
-        </div>
-      </v-col>
-    </v-row>
+      <v-pagination
+        v-model="page"
+        class="mt-10 mb-16"
+        :length="paginatedDaos"
+      ></v-pagination>
+    </section>
   </div>
 </template>
 
-<script>
-import '@/assets/styles/pages/home.scss'
-import VueApexCharts from "vue3-apexcharts"
-import gql from 'graphql-tag';
-import { useQuery } from '@vue/apollo-composable';
+<script setup>
+import '@/assets/styles/pages/daos.scss'
+import DaoCard from '@/components/dao-card.vue'
+import MetademocraciaImage from '@/assets/sources/images/metademocracia-image.png'
+import { ref, computed, onBeforeMount, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import graphQl from '@/services/graphQl';
 import WalletP2p from '../services/wallet-p2p';
-import { ref } from 'vue';
-// import moment from 'moment';
-// import graphQl from '@/services/graphQl';
-import * as nearAPI from "near-api-js";
-const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
-import {configNear} from '../services/nearConfig';
+import axios from 'axios';
 
+const
+  router = useRouter(),
 
-const QUERY = gql`
-  query MyQuery {
-    serie(id: "1") {
-      supply
+tab = ref(0),
+tabs = [/*"Más Activos",*/ "Más Nuevos", "Más Viejos", "N° Miembros"],
+page = ref(1),
+daos = ref([]),
+paginatedDaos = computed(() => (daos.value.length || 9) / 9),
+likeWalletDao = ref(undefined),
+listDaos = ref([])
+
+watch(tab, async (newVal, oldVal) => {
+  getData()
+})
+
+onBeforeMount(getData)
+
+function view(item) {
+  if(process.env.CONTRACT_DAO == item.wallet_dao) {
+    router.push({ path: 'proposals-meta', query: {dao: item.wallet_dao}})
+  } else {
+    router.push({ path: 'Proposals', query: {dao: item.wallet_dao}  })
+  }
+}
+
+async function getData() {
+  listDaos.value = [];
+  if(likeWalletDao.value) {
+    likeWalletDao.value = likeWalletDao.value.trim() == "" ? undefined : likeWalletDao.value;
+  }
+
+  // "Más Nuevos", "Más Viejos", "N° Miembros"
+  let orderDirection;
+  let orderBy;
+  switch (tabs[tab.value]) {
+    case "Más Nuevos":
+      orderDirection = 'desc'
+      orderBy = 'creation_date'
+      break;
+
+    case "Más Viejos":
+      orderDirection = 'asc'
+      orderBy = 'creation_date'
+      break;
+
+    case "N° Miembros":
+      orderDirection = 'desc'
+      orderBy = 'total_members'
+      break;
+
+    default:
+      orderDirection = 'desc'
+      orderBy = 'creation_date'
+      break;
+  }
+
+  const _likeWalletDao = !likeWalletDao.value ? '' : 'where: {wallet_dao_contains: "' + likeWalletDao.value + '"},';
+
+  const query = `query dao {
+    daos(${_likeWalletDao} orderBy: ${orderBy}, orderDirection: ${orderDirection}) {
+      owner_id
+      wallet_dao
+      total_members
+      creation_date
+      proposal_total
+      proposal_actives
+    }
+  }`;
+
+  const queryMeta = `query dao {
+    proposaldata(id: "1") {
+      proposal_actives
+      proposal_total
     }
 
     delegations {
@@ -139,225 +152,168 @@ const QUERY = gql`
       id
     }
 
-    delegationhists(orderBy: date_time, orderDirection: asc) {
-      amount
-      date_time
+    serie(id: "1") {
+      supply
     }
+  }`;
 
-    proposaldata(id: "1") {
-      proposal_actives
-      proposal_total
-    }
-  }
-`;
+  /// dao metademocracia
+  // if("Metademocracia".toUpperCase().includes(!_likeWalletDao ? "Metademocracia".toUpperCase() : _likeWalletDao.toUpperCase())) {
+    await graphQl.getQuery(queryMeta).then(async response => {
+      let total_balance = 0;
+      const delegation_near = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000 : 0;
+      const delegation_usdt = response.data.data?.delegations ? response.data.data?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000 : 0;
 
-export default {
-  components: {
-    apexchart: VueApexCharts,
-  },
-  setup(){
+      const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
+      total_balance += !balanceNearUsd ? 0 : Number((delegation_near * balanceNearUsd.data[0].value).toFixed(2));
 
-    const { result, loading,  error } = useQuery(QUERY);
+      const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
+      total_balance += !balanceUsdtUsd ? 0 : Number((delegation_usdt * balanceUsdtUsd.data[0].value).toFixed(2));
 
-    return{
-      result,
-      loading,
-      error,
-      toggle: ref(0),
-      delegation_near: ref(0),
-      delegation_usdt: ref(0),
-      series: ref([]),
-      chartOptions: ref({}),
+      listDaos.value.push({
+        wallet_dao: process.env.CONTRACT_DAO,
+        image: MetademocraciaImage,
+        name: "Metademocracia",
+        account: process.env.CONTRACT_DAO,
+        description: "Metademocracia",
+        funds: total_balance.toFixed(2),
+        members: response.data.data?.proposaldata ? response.data.data?.serie?.supply : 0,
+        groups: 1,
+        activeProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_actives : 0,
+        totalProposals: response.data.data?.proposaldata ? response.data.data?.proposaldata?.proposal_total : 0,
+      })
+    })
+  //}
 
-      chartSeries2: [
-        {
-          name: 'Series 1',
-          data: [30, 40, 45, 50, 20, 49, 87, 67, 100]
+
+  //// daos factory
+  await graphQl.getQueryDaoV2(query).then(async response => {
+    const data = response.data.data.daos
+    for(let i = 0; i < data.length; i++) {
+      const responseNearAmount = await WalletP2p.view({
+        contractId: data[i].wallet_dao,
+        methodName: "get_available_amount"
+      });
+
+      const responseUsdtAmount = await WalletP2p.view({
+        contractId: process.env.CONTRACT_USDT,
+        methodName: "ft_balance_of",
+        args: {account_id: data[i].wallet_dao }
+      });
+
+      let total_balance = 0;
+      const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
+      const balanceNear = responseNearAmount ? (Number(responseNearAmount) / 1000000000000000000000000) : 0;
+
+      const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
+      total_balance += !balanceNearUsd ? 0 : Number((balanceNear * balanceNearUsd.data[0].value).toFixed(2));
+
+      const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
+      total_balance += !balanceUsdtUsd ? 0 : Number((balanceUsdt * balanceUsdtUsd.data[0].value).toFixed(2))
+
+
+      const responseConfig = await WalletP2p.view({
+        contractId: data[i].wallet_dao,
+        methodName: "get_config"
+      });
+
+      const responsePolicy = await WalletP2p.view({
+        contractId: data[i].wallet_dao,
+        methodName: "get_policy"
+      });
+
+      /*const responseSupply = await WalletP2p.view({
+        contractId: data[i].wallet_dao,
+        methodName: "get_supply"
+      });*/
+
+      /* let members = 0;
+      for(let j=0; j < responsePolicy.roles.length; j++) {
+        if(responsePolicy.roles[j].kind?.Group) {
+          members += responsePolicy.roles[j].kind?.Group.length;
         }
-      ],
+      } */
 
-      chartOptions2: {
-        tooltip: {
-          theme: 'custom-tooltip',
-          custom: function({ series, seriesIndex, dataPointIndex, w }) {
-            const value = series[seriesIndex][dataPointIndex];
+      const metadata = JSON.parse(atob(responseConfig.metadata))
 
-            return '<div class="custom-tooltip-content">' +
-              '<span>' + '$' + value + '</span>' +
-              '</div>';
-          }
-        },
-        chart: {
-          zoom: {
-            enabled: false
-          },
-          toolbar: {
-            show: false
-          },
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'smooth',
-          width: 2,
-          fill: false
-        },
-        colors: ['#fff'],
-        xaxis: {
-          tooltip: {
-            enabled: false,
-          },
-          labels: {
-            show: false
-          },
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false
-          }
-        },
-        yaxis: {
-          labels: {
-            show: false
-          },
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false
-          }
-        },
-        grid: {
-          show: false
-        }
-      }
+      listDaos.value.push({
+        wallet_dao: data[i].wallet_dao,
+        image: metadata?.img ? metadata.img : MetademocraciaImage,
+        name: responseConfig.name,
+        account: data[i].wallet_dao,
+        description: atob(responseConfig.purpose),
+        funds: total_balance.toFixed(2),
+        members: data[i].total_members, // members,
+        groups: responsePolicy.roles.length,
+        activeProposals: data[i].proposal_actives, // responseSupply ? responseSupply[1] : 0,
+        totalProposals: data[i].proposal_total, // responseSupply ? responseSupply[0] : 0,
+      })
     }
-  },
 
-  watch: {
-    result(response) {
-      this.loadChart(response);
-    }
-  },
 
-  computed: {
-    chartHeight() {
-      return window.innerWidth < 690 ? '250px' : '450px';
-    },
-    delegationNear() {
-      if(this.result) {
-        this.delegation_near = this.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
-      }
-      return isNaN(this.delegation_near) ? 0.00 : this.delegation_near.toFixed(2);
-    },
-    delegationUsdt() {
-      if(this.result) {
-        this.delegation_usdt = this.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
-      }
-      return this.delegation_usdt.toFixed(2)
-    },
-  },
+  });
 
-  mounted() {
-    /* if(this.result){
-      if(this.result.delegationhists) {
-        this.loadChart(this.result);
-      }
-    } */
-  },
+  daos.value = listDaos.value
 
-  methods: {
-    loadChart(response) {
-
-      if(response){
-
-        if(response.delegationhists) {
-          this.series = [];
-          this.chartOptions = {};
-
-          const data_series = [];
-          for(let i = 0; i < response.delegationhists.length; i++){
-            data_series.push(Number((response.delegationhists[i].amount / 1000000000000000000000000).toFixed(2)))
-          }
-
-          const series = [
-            {
-              name: 'series1',
-              data: data_series, // [100, 150, 138, 200, 248, 230, 180],
-            }
-          ];
-          
-
-          const data_chartOptions = [];
-          for(let i = 0; i < response.delegationhists.length; i++){
-            // data.push(moment(this.result.delegationhists[i].date_time/1000000).format('DD MM HH:MM'))
-            data_chartOptions.push(response.delegationhists[i].date_time/1000000)
-          }
-
-          const chartOptions = {
-            tooltip: {
-              theme: 'custom-tooltip',
-              custom: function({ series, seriesIndex, dataPointIndex, w }) {
-                const value = series[seriesIndex][dataPointIndex];
-
-                return '<div class="custom-tooltip-content">' +
-                  '<span>' + '$' + value + '</span>' +
-                  '</div>';
-              }
-            },
-            chart: {
-              type: 'area',
-              toolbar: {
-                show:false,
-              }
-            },
-            dataLabels: {
-              enabled: false
-            },
-            stroke: {
-              curve: 'smooth',
-              width: 1,
-            },
-            xaxis: {
-              type: 'datetime',
-              categories: data_chartOptions, // ["1 JUL", "2 JUL", "3 JUL", "4 JUL", "5 JUL", "6 JUL", "7 JUL "],
-              labels: {
-                style: {
-                  colors: '#fff',
-                },
-              },
-              tooltip: {
-                enabled: false,
-              },
-            },
-
-            yaxis: {
-              labels: {
-                style: {
-                  colors: '#fff',
-                },
-              },
-
-              axisBorder: {
-                show: true,
-              },
-            },
-
-            grid: {
-              show: false,
-
-            },
-          };
-
-          this.series = series;
-          this.chartOptions = chartOptions;
-
-        }
-      }
-
-    }
-  },
 }
 </script>
+<style lang="scss">
+@import '@/assets/styles/main.scss';
+
+.toolbar-search {
+  // position: sticky;
+  // top: 20px;
+
+  position: relative;
+  isolation: isolate;
+  background: $primary !important;
+  width: 100vw !important;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  margin-inline: calc(50% - 50vw) !important;
+  z-index: 2;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgb(#62C3D7, .58);
+    translate: 20px 0px;
+    scale: 1 2;
+    filter: blur(50px);
+    z-index: -1;
+  }
+
+
+  &__wrapper {
+    max-width: calc(880px + var(--margin-global));
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--margin-global);
+    padding-block: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .v-input {
+    .v-field {
+      padding-right: 0;
+      border-radius: 30px;
+
+      &__field {
+        height: 38px;
+      }
+
+      input {
+        min-height: 100% !important;
+        height: 100% !important;
+        font-size: 14px;
+      }
+    }
+
+    i { color: $primary }
+  }
+}
+</style>

@@ -152,6 +152,7 @@ import nearIcon from '@/assets/sources/logos/near.svg';
 import usdtIcon from '@/assets/sources/icons/tether-icon.svg';
 import WalletP2p from '../services/wallet-p2p';
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 // import moment from 'moment';
 // import graphQl from '@/services/graphQl';
 
