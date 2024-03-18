@@ -27,6 +27,7 @@
 
 
     <toolbar title="DAOs" content-class="flex-spaceb">
+      
       <v-tabs v-model="tab" slider-color="transparent">
         <v-tab v-for="(item, i) in tabs" :key="i">
           <div class="custom-checkbox mr-2" :class="{ active: tab == i }" />
@@ -40,8 +41,9 @@
       </v-btn>
     </toolbar>
 
-    <v-divider thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
+    <div style="color: white !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="mt-5 full-width" fluid></v-progress-linear></div>
 
+    <v-divider v-if="!loading" thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
     <section id="daos__content">
       <div class="daos" >
         <dao-card
@@ -82,6 +84,7 @@ daos = ref([]),
 paginatedDaos = computed(() => (daos.value.length || 9) / 9),
 likeWalletDao = ref(undefined),
 listDaos = ref([])
+const loading = ref(true);
 
 watch(tab, async (newVal, oldVal) => {
   getData()
@@ -252,13 +255,20 @@ async function getData() {
 
 
   });
-
   daos.value = listDaos.value
+  if(daos.value.length > 0) {
+    loading.value = false;
+  }
 
 }
 </script>
 <style lang="scss">
 @import '@/assets/styles/main.scss';
+
+.full-width {
+      width: 550px !important;
+      align-content: center;
+ }
 
 .toolbar-search {
   // position: sticky;
