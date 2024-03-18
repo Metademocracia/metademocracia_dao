@@ -110,7 +110,7 @@ function getData() {
 }
 
 async function getProposal() {
-  const query = `query MyQuery($contractId: String) {
+  const query = `query MyQuery($contractId: String, $userId: String) {
     proposal(id: $contractId) {
       description
       contract_id
@@ -125,11 +125,15 @@ async function getProposal() {
       title
       upvote
       downvote
+      vote(where: {user_id: $userId}) {
+        vote
+      }
     }
   }`;
 
   const variables = {
-    contractId: route.query.dao + "|" + route.query.id
+    contractId: route.query.dao + "|" + route.query.id,
+    userId: WalletP2p.getAccount().address,
   }
 
   await graphQl.getQueryDaoV2(query, variables).then(async response => {
@@ -162,12 +166,14 @@ async function getProposal() {
       proposer: item.proposer,
       description: atob(item.description),
       approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
+      status: item.status,
       link: item.link,
       amount: null,
       claims: null,
       remainingTime: "una semana",
       likes: item.upvote,
       dislikes: item.downvote,
+      vote: item.vote.length > 0 ? item.vote[0].vote : undefined,
     };
 
   });
@@ -308,7 +314,6 @@ async function getProposal() {
       const members = walletVote.filter((itemMember) => walletsGroup.find((findWallet) => itemMember.wallet == findWallet)  )
       const countVotes = item.vote_counts[map][0] + item.vote_counts[map][1] + item.vote_counts[map][2]
 
-      console.log(noMembers.length, countVotes)
       /*if(noMembers.length < countVotes) {
         childrens = formatChildrens(members);
         voices = members.length + "/" + walletsGroup.length;
@@ -327,7 +332,6 @@ async function getProposal() {
       childrens = formatChildrens(members);
       voices = members.length + "/" + walletsGroup.length;
       percent = Number(((members.length * 100) / walletsGroup.length).toFixed(2));
-      console.log(walletsGroup.length, members.length)
     }
 
     return {

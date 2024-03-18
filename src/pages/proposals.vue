@@ -2,7 +2,7 @@
   <div id="proposals">
     <toolbar title="Filtrar Propuestas">
       <v-tabs v-model="filterTypeProposalSelected" slider-color="transparent">
-        <v-tab v-for="(item, i) in typeProposal" :key="i" @click="loadProposal()">
+        <v-tab v-for="(item, i) in typeProposal" :key="i">
           <div class="custom-checkbox mr-2" :class="{ active: filterTypeProposalSelected == i }" />
           {{ item.desc }}
         </v-tab>
@@ -24,7 +24,7 @@
             min-height="30"
             class="clear-overlay pa-0"
             :ripple="false"
-            @click="() => {filterStatusSelected = item.id}"
+            @click="() => {filterStatusSelected = item.id; nextIndex = 0; loadProposal()}"
           >
             <div class="custom-checkbox mr-2" style="--size: 10px" :class="{ active: filterStatusSelected === item.id }" />
             {{ item.desc }}
@@ -126,16 +126,17 @@ export default {
 			currentPage: ref(1),
       cardsPerPage: ref(3),
 			page: ref(1),
+      page2: ref(1),
       filterTypeProposalSelected: ref('*'),
 			filterStatusSelected: ref('*'),
       session: WalletP2p.getAccount(),
       isMember: ref(utilsDAO.isMember()),
       typeProposal: [
-        {id: "*", desc: "Por votar"},
-        {id: "FunctionCall", desc: "En votación"},
-        {id: "Gobernancia", desc: "Aprobadas"},
-        {id: "Transfer", desc: "Rechazadas"},
-        {id: "Voting", desc: "Todas"},
+        {id: "*", desc: "Todas"},
+        {id: "PorVotar", desc: "Por votar"},
+        {id: "InProgress", desc: "En votación"},
+        {id: "Approved", desc: "Aprobadas"},
+        {id: "Rejected", desc: "Rechazadas"},
         // {id: "ChangePolicyUpdateVotePolicy", desc: "Actualizar política de votación"},
         //{id: "ChangePolicyUpdateParameters", desc: "Actualización parámetros de políticas"},
         //{id: "Miembros", desc: "Miembros"},
@@ -143,12 +144,13 @@ export default {
       ],
       statusProposal: [
         { id: "*", desc: "Todos"},
+        {id: "PorVotar", desc: "Por votar"},
         { id: "InProgress", desc: "Activas"},
         { id: "Approved", desc: "Aprobadas"},
         { id: "Rejected", desc: "Rechazadas"},
         // { id: "Removed", desc: "Removed"},
-        { id: "Expired", desc: "Expiradas"},
-        { id: "Failed", desc: "Fallidas"},
+        // { id: "Expired", desc: "Expiradas"},
+        // { id: "Failed", desc: "Fallidas"},
       ],
       proposal_list: ref([]),
 			cardsProposals: ref([]),
@@ -169,14 +171,17 @@ export default {
 
       this.loadProposal()
     },
-    filterTypeProposalSelected: function(val) {
+    filterTypeProposalSelected: function(vala, valb) {
       this.nextIndex = 0;
+      this.filterStatusSelected = this.typeProposal[vala].id;
       this.loadProposal()
     },
-    filterStatusSelected: function(val) {
+    /*filterStatusSelected: function(val) {
       this.nextIndex = 0;
+      // const status = this.statusProposal.map(item => { return item.id }).splice(1, this.statusProposal.length);
+      // this.proposalStatus = val != '*' ? [val] : status
       this.loadProposal()
-    },
+    },*/
     filterProposer: function(val) {
       this.nextIndex = 0;
       this.proposer = !val ? undefined : val.trim() == "" ? undefined : val.trim();
@@ -250,20 +255,44 @@ export default {
     },
 
     async loadProposal() {
-      let status = this.statusProposal.map(item => { return item.id }).splice(1, this.statusProposal.length);
-      let type = this.typeProposal.map(item => { return item.id }).splice(1, this.typeProposal.length);
+      let status = this.statusProposal.map(item => { return item.id }).splice(2, this.statusProposal.length);
+
+      //let type = this.typeProposal.map(item => { return item.id }).splice(1, this.typeProposal.length);
 
       status = this.filterStatusSelected != '*' ? [this.filterStatusSelected] : status;
-      type = this.typeProposal[this.filterTypeProposalSelected].id != '*' ? [this.typeProposal[this.filterTypeProposalSelected].id] : type;
+      let searchStatus = `status_in: ${JSON.stringify(status)}, `;
+      if(status[0] == "PorVotar") {
+        const query = `query Proposals($type: [String], $status: [String], $userId: String, $limit: Int, $index: Int) {
+          proposals(where: {vote_: {user_id: $userId}} ) {
+            id
+          }
+        }`;
+
+        const variables = {
+          // type: type,
+          userId: WalletP2p.getAccount().address,
+        };
+
+        await graphQl.getQuery(query, variables).then(response => {
+          const result = response.data.data?.proposals
+
+          if(!result) return
+
+          searchStatus = `id_not_in: ${JSON.stringify(result.map((item) => {return item.id.toString()}))}, `;
+        });
+      }
+
+      //type = this.typeProposal[this.filterTypeProposalSelected].id != '*' ? [this.typeProposal[this.filterTypeProposalSelected].id] : type;
 
       //const proposalType = !this.type ? '' : ', proposal_type: "' + this.type + '"';
       //const statusProposal = !this.status ? '' : ', status: "' + this.status + '"';
       //const proposerLike = !this.likeProposer ? '' : ', proposer_contains: "' + this.likeProposer + '"';
 
+
       const searchProposer = !this.proposer ? `` : `, proposer_contains_nocase: "${this.proposer}"`;
 
-      const query = `query Proposals($type: [String], $status: [String], $limit: Int, $index: Int) {
-        proposals(where: {proposal_type_in: $type, status_in: $status ${searchProposer}} orderBy: creation_date, orderDirection: desc, skip: $index, first: $limit ) {
+      const query = `query Proposals($type: [String], $status: [String], $userId: String, $limit: Int, $index: Int) {
+        proposals(where: {${searchStatus} ${searchProposer}} orderBy: creation_date, orderDirection: desc, skip: $index, first: $limit ) {
           approval_date
           creation_date
           description
@@ -278,6 +307,9 @@ export default {
           title
           upvote
           user_creation
+          vote(where: {user_id: $userId}) {
+            vote
+          }
         }
 
         proposaldata(id: "1") {
@@ -286,8 +318,8 @@ export default {
       }`;
 
       const variables = {
-        type: type,
-        status: status,
+        // type: type,
+        userId: WalletP2p.getAccount().address,
         limit: this.elementosPorPagina,
         index:this.nextIndex
       };
@@ -315,37 +347,39 @@ export default {
           const date_format = 'Aprobado el: ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
           const date_final = item.approval_date ? date_format : item.approval_date;
 
-          //const type = typeof item.kind === "object" ? Object.keys(item.kind)[0] : item.kind;
-          //const objectProposal = typeof item.kind === "object" ? item.kind[type] : undefined;
-          //const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+          const kindProposal = JSON.parse(item.kind);
+          const objectProposal = kindProposal[item.proposal_type];
+          const configMetadata = objectProposal && item.proposal_type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
 
           return {
             id: item.id,
             contractId: this.$route.query?.dao,
             type: item.proposal_type,
-            objectProposal: undefined,
-            configMetadata: undefined,
+            objectProposal,
+            configMetadata,
             title: item.title,
             date: date_final /*item.submission_time*/,
             proposer: item.proposer,
             description: item.description,
             approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
+            status: item.status,
             link: item.link,
             amount: null,
             claims: null,
             remainingTime: "una semana",
             likes: item.upvote,
             dislikes: item.downvote,
+            vote: item.vote.length > 0 ? item.vote[0].vote : undefined,
           }
         });
 
-        // const startIndex = (this.currentPage - 1) * this.cardsPerPage;
-        // const endIndex = startIndex + this.cardsPerPage;
+        this.proposal_list = this.cardsProposals = cardsProposals;
 
-        this.totalPages = Math.ceil(cardsProposals.length / this.cardsPerPage);
-        this.proposal_list = cardsProposals;
 
-        this.loadPage();
+        // this.totalPages = Math.ceil(cardsProposals.length / this.cardsPerPage);
+        // this.proposal_list = cardsProposals;
+
+        // this.loadPage();
         // this.cardsProposals = cardsProposals.slice(startIndex, endIndex);
 
       },

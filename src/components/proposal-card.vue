@@ -67,9 +67,9 @@
       <v-card-text class="pa-0 pr-1 d-flex flex-column">
         <div class="card__content">
           <img
-            v-if="proposal?.approved !==null"
-            :src="proposal?.approved ? ApprovedIcon : FailedIcon"
-            :alt="proposal?.approved ? 'proposal approved' : 'proposal failed'"
+            v-if="proposal?.status != 'InProgress'"
+            :src="proposal?.status == 'Approved' ? ApprovedIcon : FailedIcon"
+            :alt="proposal?.status == 'Approved' ? 'proposal approved' : 'proposal failed'"
             class="mr-5"
             style="--w: clamp(4em, 12vw, 6.25em); width: var(--w); height: var(--w); float: right;"
           >
@@ -129,7 +129,7 @@
             <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.description }} </p>
 
             <p class="label mb-2">Usuario receptor</p>
-            <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal.receiver_id }} </p>
+            <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal?.receiver_id }} </p>
           </span>
 
           <span v-else>
@@ -180,7 +180,7 @@
 
           <aside class="flex-center" style="gap: 20px;">
             <div class="flex-center" style="gap: 10px;">
-              <v-btn icon color="#EEE6F1" elevation="0" size="29" @click="upvote(proposal?.id, proposal?.contractId, proposal?.type)">
+              <v-btn icon :disabled="proposal?.vote" :color="(proposal?.vote == 'VoteApprove' ? '#77f1a4' : '#EEE6F1')" elevation="0" size="29" @click="upvote(proposal?.id, proposal?.contractId, proposal?.type)">
                 <v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />
               </v-btn>
 
@@ -188,7 +188,7 @@
             </div>
 
             <div class="flex-center" style="gap: 10px;">
-              <v-btn icon color="#EEE6F1" elevation="0" size="29" @click="downvote(proposal?.id, proposal?.contractId, proposal?.type)">
+              <v-btn icon :disabled="proposal?.vote" :color="proposal?.vote == 'VoteReject' ? '#77f1a4' : '#EEE6F1'" elevation="0" size="29" @click="downvote(proposal?.id, proposal?.contractId, proposal?.type)">
                 <v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />
               </v-btn>
 

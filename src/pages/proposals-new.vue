@@ -181,7 +181,7 @@ export default {
       const statusProposal = !this.status ? '' : ', status: "' + this.status + '"';
       const proposerLike = !this.likeProposer ? '' : ', proposer_contains: "' + this.likeProposer + '"';
 
-      const query = `query MyQuery($contractId: String, $limit: Int, $index: Int) {
+      const query = `query MyQuery($contractId: String, $userId: String, $limit: Int, $index: Int) {
         dao(id: $contractId) {
           proposal_total
         }
@@ -201,12 +201,16 @@ export default {
           title
           upvote
           downvote
+          vote(where: {user_id: $userId}) {
+            vote
+          }
         }
       }`;
 
 
       const variables = {
         contractId: this.wallet_dao,
+        userId: WalletP2p.getAccount().address,
         limit: this.elementosPorPagina,
         index:this.nextIndex
       }
@@ -237,7 +241,7 @@ export default {
           const date = moment(item.approval_date/1000000)
           const date_format = ' ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
           const date_final = item.approval_date ? date_format : item.approval_date;
-
+          
           return{
             id: item.proposal_id,
             contractId: item.contract_id,
@@ -249,12 +253,14 @@ export default {
             proposer: item.proposer,
             description: atob(item.description),
             approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
+            status: item.status,
             link: item.link,
             amount: null,
             claims: null,
             remainingTime: "una semana",
             likes: item.upvote,
             dislikes: item.downvote,
+            vote: item.vote.length > 0 ? item.vote[0].vote : undefined,
           }});
 
 

@@ -245,31 +245,38 @@ export default {
         //this.voices_goal = response.serie.supply;
         //this.voices_left = Number(data.upvote) + Number(data.downvote)
 
-        //const date = moment(data.approval_date/1000000)
-        //const date_format = 'Aprobado el: ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
-        //const date_final = data.approval_date ? date_format : data.approval_date;
+        const date = moment(data.approval_date/1000000)
+        const date_format = 'Aprobado el: ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
+        const date_final = data.approval_date ? date_format : data.approval_date;
 
-        //const type = typeof item.kind === "object" ? Object.keys(item.kind)[0] : item.kind;
-        //const objectProposal = typeof item.kind === "object" ? item.kind[type] : undefined;
-        //const configMetadata = objectProposal && type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+        const kindProposal = JSON.parse(data.kind);
+        const objectProposal = kindProposal[data.proposal_type];
+        const configMetadata = objectProposal && data.proposal_type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
+
+        const voteResult = data.vote.length > 0 ? data.vote : undefined;
+        const userId = WalletP2p.getAccount().address;
+        const voteUser = !voteResult ? undefined : voteResult.find((item) => item.user_id == userId)?.vote;
+
 
         this.cardsProposals = {
           id: data.id,
           contractId: this.$route.query?.dao,
           type: data.proposal_type,
-          objectProposal: undefined,
-          configMetadata: undefined,
+          objectProposal,
+          configMetadata,
           title: data.title,
-          date: null/*item.submission_time*/,
+          date: date_final /*item.submission_time*/,
           proposer: data.proposer,
           description: data.description,
           approved: data.status == "InProgress" ? null : data.status == "Approved" ? true : false,
+          status: data.status,
           link: data.link,
           amount: amount,
           claims: null,
           remainingTime: "una semana",
           likes: data.upvote,
           dislikes: data.downvote,
+          vote: voteUser
         };
 
 

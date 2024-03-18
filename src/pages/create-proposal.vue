@@ -222,7 +222,7 @@ export default{
           case "Solicitud de fondos": {
             const bound = await this.searchBond("Transfer")
             if(!bound) return
-            this.addTransfer(bound)
+            await this.addTransfer(bound)
           }
             break;
         }
@@ -265,12 +265,28 @@ export default{
       }
     },
 
-    addTransfer(bond){
+    async addTransfer(bond){
       const tokenId = document.getElementById("tokenId").value;
       const amount = document.getElementById("amount").value;
       const msg = document.getElementById("msg").value;
+      const receiverId = document.getElementById("receiverId").value
 
-      const json = {
+      /* let token = this.itemsTokens.find((item) => item.id == tokenId)
+
+      if(!token?.desc){
+        token = {desc: "Near"}
+      }
+
+      const usdtIsActive = token.desc == "Near" ? true
+      : await WalletP2p.view({
+        contractId: process.env.CONTRACT_USDT,
+        methodName: "storage_balance_of",
+        args: { account_id: receiverId }
+      }); */
+
+      const usdtIsActive = true;
+
+      const setProposal = {
         contractId: process.env.CONTRACT_DAO,
         methodName: "set_proposal",
         args: {
@@ -281,7 +297,7 @@ export default{
             kind: {
               Transfer: {
                 token_id: tokenId, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
-                receiver_id: document.getElementById("receiverId").value,
+                receiver_id: receiverId,
                 amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
                 msg: msg ? msg.lenght > 0 ? msg.length : null : null,
               }
@@ -292,6 +308,23 @@ export default{
         gas: "300000000000000",
         attachedDeposit: bond.toString()
       };
+
+      let json = setProposal
+
+      if(!usdtIsActive){
+        json = [
+          {
+            contractId: process.env.CONTRACT_USDT,
+            methodName: "storage_deposit",
+            args: {
+              account_id: receiverId,
+            },
+            gas: "30000000000000",
+            attachedDeposit: "1250000000000000000000"
+          },
+          setProposal
+        ];
+      }
 
       WalletP2p.call(json, "proposals-meta", ("?dao="+process.env.CONTRACT_DAO));
     },
