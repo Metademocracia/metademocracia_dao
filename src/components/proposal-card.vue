@@ -178,33 +178,59 @@
             </div>
           </aside>
 
-          <aside class="flex-center" style="gap: 20px;">
+          <aside v-if="proposal?.status == 'Failed'" class="flex-center" style="gap: 20px;">
             <div class="flex-center" style="gap: 10px;">
               <v-btn
+                :color="'#EEE6F1'"
+                elevation="1"
+                size="60"
+                @click="finalize(proposal?.id, proposal?.contractId, proposal?.type)"
+              >
+              <h7 style="font-weight: 500; color: black;">Culminar</h7>
+              </v-btn>
+            </div>
+          </aside>
+          <aside v-else class="flex-center" style="gap: 20px;">
+            <div class="flex-center" style="gap: 10px;">
+              <!--<v-btn
                 icon
                 :disabled="proposal?.vote || !['InProgress', 'Failed'].includes(proposal?.status)"
                 :color="(proposal?.vote == 'VoteApprove' ? '#77f1a4' : '#EEE6F1')"
                 elevation="0"
                 size="29"
                 @click="upvote(proposal?.id, proposal?.contractId, proposal?.type)"
-              >
-                <v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />
-              </v-btn>
+              >-->
+                <!--<v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />-->
+                <img
+                  :src="proposal?.vote == 'VoteApprove' ? VotoPositivoIcon : VotoPositivoGrisIcon"
+                  alt="voto positivo"
+                  class=""
+                  :style="'--w: clamp(2.23em, 12vw, 0.45em); width: var(--w); height: var(--w); float: right;'+(!proposal?.vote && proposal?.status == 'InProgress' ? 'cursor:pointer;' : '')"
+                  @click="() => {if(!proposal?.vote && proposal?.status == 'InProgress') {upvote(proposal?.id, proposal?.contractId, proposal?.type)}}"
+                >
+              <!--</v-btn>-->
 
               <span>{{ proposal?.likes }}</span>
             </div>
 
             <div class="flex-center" style="gap: 10px;">
-              <v-btn
+              <!--<v-btn
                 icon
                 :disabled="proposal?.vote || !['InProgress', 'Failed'].includes(proposal?.status)"
                 :color="proposal?.vote == 'VoteReject' ? '#77f1a4' : '#EEE6F1'"
                 elevation="0"
                 size="29"
                 @click="downvote(proposal?.id, proposal?.contractId, proposal?.type)"
-              >
-                <v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />
-              </v-btn>
+              >-->
+                <!--<v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />-->
+                <img
+                  :src="proposal?.vote == 'VoteReject' ? VotoNegativoIcon : VotoNegativoGrisIcon"
+                  alt="voto positivo"
+                  class="mt-3"
+                  :style="'--w: clamp(2.23em, 12vw, 0.45em); width: var(--w); height: var(--w); float: right;'+(!proposal?.vote && proposal?.status == 'InProgress' ? 'cursor:pointer;' : '')"
+                  @click="() => {if(!proposal?.vote && proposal?.status == 'InProgress') {downvote(proposal?.id, proposal?.contractId, proposal?.type)}}"
+                >
+              <!--</v-btn>-->
 
               <span>{{ proposal?.dislikes }}</span>
             </div>
@@ -220,6 +246,10 @@
 import ApprovedIcon from '@/assets/sources/images/Iconos-propuestas-metadao-aprobado.png'
 import ExpiradoIcon from '@/assets/sources/images/Iconos-propuestas-metadao-expirado.png'
 import RechazadoIcon from '@/assets/sources/images/Iconos-propuestas-metadao-rechazado.png'
+import VotoPositivoIcon from '@/assets/sources/images/voto-positivo.png'
+import VotoPositivoGrisIcon from '@/assets/sources/images/voto-positivo-por-realizar.png'
+import VotoNegativoIcon from '@/assets/sources/images/voto-negativo.png'
+import VotoNegativoGrisIcon from '@/assets/sources/images/voto-negativo-por-realizar.png'
 import FailedIcon from '@/assets/sources/images/failed.svg'
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
@@ -304,6 +334,41 @@ function onPressProposal() {
   }
 
   //router.push({ name: 'ProposalDetails', query: { dao: props.proposal.contractId, id: props.proposal.id } })
+}
+
+async function finalize(id, contractId, type) {
+  if(!id && !contractId) return
+
+  const gas = type == "Transfer" ? "50000000000000" : undefined;
+  let json = {
+    contractId: contractId,
+    methodName: "act_proposal",
+    args: {
+      id: Number(id),
+      action: "Finalize"
+    },
+    gas,
+    // attachedDeposit: "1"
+  };
+
+  if(contractId == process.env.CONTRACT_DAO) {
+    const isMember = await utilsDAO.isMember();
+    if(isMember) {
+      json = {
+        contractId: process.env.CONTRACT_DAO,
+        methodName: "update_proposal",
+        args: {
+          id: Number(id),
+          action: "VoteApprove"
+        },
+        gas: "56000000000000"
+        // attachedDeposit: "100000000000000000000"
+      };
+    }
+  }
+
+  WalletP2p.call(json);
+
 }
 
 async function upvote(id, contractId, type) {
