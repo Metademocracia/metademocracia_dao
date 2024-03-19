@@ -16,6 +16,9 @@
   min-height: var(--loader-size, 60%);
 }
 
+.text-color {
+  input, i { color: #000 !important }
+}
 
 .activeRipple {
   span {

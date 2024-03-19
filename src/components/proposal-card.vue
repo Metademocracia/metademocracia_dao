@@ -181,12 +181,11 @@
           <aside v-if="proposal?.status == 'Failed'" class="flex-center" style="gap: 20px;">
             <div class="flex-center" style="gap: 10px;">
               <v-btn
-                :color="'#EEE6F1'"
+                class="bg-tertiary"
                 elevation="1"
-                size="60"
                 @click="finalize(proposal?.id, proposal?.contractId, proposal?.type)"
               >
-              <h7 style="font-weight: 500; color: black;">Culminar</h7>
+              <h7 class="text-white" style="font-weight: 500">Culminar</h7>
               </v-btn>
             </div>
           </aside>

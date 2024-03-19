@@ -10,8 +10,6 @@
       >
         <template #prepend-inner>
           <v-icon icon="mdi-magnify" size="23" class="text-primary" />
-
-          <v-divider vertical thickness="1" color="#000" class="mx-2 my-auto" style="opacity: 1; height: 70%;" />
         </template>
 
         <template #append-inner>

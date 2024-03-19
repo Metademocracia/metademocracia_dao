@@ -16,7 +16,7 @@
       </v-carousel>
     </section>
 
-    <section class="section2-home">
+    <section v-if="$route.name != 'Home'" class="section2-home">
       <div class="member-container">
         <div class="center mobile-div-member" style="gap: 10px;">
           <img

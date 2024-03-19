@@ -8,11 +8,11 @@
       <h6>Grupos</h6>
 
       <v-tabs v-model="tab" slider-color="transparent">
-        <v-tab min-width="45" class="pa-0" :class="{ active: true }">
+        <v-btn min-width="45" min-height="48" class="pa-0" :class="{ active: true }" style="pointer-events: none;">
           <v-icon size="30">mdi-account-multiple</v-icon>
-        </v-tab>
+        </v-btn>
 
-        <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: i == 0}">
+        <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: i == tab}">
           {{ item.name }}
         </v-tab>
       </v-tabs>
@@ -189,7 +189,7 @@ async function getData() {
     }
   }`;
 
-  const tabIndex = tab.value == 0 ? 0 : tab.value-1;
+  const tabIndex = tab.value;
 
   const variables = {
     contractId: route.query?.dao,

@@ -52,6 +52,9 @@ export default createVuetify({
   // Set default config to components
   defaults: {
     global: {},
+    VInput: {
+      class: 'text-color'
+    },
     VBtn: {
       style: 'text-transform: none; letter-spacing: normal',
       class: 'progress-inside'

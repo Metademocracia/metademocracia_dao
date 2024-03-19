@@ -98,5 +98,9 @@ hasPressedEmit = !!instance?.vnode.props?.onPressed
 
   span, a { font-size: 11px !important }
   p { font-size: 13px !important }
+
+  span:not(.v-btn span, .text-primary), a, p, h6 {
+    color: #000 !important;
+  }
 }
 </style>

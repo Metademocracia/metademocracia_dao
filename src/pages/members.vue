@@ -7,12 +7,12 @@
     <section class="container-members mt-4 ">
       <h6>Grupos</h6>
 
-      <v-tabs slider-color="transparent">
-        <v-tab min-width="45" class="pa-0" :class="{ active: true }">
+      <v-tabs v-model="tab" slider-color="transparent">
+        <v-btn min-width="45" min-height="48" class="pa-0" :class="{ active: true }" style="pointer-events: none;">
           <v-icon size="30">mdi-account-multiple</v-icon>
-        </v-tab>
+        </v-btn>
 
-        <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: i == 0}">
+        <v-tab v-for="(item, i) in dataTabs" :key="i" :class="{ active: i == tab}">
           {{ item.name }}
         </v-tab>
       </v-tabs>
@@ -85,6 +85,7 @@ import { useRouter, useRoute } from 'vue-router';
 const
 router = useRouter(),
 route = useRoute(),
+tab = ref(0),
 dataTabs = ref([
   {
     name: "Ciudadanos",

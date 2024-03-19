@@ -1,6 +1,6 @@
 @use "@/assets/styles/main.scss" as *;
 
-#daos, #my-daos {
+#daos, #my-daos, #dao-home {
   @extend .parent;
   @extend .margin-global;
   padding-bottom: 0px!important;
