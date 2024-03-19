@@ -156,7 +156,7 @@ export default {
 			cardsProposals: ref([]),
       totalPages: ref(Math.ceil(0 / 0)),
       proposer: ref(null),
-      paginatedDataProposal: ref(0),
+      paginatedDataProposal: ref(4),
       elementosPorPagina: ref(4),
       totalProposalList: ref(0),
       nextIndex: ref(0),

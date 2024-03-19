@@ -121,7 +121,7 @@ export default {
       page2: ref(1),
       wallet_dao: ref(null),
       typeDao: ref(false),
-      paginatedDataProposal: ref(0),
+      paginatedDataProposal: ref(4),
       elementosPorPagina: ref(4),
       totalProposalList: ref(0),
       nextIndex: ref(0),
@@ -241,7 +241,7 @@ export default {
           const date = moment(item.approval_date/1000000)
           const date_format = ' ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
           const date_final = item.approval_date ? date_format : item.approval_date;
-          
+
           return{
             id: item.proposal_id,
             contractId: item.contract_id,
