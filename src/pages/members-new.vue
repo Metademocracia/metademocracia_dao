@@ -184,6 +184,7 @@ async function getData() {
         skip: $index,
         first: $limit) {
           member
+          votes
         }
       }
     }
@@ -238,6 +239,7 @@ async function getData() {
         avatar: avatarIcon,
         group: group.group,
         user: item.member,
+        votes: item.votes
       }
     });
 
