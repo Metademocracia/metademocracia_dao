@@ -43,7 +43,7 @@
 
     <v-divider v-if="!loading" thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
     <section id="daos__content">
-      <div class="daos" >
+      <div class="daos" style="--gtc: repeat(auto-fit, minmax(min(100%, 230px), 1fr))">
         <dao-card
           v-for="(item, i) in daos"
           :key="i"
