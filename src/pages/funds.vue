@@ -330,7 +330,7 @@ export default {
     tokenCardsSelected: function(val) {
       this.nextIndex = 0;
       this.totalFundsList = 0;
-      this.assetTransfer = val;
+      // this.assetTransfer = val;
       this.loadTransactions()
     },
   },
