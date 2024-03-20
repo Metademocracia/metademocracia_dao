@@ -249,7 +249,7 @@ import VotoPositivoIcon from '@/assets/sources/images/voto-positivo.png'
 import VotoPositivoGrisIcon from '@/assets/sources/images/voto-positivo-por-realizar.png'
 import VotoNegativoIcon from '@/assets/sources/images/voto-negativo.png'
 import VotoNegativoGrisIcon from '@/assets/sources/images/voto-negativo-por-realizar.png'
-import FailedIcon from '@/assets/sources/images/failed.svg'
+import FailedIcon from '@/assets/sources/images/Iconos-propuestas-metadao-FALLIDO.png'
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 import utilsDAO from '@/services/utils-dao';

@@ -161,12 +161,14 @@ export default {
       totalProposalList: ref(0),
       nextIndex: ref(0),
       filterProposer: ref(undefined),
+      back: ref(false)
     }
   },
 
   watch: {
-    page: function(val) {
+    page: function(val, valOld) {
       if(this.totalProposalList.length <= 0) return
+      this.back = val < valOld;
       this.nextIndex = (val - 1) * this.elementosPorPagina;
 
       this.loadProposal()
@@ -260,7 +262,7 @@ export default {
       //let type = this.typeProposal.map(item => { return item.id }).splice(1, this.typeProposal.length);
 
       status = this.filterStatusSelected != '*' ? [this.filterStatusSelected] : status;
-      let searchStatus = `status_in: ${JSON.stringify(status)}, `;
+      let searchStatus = `status_in: ${JSON.stringify(status)} `;
       if(status[0] == "PorVotar") {
         const query = `query Proposals($type: [String], $status: [String], $userId: String, $limit: Int, $index: Int) {
           proposals(where: {vote_: {user_id: $userId}} ) {
@@ -278,7 +280,7 @@ export default {
 
           if(!result) return
 
-          searchStatus = `id_not_in: ${JSON.stringify(result.map((item) => {return item.id.toString()}))}, `;
+          searchStatus = `id_not_in: ${JSON.stringify(result.map((item) => {return item.id.toString()}))} `;
         });
       }
 
@@ -317,6 +319,8 @@ export default {
         }
       }`;
 
+      console.log(query)
+
       const variables = {
         // type: type,
         userId: WalletP2p.getAccount().address,
@@ -324,16 +328,40 @@ export default {
         index:this.nextIndex
       };
 
-      await graphQl.getQuery(query, variables).then(response => {
-        this.loadCardProposal(response.data.data);
-      });
-    },
+      await graphQl.getQuery(query, variables).then(async result => {
+        const response = result.data.data;
+        
+        if(!response?.proposals) return
+        // if(response.proposals.length <= 0) return
 
-    loadCardProposal(response) {
 
         //paginacion
-        this.totalProposalList = response.proposals.length <= 0 ? 0 : response.proposaldata.proposal_total;
-        this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+        if(this.filterStatusSelected != '*' || searchProposer != '') {
+          this.totalProposalList = this.page == 1 && !this.back ? response.proposals.length : this.totalProposalList;
+          this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+
+          if(this.paginatedDataProposal == this.page) {
+            variables.index = (this.page) * this.elementosPorPagina
+
+            await graphQl.getQuery(query, variables).then(async response => {
+              const data = response.data.data?.proposals;
+              if(!data) return
+              if(data.length <= 0) return
+
+              this.totalProposalList += data.length;
+              this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+            })
+          }
+          this.back = false;
+        } else {
+          this.totalProposalList = response.proposals.length <= 0 ? 0 : response.proposaldata.proposal_total;
+          this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+        }
+
+
+        // this.totalProposalList = response.proposals.length <= 0 ? 0 : response.proposaldata.proposal_total;
+        // this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+
         this.nextIndex = (this.page) * this.elementosPorPagina;
 
 
@@ -382,14 +410,16 @@ export default {
         // this.loadPage();
         // this.cardsProposals = cardsProposals.slice(startIndex, endIndex);
 
-      },
+      });
+    },
 
-      loadPage() {
-        const startIndex = (this.currentPage - 1) * this.cardsPerPage;
-        const endIndex = startIndex + this.cardsPerPage;
 
-        this.cardsProposals = this.proposal_list.slice(startIndex, endIndex);
-      },
+    loadPage() {
+      const startIndex = (this.currentPage - 1) * this.cardsPerPage;
+      const endIndex = startIndex + this.cardsPerPage;
+
+      this.cardsProposals = this.proposal_list.slice(startIndex, endIndex);
+    },
 
   },
 }

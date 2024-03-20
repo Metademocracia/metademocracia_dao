@@ -128,31 +128,36 @@ export default {
       type: ref(undefined),
       status: ref(undefined),
       filterProposer: ref(undefined),
-      likeProposer: ref(undefined)
+      likeProposer: ref(undefined),
+      back: ref(false)
     }
   },
 
   watch: {
-    page: function(val) {
+    page: function(val, valOld) {
       if(this.totalProposalList.length <= 0) return
+      this.back = val < valOld;
       this.nextIndex = (val - 1) * this.elementosPorPagina;
 
       this.getData()
     },
     tab: function(val) {
       this.nextIndex = 0;
+      this.page = 1;
       this.type = this.tabs[val].value == "todos" ? undefined : this.tabs[val].value;
       this.status = this.filter == "todos" ? undefined : this.filter;
       this.getData()
     },
     filter: function(val) {
       this.nextIndex = 0;
+      this.page = 1;
       this.type = this.tabs[this.tab].value == "todos" ? undefined : this.tabs[this.tab].value;
       this.status = val == "todos" ? undefined : val;
       this.getData()
     },
     filterProposer: function(val) {
       this.nextIndex = 0;
+      this.page = 1;
       this.likeProposer = !val ? undefined : val.trim() == "" ? undefined : val.trim();
       this.getData()
     }
@@ -176,6 +181,48 @@ export default {
 
 
   methods: {
+    async loadData() {
+      const proposalType = !this.type ? '' : ', proposal_type: "' + this.type + '"';
+      const statusProposal = !this.status ? '' : ', status: "' + this.status + '"';
+      const proposerLike = !this.likeProposer ? '' : ', proposer_contains: "' + this.likeProposer + '"';
+
+      const query = `query MyQuery($contractId: String, $userId: String, $limit: Int, $index: Int) {
+        dao(id: $contractId) {
+          proposal_total
+        }
+
+        proposals(where: {contract_id: $contractId ${proposalType} ${statusProposal} ${proposerLike}},
+        orderBy: proposal_id, orderDirection: desc, skip: $index, first: $limit) {
+          description
+          contract_id
+          creation_date
+          approval_date
+          id
+          kind
+          link
+          proposal_id
+          proposer
+          status
+          title
+          upvote
+          downvote
+          vote(where: {user_id: $userId}) {
+            vote
+          }
+        }
+      }`;
+
+
+      const variables = {
+        contractId: this.wallet_dao,
+        userId: WalletP2p.getAccount().address,
+        limit: this.elementosPorPagina,
+        index:this.nextIndex
+      }
+
+      await graphQl.getQueryDaoV2(query, variables).then(async response => {})
+    },
+
     async getData() {
       const proposalType = !this.type ? '' : ', proposal_type: "' + this.type + '"';
       const statusProposal = !this.status ? '' : ', status: "' + this.status + '"';
@@ -221,8 +268,27 @@ export default {
 
 
         //paginacion
-        this.totalProposalList = proposals.length <= 0 ? 0 : dao.proposal_total;
-        this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+        if(statusProposal != '' || proposerLike != '' || proposalType) {
+          this.totalProposalList = this.page == 1 && !this.back ? proposals.length : this.totalProposalList;
+          this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+          
+          if(this.paginatedDataProposal == this.page) {
+            variables.index = (this.page) * this.elementosPorPagina
+
+            await graphQl.getQueryDaoV2(query, variables).then(async response => {
+              const data = response.data.data?.proposals;
+              if(!data) return
+              if(data.length <= 0) return
+
+              this.totalProposalList += data.length;
+              this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+            })
+          }
+          this.back = false;
+        } else {
+          this.totalProposalList = proposals.length <= 0 ? 0 : dao.proposal_total;
+          this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
+        }
 
         this.nextIndex = (this.page) * this.elementosPorPagina;
 
