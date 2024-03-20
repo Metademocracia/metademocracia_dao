@@ -361,7 +361,7 @@ export default {
           ref: 'https://wallet.nearp2p.com/'
         }
       ],
-      titleBtnLogin: ref("Conectar Wallet"),
+      titleBtnLogin: ref("Conectar Billetera"),
     }
   },
   beforeMount() {
@@ -550,7 +550,7 @@ export default {
 
     logout() {
       localStorage.removeItem("session")
-      this.titleBtnLogin = "Conectar Wallet";
+      this.titleBtnLogin = "Conectar Billetera";
       this.dialogConnect = false;
 
       this.$router.push({path: '/'})
