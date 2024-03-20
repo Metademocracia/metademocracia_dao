@@ -40,7 +40,7 @@ function call (json, ruta, param_ruta) {
         attachedDeposit: "10000000000000000000",
       }
   */
- 
+
   const dataWallet = JSON.parse(localStorage.getItem("session"))
   const wallet = dataWallet ? dataWallet.wallet : undefined;
   const urlParams = new URLSearchParams(window.location.search);
@@ -83,7 +83,9 @@ async function view(json) {
   let address =  getAccount().address;
 
   if(!privateKey && !address) {
+    console.log("aqui: ", await nearSeedPhrase.generateSeedPhrase())
     const {secretKey} = await nearSeedPhrase.generateSeedPhrase();
+
     const keyPair = KeyPair.fromString(secretKey);
     const implicitAccountId = Buffer.from(keyPair.getPublicKey().data).toString("hex");
 

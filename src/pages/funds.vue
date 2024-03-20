@@ -14,7 +14,7 @@
         />
 
         <div class="flex-column">
-          <span>Valor total bloqueado</span>
+          <span>Valor total</span>
           <span>{{ total_value_computed }} USD</span>
         </div>
       </aside>
@@ -32,7 +32,7 @@
         color="#7758a4"
         elevation="3"
         style="max-width: 250px;"
-        @click="windowStep = i"
+        @click="() => { tokenCardsSelected = item.currency; windowStep = i;}"
       >
         <div class="d-flex justify-center align-start" style="gap: 8px;">
           <img
@@ -246,7 +246,7 @@ export default {
 			currentPage: ref(1),
       cardsPerPage: ref(10),
 			page: ref(1),
-			selectedOrderBy: ref({id: "asc", desc: "Menos Recientes"}),
+			selectedOrderBy: ref({id: "desc", desc: "Más Recientes"}),
       filterTableOrderBy: ref([
         {id: "asc", desc: "Menos Recientes"},
         {id: "desc", desc: "Más Recientes"}
@@ -303,6 +303,9 @@ export default {
         {id: "transfer", desc: "Enviados"},
       ]),
       address: ref(null),
+      tokenCardsSelected: ref("NEAR"),
+      totalFundsList: ref(0),
+      nextIndex: ref(0),
 
 		}
 	},
@@ -323,6 +326,12 @@ export default {
     },
     resultUsdt(response) {
       this.loadChartUsdt(response);
+    },
+    tokenCardsSelected: function(val) {
+      this.nextIndex = 0;
+      this.totalFundsList = 0;
+      this.assetTransfer = val;
+      this.loadTransactions()
     },
   },
 
@@ -464,9 +473,10 @@ export default {
     async loadTransactions() {
       let typeTransactions = this.typeTransaction.map(item => { return item.id }).splice(1, this.typeTransaction.length);
       typeTransactions = this.select_radio_buttons != 'todos' ? [this.select_radio_buttons] : typeTransactions;
+      const tokenId = !this.tokenCardsSelected ? '' : ', token_id: "' + this.tokenCardsSelected + '"';
 
       const query1 = `query MyQuery($typeTransactions: [String], $orderDirection: String) {
-        fundshists(where: {type_in: $typeTransactions}, orderBy: date_time, orderDirection: $orderDirection ) {
+        fundshists(where: {type_in: $typeTransactions ${tokenId}}, orderBy: date_time, orderDirection: $orderDirection ) {
           amount
           date_time
           id
@@ -477,7 +487,7 @@ export default {
       }`;
 
       const query2 = `query MyQuery($typeTransactions: [String], $address: String, $orderDirection: String) {
-        fundshists(where: {type_in: $typeTransactions, user_id_contains_nocase: $address}, orderBy: date_time, orderDirection: $orderDirection ) {
+        fundshists(where: {type_in: $typeTransactions, user_id_contains_nocase: $address ${tokenId}}, orderBy: date_time, orderDirection: $orderDirection ) {
           amount
           date_time
           id

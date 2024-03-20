@@ -197,7 +197,7 @@
               :items="groupsDefaults"
               variant="solo"
               placeholder="Seleccione un grupo"
-              :rules="[(v) => !!v || 'Seleccione un grupo predeterminado']"
+              :rules="[(v) => !!v || 'Seleccione un grupo predeterminado', v => validUniqueGroup(v) || 'No puede repetir el nombre de grupo']"
               required
             ></v-select>
 
@@ -210,6 +210,7 @@
                 :items="groupsDefaults"
                 variant="solo"
                 placeholder="Seleccione un grupo"
+                :rules="[v => validUniqueGroup(v) || 'No puede repetir el nombre de grupo']"
                 @update:model-value="chargeCouncil()"
                 ></v-select>
             </v-col>
@@ -220,6 +221,7 @@
                   placeholder="Nombre del grupo"
                   class="appened"
                   variant="solo"
+                  :rules="[v => validUniqueGroup(v) || 'No puede repetir el nombre de grupo']"
                   @update:model-value="chargeCouncil()"
                 >
                   <template #append-inner>
@@ -505,6 +507,16 @@ onBeforeMount(getFee)
   console.log("aqui paso")
   groupCouncil.value = customGroups.value[0].model;
 }*/
+
+function validUniqueGroup(item) {
+  if(!item || !groupCouncil.value) return true
+
+  const array = [].concat((!customGroups.value[0].model ? [] : customGroups.value))
+  array.push({model: groupAllDefault})
+  array.push({model: groupCouncil.value})
+
+  return !(array.filter((elem) => elem.model.toUpperCase() == item.toUpperCase()).length > 1)
+}
 
 async function validMember(item) {
   //item.memberErrror = "wallet no valida"
