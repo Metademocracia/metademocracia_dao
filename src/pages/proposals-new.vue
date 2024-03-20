@@ -226,7 +226,7 @@ export default {
     async getData() {
       const proposalType = !this.type ? '' : ', proposal_type: "' + this.type + '"';
       const statusProposal = !this.status ? '' : ', status: "' + this.status + '"';
-      const proposerLike = !this.likeProposer ? '' : ', proposer_contains: "' + this.likeProposer + '"';
+      const proposerLike = !this.likeProposer ? '' : ', proposer_contains_nocase: "' + this.likeProposer + '"';
 
       const query = `query MyQuery($contractId: String, $userId: String, $limit: Int, $index: Int) {
         dao(id: $contractId) {
@@ -271,7 +271,7 @@ export default {
         if(statusProposal != '' || proposerLike != '' || proposalType) {
           this.totalProposalList = this.page == 1 && !this.back ? proposals.length : this.totalProposalList;
           this.paginatedDataProposal = Math.ceil(this.totalProposalList / this.elementosPorPagina);
-          
+
           if(this.paginatedDataProposal == this.page) {
             variables.index = (this.page) * this.elementosPorPagina
 
