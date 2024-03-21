@@ -93,7 +93,7 @@ watch(tab, async (newVal, oldVal) => {
   getData()
 })
 
-onBeforeMount(console.log("aqui si: ", accounId), getData)
+onBeforeMount(getData)
 
 function view(item) {
   if(process.env.CONTRACT_DAO == item.wallet_dao) {
