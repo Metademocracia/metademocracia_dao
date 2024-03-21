@@ -1,70 +1,74 @@
 <template>
   <div id="dao-home">
-    <aside class="toolbar-search">
-    <div class="toolbar-search__wrapper">
-      <v-text-field
-        v-model="likeWalletDao"
-        placeholder="Buscar"
-        variant="solo"
-        hide-details
-      >
-        <template #prepend-inner>
-          <v-icon icon="mdi-magnify" size="23" class="text-primary" />
-        </template>
+    <span v-if="!accounId"><connectWallet></connectWallet></span>
+    <span v-if="accounId">
+      <aside class="toolbar-search">
+        <div class="toolbar-search__wrapper">
+          <v-text-field
+            v-model="likeWalletDao"
+            placeholder="Buscar"
+            variant="solo"
+            hide-details
+          >
+            <template #prepend-inner>
+              <v-icon icon="mdi-magnify" size="23" class="text-primary" />
+            </template>
 
-        <template #append-inner>
-          <v-btn
-            height="38"
-            class="bg-secondary px-7"
-            @click="getData()"
-          >Buscar</v-btn>
-        </template>
-      </v-text-field>
-    </div>
-  </aside>
+            <template #append-inner>
+              <v-btn
+                height="38"
+                class="bg-secondary px-7"
+                @click="getData()"
+              >Buscar</v-btn>
+            </template>
+          </v-text-field>
+        </div>
+      </aside>
 
+      <toolbar title="DAOs" content-class="flex-spaceb">
 
-    <toolbar title="DAOs" content-class="flex-spaceb">
-      
-      <v-tabs v-model="tab" slider-color="transparent">
-        <v-tab v-for="(item, i) in tabs" :key="i">
-          <div class="custom-checkbox mr-2" :class="{ active: tab == i }" />
-          {{ item }}
-        </v-tab>
-      </v-tabs>
+        <v-tabs v-model="tab" slider-color="transparent">
+          <v-tab v-for="(item, i) in tabs" :key="i">
+            <div class="custom-checkbox mr-2" :class="{ active: tab == i }" />
+            {{ item }}
+          </v-tab>
+        </v-tabs>
 
-      <v-btn class="bg-tertiary px-2 ml-auto" style="font-size: 12px;" @click="router.push({ name: 'CreateDao' })">
-        <v-icon icon="mdi-plus" class="text-white" />
-        Crear Dao
-      </v-btn>
-    </toolbar>
+        <v-btn class="bg-tertiary px-2 ml-auto" style="font-size: 12px;" @click="router.push({ name: 'CreateDao' })">
+          <v-icon icon="mdi-plus" class="text-white" />
+          Crear Dao
+        </v-btn>
+      </toolbar>
 
-    <div style="color: white !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="full-width" fluid></v-progress-linear></div>
+      <div style="color: white !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="full-width" fluid></v-progress-linear></div>
 
-    <v-divider v-if="!loading" thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
-    <section id="daos__content">
-      <div class="daos">
-        <dao-card
-          v-for="(item, i) in daos"
-          :key="i"
-          :dao="item"
-          :class="{ limited: daos.length <= 2 }"
-          @pressed="view(item)"
-        />
-      </div>
+      <v-divider v-if="!loading" thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
+      <section id="daos__content">
+        <div class="daos">
+          <dao-card
+            v-for="(item, i) in daos"
+            :key="i"
+            :dao="item"
+            :class="{ limited: daos.length <= 2 }"
+            @pressed="view(item)"
+          />
+        </div>
 
-      <v-pagination
-        v-model="page"
-        class="mt-10 mb-16"
-        :length="paginatedDaos"
-      ></v-pagination>
-    </section>
+        <v-pagination
+          v-model="page"
+          class="mt-10 mb-16"
+          :length="paginatedDaos"
+        ></v-pagination>
+      </section>
+    </span>
+
   </div>
 </template>
 
 <script setup>
 import '@/assets/styles/pages/daos.scss'
 import DaoCard from '@/components/dao-card.vue'
+import connectWallet from '@/components/connect-wallet.vue';
 import MetademocraciaImage from '@/assets/sources/images/metademocracia-image.png'
 import { ref, computed, onBeforeMount, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -81,14 +85,15 @@ page = ref(1),
 daos = ref([]),
 paginatedDaos = computed(() => (daos.value.length || 9) / 9),
 likeWalletDao = ref(undefined),
-listDaos = ref([])
+listDaos = ref([]),
+accounId = WalletP2p.getAccount()?.address;
 const loading = ref(true);
 
 watch(tab, async (newVal, oldVal) => {
   getData()
 })
 
-onBeforeMount(getData)
+onBeforeMount(console.log("aqui si: ", accounId), getData)
 
 function view(item) {
   if(process.env.CONTRACT_DAO == item.wallet_dao) {

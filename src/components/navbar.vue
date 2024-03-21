@@ -321,6 +321,7 @@
 import { useWindowScroll } from '@vueuse/core';
 import { ref, compile, h} from 'vue';
 import WalletP2p from '../services/wallet-p2p';
+import connectWallet from '@/components/connect-wallet.vue';
 import formatHtml from "../components/format-html.vue";
 import moment from 'moment';
 import utilsDAO from '@/services/utils-dao';

@@ -1,52 +1,55 @@
 <template>
   <div id="my-daos">
-    <aside class="toolbar-search">
-    <div class="toolbar-search__wrapper">
-      <v-text-field
-        v-model="likeWalletDao"
-        placeholder="Buscar"
-        variant="solo"
-        hide-details
-      >
-        <template #prepend-inner>
-          <v-icon icon="mdi-magnify" size="23" class="text-primary" />
-        </template>
+    <span v-if="!accounId"><connectWallet></connectWallet></span>
+    <span v-if="accounId">
+      <aside class="toolbar-search">
+      <div class="toolbar-search__wrapper">
+        <v-text-field
+          v-model="likeWalletDao"
+          placeholder="Buscar"
+          variant="solo"
+          hide-details
+        >
+          <template #prepend-inner>
+            <v-icon icon="mdi-magnify" size="23" class="text-primary" />
+          </template>
 
-        <template #append-inner>
-          <v-btn
-            height="38"
-            class="bg-secondary px-7"
-            @click="getData()"
-          >Buscar</v-btn>
-        </template>
-      </v-text-field>
-    </div>
-  </aside>
-
-    <toolbar title="Mis DAOs" content-class="flex-spaceb">
-      <v-btn class="bg-tertiary px-2 ml-auto" style="font-size: 12px;" @click="router.push({ name: 'CreateDao' })">
-        <v-icon icon="mdi-plus" class="text-white" />
-        Crear Dao
-      </v-btn>
-    </toolbar>
-
-    <section id="my-daos__content" class="mt-10">
-      <div class="daos">
-        <dao-card
-          v-for="(item, i) in daos"
-          :key="i"
-          :dao="item"
-          :class="{ limited: daos.length <= 2 }"
-          @pressed="view(item)"
-        />
+          <template #append-inner>
+            <v-btn
+              height="38"
+              class="bg-secondary px-7"
+              @click="getData()"
+            >Buscar</v-btn>
+          </template>
+        </v-text-field>
       </div>
+    </aside>
 
-      <v-pagination
-        v-model="page"
-        class="mt-10 mb-16"
-        :length="paginatedDaos"
-      ></v-pagination>
-    </section>
+      <toolbar title="Mis DAOs" content-class="flex-spaceb">
+        <v-btn class="bg-tertiary px-2 ml-auto" style="font-size: 12px;" @click="router.push({ name: 'CreateDao' })">
+          <v-icon icon="mdi-plus" class="text-white" />
+          Crear Dao
+        </v-btn>
+      </toolbar>
+
+      <section id="my-daos__content" class="mt-10">
+        <div class="daos">
+          <dao-card
+            v-for="(item, i) in daos"
+            :key="i"
+            :dao="item"
+            :class="{ limited: daos.length <= 2 }"
+            @pressed="view(item)"
+          />
+        </div>
+
+        <v-pagination
+          v-model="page"
+          class="mt-10 mb-16"
+          :length="paginatedDaos"
+        ></v-pagination>
+      </section>
+    </span>
   </div>
 </template>
 
@@ -59,7 +62,7 @@ import { useRouter } from 'vue-router';
 import graphQl from '@/services/graphQl';
 import WalletP2p from '../services/wallet-p2p';
 import axios from 'axios';
-
+import connectWallet from '@/components/connect-wallet.vue';
 
 const
   router = useRouter(),
@@ -68,7 +71,8 @@ page = ref(1),
 daos = ref([]),
 paginatedDaos = computed(() => (daos.value.length || 3) / 3),
 listDaos = ref([]),
-likeWalletDao = ref(undefined)
+likeWalletDao = ref(undefined),
+accounId = WalletP2p.getAccount()?.address
 
 
 onBeforeMount(getData)
