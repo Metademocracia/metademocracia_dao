@@ -3,7 +3,7 @@
 
 #daos, #my-daos, #dao-home {
   @extend .parent;
-  @extend .margin-global;
+  &:not(#dao-home) { @extend .margin-global }
   padding-bottom: 0px!important;
   padding-top: 30px;
 
