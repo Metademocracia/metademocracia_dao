@@ -41,7 +41,7 @@
               placeholder="Nombre del DAO"
               variant="solo"
               class="mb-1"
-              :rules="[globalRules.required, value => value.length <= 20 || 'Max 30 caracteres',]"
+              :rules="[globalRules.required, value => value.length <= 30 || 'Max 30 caracteres',]"
               maxlength="30"
               counter
               @change="funAddress()"
