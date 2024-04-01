@@ -12,7 +12,7 @@
 					<h5 class="mb-0">{{ item.title }}</h5>
 
 					<template #actions="{ expanded }">
-						<span>{{ item.voices }} voices</span>
+						<span>{{ item.voices }} votantes</span>
 						<v-divider
 							thickness="1"
 							vertical

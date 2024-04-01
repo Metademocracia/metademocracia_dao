@@ -359,7 +359,7 @@ export default {
         },
         {
           name: 'Billetera',
-          ref: 'https://wallet.nearp2p.com/'
+          ref: 'https://mi.arepa.digital/'
         }
       ],
       titleBtnLogin: ref("Conectar Billetera"),
