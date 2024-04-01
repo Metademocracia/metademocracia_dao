@@ -13,7 +13,14 @@
       />
 
       <img :src="dao?.image" :alt="`${dao?.name} image`" class="dao-image mx-auto">
-      <h6 class="mt-2 mb-1 text-center" style="text-decoration: underline">{{ dao?.name }}</h6>
+      <v-progress-circular
+        v-if="!dao?.name"
+        class="mt-2 mb-1 text-center"
+        :size="20"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+      <h6 v-else class="mt-2 mb-1 text-center" style="text-decoration: underline">{{ dao?.name }}</h6>
       <a class="text-center" style="text-wrap: nowrap;">
         {{ dao?.account }}
         <sup>
@@ -21,19 +28,39 @@
         </sup>
       </a>
 
-      <p class="my-5 ellipsis-box" style="--lines: 4">{{ dao?.description }}</p>
+      <v-progress-circular
+        v-if="!dao?.description"
+        class="my-5 ellipsis-box"
+        :size="20"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+      <p v-else class="my-5 ellipsis-box" style="--lines: 4">{{ dao?.description }}</p>
 
       <div class="w-100 d-flex flex-spacea" style="gap: 20px;">
         <div class="flex-column-center">
           <span class="text-primary">Fondos del DAO</span>
-
-          <h6 class="mb-0" style="font-size: 18px;">{{ dao?.funds }} USD</h6>
+          <v-progress-circular
+            v-if="!dao?.funds"
+            :size="20"
+            color="primary"
+            indeterminate
+          ></v-progress-circular>
+          <h6 v-else class="mb-0" style="font-size: 18px;">{{ dao?.funds }} USD </h6>
         </div>
-        
+
         <div class="flex-column-center">
           <span class="text-primary">Miembros / Grupos</span>
 
-          <h6 class="mb-0" style="font-size: 18px;">{{ dao?.members }} / {{ dao?.groups }}</h6>
+          <h6 class="mb-0" style="font-size: 18px;">{{ dao?.members }} /
+            <v-progress-circular
+              v-if="!dao?.groups"
+              :size="20"
+              color="primary"
+              indeterminate
+            ></v-progress-circular>
+            <none v-else style="color: black !important;">{{ dao?.groups }}</none>
+          </h6>
         </div>
       </div>
 

@@ -32,6 +32,9 @@
         </v-btn>
       </toolbar>
 
+      <div class="mt-10" style="color: white !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="full-width" fluid></v-progress-linear></div>
+      <v-divider v-if="!loading" thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
+
       <section id="my-daos__content" class="mt-10">
         <div class="daos">
           <dao-card
@@ -73,6 +76,7 @@ paginatedDaos = computed(() => (daos.value.length || 3) / 3),
 listDaos = ref([]),
 likeWalletDao = ref(undefined),
 accounId = WalletP2p.getAccount()?.address
+const loading = ref(true);
 
 
 onBeforeMount(getData)
@@ -163,7 +167,7 @@ async function getData() {
     const data = response.data.data.members
 
     for(let i = 0; i < data.length; i++) {
-      const responseNearAmount = await WalletP2p.view({
+      /* const responseNearAmount = await WalletP2p.view({
         contractId: data[i].dao.wallet_dao,
         methodName: "get_available_amount"
       });
@@ -207,24 +211,89 @@ async function getData() {
         }
       }
 
-      const metadata = JSON.parse(atob(responseConfig.metadata))
+      const metadata = JSON.parse(atob(responseConfig.metadata)) */
 
       listDaos.value.push({
         wallet_dao: data[i].dao.wallet_dao,
-        image: metadata?.img ? metadata.img : MetademocraciaImage,
-        name: responseConfig.name,
+        image: MetademocraciaImage, // metadata?.img ? metadata.img : MetademocraciaImage,
+        name: undefined, // responseConfig.name,
         account: data[i].dao.wallet_dao,
-        description: atob(responseConfig.purpose), // responseConfig.purpose.split(" ").length > 0 ? responseConfig.purpose : atob(responseConfig.purpose),
-        funds: total_balance,
-        members: members,
-        groups: responsePolicy.roles.length,
-        activeProposals: responseSupply ? responseSupply[1] : 0,
-        totalProposals: responseSupply ? responseSupply[0] : 0,
+        description: undefined, // atob(responseConfig.purpose), // responseConfig.purpose.split(" ").length > 0 ? responseConfig.purpose : atob(responseConfig.purpose),
+        funds: undefined, // total_balance,
+        members: data[i].dao.total_members,
+        groups: undefined, // responsePolicy.roles.length,
+        activeProposals: data[i].dao.proposal_actives, // responseSupply ? responseSupply[1] : 0,
+        totalProposals: data[i].dao.proposal_total, // responseSupply ? responseSupply[0] : 0,
       })
     }
   });
 
   daos.value = listDaos.value;
+
+  if(daos.value.length > 0) {
+    loading.value = false;
+  }
+
+  const data = daos.value
+  for(let i = 0; i < data.length; i++) {
+    // omitir metademocracia
+    if(process.env.CONTRACT_DAO == data[i].wallet_dao) continue;
+
+    // sumar balance near en usd
+    WalletP2p.view({
+      contractId: data[i].wallet_dao,
+      methodName: "get_available_amount"
+    }).then(async (responseNearAmount) => {
+      const balanceNear = responseNearAmount ? (Number(responseNearAmount) / 1000000000000000000000000) : 0;
+      const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
+      const total_balance = !balanceNearUsd ? 0 : (balanceNear * Number(balanceNearUsd.data[0].value));
+
+      daos.value[i].funds = ((!daos.value[i]?.funds ? 0 : Number(daos.value[i].funds)) + total_balance).toFixed(2);
+    }).catch(error => {
+      console.log("error", error)
+    });
+
+
+    //sumar balance usdt en usd
+    WalletP2p.view({
+      contractId: process.env.CONTRACT_USDT,
+      methodName: "ft_balance_of",
+      args: {account_id: data[i].wallet_dao }
+    }).then(async (responseUsdtAmount) => {
+      const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;
+      const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
+      const total_balance = !balanceUsdtUsd ? 0 : (balanceUsdt * Number(balanceUsdtUsd.data[0].value));
+
+      daos.value[i].funds = ((!daos.value[i]?.funds ? 0 : Number(daos.value[i].funds)) + total_balance).toFixed(2);
+    }).catch(error => {
+      console.log("error", error)
+    });
+
+
+    // cargae nombre, descripcion y imagen
+    WalletP2p.view({
+      contractId: data[i].wallet_dao,
+      methodName: "get_config"
+    }).then(async (responseConfig) => {
+      const metadata = JSON.parse(atob(responseConfig.metadata))
+      daos.value[i].name = responseConfig.name;
+      daos.value[i].description = atob(responseConfig.purpose);
+      daos.value[i].image = metadata?.img ? metadata.img : MetademocraciaImage;
+    }).catch(error => {
+      console.log("error", error)
+    });
+
+    // cargar total de grupos
+    WalletP2p.view({
+      contractId: data[i].wallet_dao,
+      methodName: "get_policy"
+    }).then(async (responsePolicy) => {
+      daos.value[i].groups = responsePolicy.roles.length;
+    }).catch(error => {
+      console.log("error", error)
+    })
+
+  }
 
 }
 </script>

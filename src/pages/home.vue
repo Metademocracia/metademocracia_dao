@@ -196,7 +196,7 @@ async function getData() {
   await graphQl.getQueryDaoV2(query).then(async response => {
     const data = response.data.data.daos
     for(let i = 0; i < data.length; i++) {
-      const responseNearAmount = await WalletP2p.view({
+      /* const responseNearAmount = await WalletP2p.view({
         contractId: data[i].wallet_dao,
         methodName: "get_available_amount"
       });
@@ -226,7 +226,7 @@ async function getData() {
       const responsePolicy = await WalletP2p.view({
         contractId: data[i].wallet_dao,
         methodName: "get_policy"
-      });
+      }); */
 
       /*const responseSupply = await WalletP2p.view({
         contractId: data[i].wallet_dao,
@@ -240,17 +240,17 @@ async function getData() {
         }
       } */
 
-      const metadata = JSON.parse(atob(responseConfig.metadata))
+      // const metadata = JSON.parse(atob(responseConfig.metadata))
 
       listDaos.value.push({
         wallet_dao: data[i].wallet_dao,
-        image: metadata?.img ? metadata.img : MetademocraciaImage,
-        name: responseConfig.name,
+        image: MetademocraciaImage, // metadata?.img ? metadata.img : MetademocraciaImage,
+        name: undefined, // responseConfig.name,
         account: data[i].wallet_dao,
-        description: atob(responseConfig.purpose),
-        funds: total_balance.toFixed(2),
+        description: undefined, // atob(responseConfig.purpose),
+        funds: undefined, // total_balance.toFixed(2),
         members: data[i].total_members, // members,
-        groups: responsePolicy.roles.length,
+        groups: undefined, // responsePolicy.roles.length,
         activeProposals: data[i].proposal_actives, // responseSupply ? responseSupply[1] : 0,
         totalProposals: data[i].proposal_total, // responseSupply ? responseSupply[0] : 0,
       })
@@ -261,6 +261,67 @@ async function getData() {
   daos.value = listDaos.value
   if(daos.value.length > 0) {
     loading.value = false;
+  }
+
+  const data = daos.value
+  for(let i = 0; i < data.length; i++) {
+    // omitir metademocracia
+    if(process.env.CONTRACT_DAO == data[i].wallet_dao) continue;
+
+    // sumar balance near en usd
+    WalletP2p.view({
+      contractId: data[i].wallet_dao,
+      methodName: "get_available_amount"
+    }).then(async (responseNearAmount) => {
+      const balanceNear = responseNearAmount ? (Number(responseNearAmount) / 1000000000000000000000000) : 0;
+      const balanceNearUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"});
+      const total_balance = !balanceNearUsd ? 0 : (balanceNear * Number(balanceNearUsd.data[0].value));
+
+      daos.value[i].funds = ((!daos.value[i]?.funds ? 0 : Number(daos.value[i].funds)) + total_balance).toFixed(2);
+    }).catch(error => {
+      console.log("error", error)
+    });
+
+
+    //sumar balance usdt en usd
+    WalletP2p.view({
+      contractId: process.env.CONTRACT_USDT,
+      methodName: "ft_balance_of",
+      args: {account_id: data[i].wallet_dao }
+    }).then(async (responseUsdtAmount) => {
+      const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;
+      const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
+      const total_balance = !balanceUsdtUsd ? 0 : (balanceUsdt * Number(balanceUsdtUsd.data[0].value));
+
+      daos.value[i].funds = ((!daos.value[i]?.funds ? 0 : Number(daos.value[i].funds)) + total_balance).toFixed(2);
+    }).catch(error => {
+      console.log("error", error)
+    });
+
+
+    // cargae nombre, descripcion y imagen
+    WalletP2p.view({
+      contractId: data[i].wallet_dao,
+      methodName: "get_config"
+    }).then(async (responseConfig) => {
+      const metadata = JSON.parse(atob(responseConfig.metadata))
+      daos.value[i].name = responseConfig.name;
+      daos.value[i].description = atob(responseConfig.purpose);
+      daos.value[i].image = metadata?.img ? metadata.img : MetademocraciaImage;
+    }).catch(error => {
+      console.log("error", error)
+    });
+
+    // cargar total de grupos
+    WalletP2p.view({
+      contractId: data[i].wallet_dao,
+      methodName: "get_policy"
+    }).then(async (responsePolicy) => {
+      daos.value[i].groups = responsePolicy.roles.length;
+    }).catch(error => {
+      console.log("error", error)
+    })
+
   }
 
 }
