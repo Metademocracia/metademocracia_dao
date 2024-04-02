@@ -59,7 +59,7 @@
               color="primary"
               indeterminate
             ></v-progress-circular>
-            <none v-else style="color: black !important;">{{ dao?.groups }}</none>
+            {{ (!dao?.groups ? "" : dao?.groups) }}
           </h6>
         </div>
       </div>
