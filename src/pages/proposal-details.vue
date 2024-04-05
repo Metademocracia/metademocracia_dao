@@ -283,7 +283,8 @@ export default {
         this.panels = [{
           title: "Concejales",
           voices: dataVoice.length+"/"+response.serie.supply,
-          percent: Number(((dataVoice.length * Number(response.serie.supply)) / 100).toFixed(2)),
+          percent: Number(((dataVoice.length * 100) / Number(response.serie.supply)).toFixed(2)),
+                    //Number(((members.length * 100) / walletsGroup.length).toFixed(2));
           children: dataVoice
         }]
 

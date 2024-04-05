@@ -110,6 +110,12 @@ const routes = [
         meta: { head: `DAOs - ${DEFAULT_TITLE}` }
       },
       {
+        path: 'pruebas',
+        name: 'Pruebas',
+        component: () => import('@/pages/pruebas.vue'),
+        meta: { head: `Pruebas - ${DEFAULT_TITLE}` }
+      },
+      {
         path: 'my-daos',
         name: 'MyDaos',
         component: () => import('@/pages/my-daos.vue'),

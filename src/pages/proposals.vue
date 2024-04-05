@@ -292,9 +292,9 @@ export default {
 
 
       const searchProposer = !this.proposer ? `` : `, proposer_contains_nocase: "${this.proposer}"`;
-
+      // id_not: "8",
       const query = `query Proposals($type: [String], $status: [String], $userId: String, $limit: Int, $index: Int) {
-        proposals(where: {id_not: "8", ${searchStatus} ${searchProposer}} orderBy: creation_date, orderDirection: desc, skip: $index, first: $limit ) {
+        proposals(where: {${searchStatus} ${searchProposer}} orderBy: creation_date, orderDirection: desc, skip: $index, first: $limit ) {
           approval_date
           creation_date
           description
@@ -318,8 +318,6 @@ export default {
           proposal_total
         }
       }`;
-
-      console.log(query)
 
       const variables = {
         // type: type,
