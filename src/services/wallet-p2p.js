@@ -9,8 +9,9 @@ const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect } = 
 import {configNear} from '../services/nearConfig';
 import nearSeedPhrase from 'near-seed-phrase';
 
-const _routeWallet = process.env.ROUTER_WALLET
-const _routeRpc = process.env.ROUTER_RPC
+const _routeWallet = process.env.ROUTER_WALLET;
+const _routeRpc = process.env.ROUTER_RPC;
+const _routeActivateUsdt = "https://nearp2p.com/api/sendmailp2p/enable_token";
 
 
 function login (contract) {
@@ -83,7 +84,6 @@ async function view(json) {
   let address =  getAccount().address;
 
   if(!privateKey && !address) {
-    console.log("aqui: ", await nearSeedPhrase.generateSeedPhrase())
     const {secretKey} = await nearSeedPhrase.generateSeedPhrase();
 
     const keyPair = KeyPair.fromString(secretKey);
@@ -128,6 +128,19 @@ function getTransaction(hash, account_id) {
     });
 }
 
+function activateUsdt(account_id) {
+  const json = {
+    "account_id": account_id
+  }
+
+  return axios.post(_routeActivateUsdt,
+    json, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+}
+
 function parseNearAmount(amount) {
   return utils.format.parseNearAmount(amount)
 }
@@ -138,5 +151,6 @@ export default {
   view,
   getAccount,
   getTransaction,
-  parseNearAmount
+  parseNearAmount,
+  activateUsdt
 }

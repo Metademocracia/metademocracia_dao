@@ -255,8 +255,10 @@ async function getData() {
         totalProposals: data[i].proposal_total, // responseSupply ? responseSupply[0] : 0,
       })
     }
+    console.log(listDaos.value)
 
-
+  }).catch((error) => {
+    console.log("error graph: ", error)
   });
 
   daos.value = listDaos.value

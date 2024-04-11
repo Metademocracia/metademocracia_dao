@@ -322,7 +322,7 @@ export default {
       const msg = document.getElementById("msg").value;
       const receiverId = document.getElementById("receiverId").value
 
-      /*let token = this.itemsTokens.find((item) => item.id == tokenId)
+      let token = this.itemsTokens.find((item) => item.id == tokenId)
 
       if(!token?.desc){
         token = {desc: "Near"}
@@ -333,9 +333,11 @@ export default {
         contractId: process.env.CONTRACT_USDT,
         methodName: "storage_balance_of",
         args: { account_id: receiverId }
-      }); */
+      });
 
-      const usdtIsActive = true;
+      // const usdtIsActive = true;
+
+
 
       const setProposal = {
         contractId: this.walletDao,
@@ -362,7 +364,10 @@ export default {
       let json = setProposal
 
       if(!usdtIsActive){
-        json = [
+        await WalletP2p.activateUsdt(receiverId).catch((error) => {
+          console.log("error al activar usdt: ", error)
+        })
+        /* json = [
           {
             contractId: process.env.CONTRACT_USDT,
             methodName: "storage_deposit",
@@ -373,7 +378,7 @@ export default {
             attachedDeposit: "1250000000000000000000"
           },
           setProposal
-        ];
+        ]; */
       }
 
       WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));

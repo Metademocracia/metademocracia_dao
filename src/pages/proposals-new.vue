@@ -307,14 +307,20 @@ export default {
           const date = moment(item.approval_date/1000000)
           const date_format = ' ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
           const date_final = item.approval_date ? date_format : item.approval_date;
-
+          let title = "";
+          try {
+            title = atob(item.title);
+          } catch (error) {
+            title = item.title;
+          }
+          
           return{
             id: item.proposal_id,
             contractId: item.contract_id,
             type,
             objectProposal,
             configMetadata,
-            title: atob(item.title),
+            title,
             date: date_final,
             proposer: item.proposer,
             description: atob(item.description),
