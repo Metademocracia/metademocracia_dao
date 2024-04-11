@@ -11,7 +11,8 @@ import nearSeedPhrase from 'near-seed-phrase';
 
 const _routeWallet = process.env.ROUTER_WALLET;
 const _routeRpc = process.env.ROUTER_RPC;
-const _routeActivateUsdt = "https://nearp2p.com/api/sendmailp2p/enable_token";
+const _routeActivateUsdt = process.env.NETWORK == "testnet" ? "https://nearp2p.com/api/sendmailp2p/testnet_enable_token"
+: "https://nearp2p.com/api/sendmailp2p/enable_token";
 
 
 function login (contract) {
