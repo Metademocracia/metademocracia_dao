@@ -752,6 +752,7 @@ async function createDao(formValid) {
     }
   }
 
+  const isPrivated = selectTypeDao.value == "0" ? false : true;
   const metadata = btoa(JSON.stringify({
     kyc: {
       legacyState: !formItems.legacyState ? null : formItems.legacyState,
@@ -760,7 +761,7 @@ async function createDao(formValid) {
     },
     social: social.length > 0 ? social  : null,
     img: img ? img : null,
-    isPrivated: selectTypeDao.value == "0" ? false : true
+    isPrivated
   }));
 
 
@@ -770,7 +771,7 @@ async function createDao(formValid) {
     args: {
       name: nameDao.value,
       args: btoa(JSON.stringify({
-        config: {name: nameDao.value, purpose: btoa(formItems._rawValue.purpose), metadata: metadata},
+        config: {name: nameDao.value, purpose: `${btoa(formItems._rawValue.purpose)}|${JSON.stringfy({isPrivated})}` , metadata: metadata},
         //policy: [WalletP2p.getAccount().address, "prueba1.testnet", "prueba2.testnet", "hrpalencia.testnet"],
         policy: {
             roles: getRoles(),
