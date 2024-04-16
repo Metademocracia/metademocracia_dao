@@ -52,6 +52,19 @@
         :rules="[globalRules.required]"
       />
 
+      <label for="type-dao">Tipo dao</label>
+      <v-select
+        v-model="selectTypeDao"
+        id="type-dao"
+        :items="typesDao"
+        item-title="desc"
+        item-value="value"
+        variant="solo"
+        placeholder="Seleccione un tipo"
+        :rules="[(v) => !!v || 'Seleccione un tipo']"
+        required
+      ></v-select>
+
     </form-card-editable>
 
     <form-card-editable
@@ -311,7 +324,10 @@
         <p class="mt-1">{{ walletDao }}</p>
 
         <label>Propósito:</label>
-        <p class="mt-1 mb-0">{{ dataDao?.purpose }}</p>
+        <p class="mt-1">{{ dataDao?.purpose }}</p>
+
+        <label>Tipo dao:</label>
+        <p class="mt-1 mb-0">{{ !dataDao?.typeDao ? "Publico" : dataDao?.typeDao }}</p>
       </form-card>
 
 
@@ -442,7 +458,7 @@ import axios from 'axios';
 
 const
   toast = useToast(),
-  { globalRules } = variables,
+  { globalRules, typesDao, typesDaoDefault } = variables,
 
 address = WalletP2p.getAccount().address,
 tab = ref(0),
@@ -480,7 +496,8 @@ metadataDao = ref(null),
 dataConfig = ref(null),
 dataDao = ref(null),
 nameDao = ref(null),
-daoProposalKyc = ref([ { model: undefined } ])
+daoProposalKyc = ref([ { model: undefined } ]),
+selectTypeDao = ref(typesDaoDefault.value)
 
 watch(tab, clearEditing)
 watch(nameDao, async (newName, oldName) => {
@@ -514,10 +531,12 @@ async function getData() {
   dataConfig.value = responseConfig;
   dataDao.value = {
     name: dataConfig.value?.name,
-    purpose: atob(dataConfig.value?.purpose)
+    purpose: atob(dataConfig.value?.purpose),
+    typeDao: !metadataDao.value?.isPrivated ? "Publico" : "Privado",
   }
   links.value = metadataDao.value.social.map((item) => {return {text: item, href: item}});
-  daoLogo.value = !metadataDao.value?.img ? MetademocraciaImage : metadataDao.value?.img
+  daoLogo.value = !metadataDao.value?.img ? MetademocraciaImage : metadataDao.value?.img;
+  // selectTypeDao.value = !metadataDao.value?.isPrivated ? false : metadataDao.value?.isPrivated;
 
   //console.log("links: ", metadataDao.value.social.map((item) => {return {text: item, href: item}}))
 
@@ -575,6 +594,12 @@ async function onCompleted({ formValid }) {
     case 0:  {
       dataConfig.value.name = nameDao.value;
       dataConfig.value.purpose = document.getElementById("purposeDao").value;
+
+      metadataDao.value.isPrivated = selectTypeDao.value;
+
+      const metadata = btoa(JSON.stringify(metadataDao.value));
+      dataConfig.value.metadata = metadata
+
 
       const link = document.getElementById("linkName").value;
       const title = btoa("Cambio de nombre y propósito del dao");

@@ -20,7 +20,8 @@ const mapGroupAlls = (text) => {
 
 export default {
   // ? custom defines
-
+  typesDao: [{desc: "Publico", value: "0"}, {desc: "Privado", value: "1"}],
+  typesDaoDefault: {desc: "Publico", value: "0"},
   groupAllDefault,
   groupAlls,
   mapGroupAlls,

@@ -136,9 +136,9 @@ async function call(){
   const nearConnection = await connect(connectionConfig);
 
   const walletConnection = new WalletConnection(nearConnection, "metaDao");
-
-  const account = walletConnection.account().functionCall()
-  console.log(account)
+  console.log("walletConnection: ", walletConnection)
+  const account = walletConnection.account() // .functionCall()
+  console.log("account: ", account)
 
   const contract = new Contract(account, "pruebas12.factoryv4.metademocracia.testnet", {
     changeMethods: ["add_proposal"],
@@ -153,7 +153,7 @@ async function call(){
       }
     },
     "200000000000000", // attached GAS (optional)
-    "1000000000000000000000000" // attached deposit in yoctoNEAR (optional)
+    "200000000000000000000000" // attached deposit in yoctoNEAR (optional)
   );
 }
 

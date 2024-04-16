@@ -66,6 +66,20 @@
               counter="200"
               :rules="[globalRules.required, v => v.length <= 200 || 'Max 200 characters']"
             />
+
+            <label for="type-dao">Tipo dao</label>
+            <v-select
+              v-model="selectTypeDao"
+              id="type-dao"
+              :items="typesDao"
+              item-title="desc"
+              item-value="value"
+              variant="solo"
+              placeholder="Seleccione un grupo"
+              :rules="[(v) => !!v || 'Seleccione un tipo']"
+              required
+            ></v-select>
+
           </form-card>
         </v-window-item>
 
@@ -436,7 +450,7 @@ import {configNear} from '../services/nearConfig';
 
 const
   toast = useToast(),
-  { globalRules, groupsDefaults, groupAllDefault, groupDefault, proposalKind } = variables,
+  { globalRules, groupsDefaults, groupAllDefault, groupDefault, proposalKind, typesDao, typesDaoDefault } = variables,
   router = useRouter(),
   route = useRoute(),
 
@@ -485,7 +499,8 @@ contractCost = ref(""),
 contractCostNear = ref(""),
 loadingBtn = ref(false),
 groupCouncil = ref(groupDefault),
-addressUser = WalletP2p.getAccount().address
+addressUser = WalletP2p.getAccount().address,
+selectTypeDao = ref(typesDaoDefault.value)
 
 watch(nameDao, async (newName, oldName) => {
   if(newName){
@@ -744,7 +759,8 @@ async function createDao(formValid) {
       documentsKyc: documentsKyc
     },
     social: social.length > 0 ? social  : null,
-    img: img ? img : null
+    img: img ? img : null,
+    isPrivated: selectTypeDao.value == "0" ? false : true
   }));
 
 
