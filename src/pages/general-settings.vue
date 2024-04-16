@@ -593,7 +593,7 @@ async function onCompleted({ formValid }) {
     // Name and proposal about DAO
     case 0:  {
       dataConfig.value.name = nameDao.value;
-      dataConfig.value.purpose = `${btoa(document.getElementById("purposeDao").value)}|${JSON.stringfy({isPrivated})}`;
+      dataConfig.value.purpose = `${btoa(document.getElementById("purposeDao").value)}|${JSON.stringify({isPrivated})}`;
 
       const isPrivated = selectTypeDao.value == "0" ? false : true;
       metadataDao.value.isPrivated = isPrivated;
