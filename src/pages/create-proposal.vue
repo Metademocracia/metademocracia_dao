@@ -296,7 +296,7 @@ export default{
             proponent: WalletP2p.getAccount().address,
             kind: {
               Transfer: {
-                token_id: tokenId, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
+                token_id: tokenId == "" ? null : tokenId, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
                 receiver_id: receiverId,
                 amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
                 msg: msg ? msg.lenght > 0 ? msg.length : null : null,

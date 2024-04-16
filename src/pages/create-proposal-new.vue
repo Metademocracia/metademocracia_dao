@@ -348,7 +348,7 @@ export default {
             description: btoa(document.getElementById("description").value),
             kind: {
               Transfer: {
-                token_id: tokenId,
+                token_id: tokenId == "" ? null : tokenId,
                 receiver_id: receiverId,
                 amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
                 msg: msg ? msg.lenght > 0 ? msg.length : null : null,

@@ -313,7 +313,7 @@ function mapAmount() {
     if(props.proposal?.type != "Transfer") return undefined
 
     const tokenId = props.proposal?.objectProposal.token_id;
-    const asset = tokenId == "" ? "NEAR" : "USDT";
+    const asset = !tokenId || tokenId == "" ? "NEAR" : "USDT";
     const decimals = asset == "NEAR" ? 24 : 6;
     const amount = Number(props.proposal?.objectProposal.amount);
     // const fixe = asset == "NEAR" ? 5 : 2;
@@ -352,18 +352,20 @@ async function finalize(id, contractId, type) {
 
   if(contractId == process.env.CONTRACT_DAO) {
     const isMember = await utilsDAO.isMember();
-    if(isMember) {
-      json = {
-        contractId: process.env.CONTRACT_DAO,
-        methodName: "update_proposal",
-        args: {
-          id: Number(id),
-          action: "VoteApprove"
-        },
-        gas: "56000000000000"
-        // attachedDeposit: "100000000000000000000"
-      };
-    }
+
+    if(!isMember) return
+
+    json = {
+      contractId: process.env.CONTRACT_DAO,
+      methodName: "update_proposal",
+      args: {
+        id: Number(id),
+        action: "VoteApprove"
+      },
+      gas: "56000000000000"
+      // attachedDeposit: "100000000000000000000"
+    };
+
   }
 
   WalletP2p.call(json);
@@ -387,18 +389,19 @@ async function upvote(id, contractId, type) {
 
   if(contractId == process.env.CONTRACT_DAO) {
     const isMember = await utilsDAO.isMember();
-    if(isMember) {
-      json = {
-        contractId: process.env.CONTRACT_DAO,
-        methodName: "update_proposal",
-        args: {
-          id: Number(id),
-          action: "VoteApprove"
-        },
-        gas: "56000000000000"
-        // attachedDeposit: "100000000000000000000"
-      };
-    }
+
+    if(!isMember) return
+
+    json = {
+      contractId: process.env.CONTRACT_DAO,
+      methodName: "update_proposal",
+      args: {
+        id: Number(id),
+        action: "VoteApprove"
+      },
+      gas: "56000000000000"
+      // attachedDeposit: "100000000000000000000"
+    };
   }
 
   WalletP2p.call(json);
@@ -424,18 +427,19 @@ async function downvote(id, contractId, type) {
 
   if(contractId == process.env.CONTRACT_DAO) {
     const isMember = await utilsDAO.isMember();
-    if(isMember) {
-      json = {
-        contractId: process.env.CONTRACT_DAO,
-        methodName: "update_proposal",
-        args: {
-          id: Number(id),
-          action: "VoteReject"
-        },
-        gas: "56000000000000"
-        // attachedDeposit: "100000000000000000000"
-      };
-    }
+
+    if(!isMember) return
+
+    json = {
+      contractId: process.env.CONTRACT_DAO,
+      methodName: "update_proposal",
+      args: {
+        id: Number(id),
+        action: "VoteReject"
+      },
+      gas: "56000000000000"
+      // attachedDeposit: "100000000000000000000"
+    };
   }
 
   WalletP2p.call(json);
