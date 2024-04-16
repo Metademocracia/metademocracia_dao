@@ -134,10 +134,10 @@ async function getData() {
       break;
   }
 
-  const _likeWalletDao = !likeWalletDao.value ? '' : 'where: {wallet_dao_contains: "' + likeWalletDao.value + '"},';
+  const _likeWalletDao = !likeWalletDao.value ? '' : ', wallet_dao_contains: "' + likeWalletDao.value + '" ';
 
   const query = `query dao {
-    daos(${_likeWalletDao} orderBy: ${orderBy}, orderDirection: ${orderDirection}) {
+    daos(where: {isPrivated: false ${_likeWalletDao}}, orderBy: ${orderBy}, orderDirection: ${orderDirection}) {
       owner_id
       wallet_dao
       total_members
