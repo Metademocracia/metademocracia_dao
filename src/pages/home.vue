@@ -305,8 +305,10 @@ async function getData() {
       methodName: "get_config"
     }).then(async (responseConfig) => {
       const metadata = JSON.parse(atob(responseConfig.metadata))
+      const purposeData =  responseConfig.purpose.split("|");
+
       daos.value[i].name = responseConfig.name;
-      daos.value[i].description = atob(responseConfig.purpose);
+      daos.value[i].description = purposeData.length > 1 ? atob(purposeData[0]) : atob(responseConfig.purpose);
       daos.value[i].image = metadata?.img ? metadata.img : MetademocraciaImage;
     }).catch(error => {
       console.log("error", error)
