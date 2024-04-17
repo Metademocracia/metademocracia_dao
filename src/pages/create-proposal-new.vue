@@ -84,8 +84,8 @@
                     variant="solo"
                     :error-messages="item.memberErrror"
                     :success-messages="item.memberSuccess"
-                    @keyup="validMember(item)"
-                    @change="validMember(item)"
+                    @keyup="validMember(item, true)"
+                    @change="validMember(item, true)"
                   />
 
                   <v-select
@@ -95,7 +95,7 @@
                     placeholder="Seleccione un grupo"
                     :rules="[(v) => !!v || 'Seleccione un grupo']"
                     required
-                    @update:modelValue="validMember(item)"
+                    @update:modelValue="validMember(item, true)"
                   >
                     <template #append>
                       <v-btn
@@ -260,7 +260,16 @@ export default {
   },
 
   methods: {
-    async validMember(item) {
+    async validMember(item, validDuplicateMembers = false) {
+
+      if(validDuplicateMembers) {
+        const duplicateMember = this.validUniqueMember(item, this.daoMembers);
+        if(duplicateMember){
+          item.memberSuccess = null
+          item.memberErrror = "No puede repetir el usuario en un mismo grupo"
+          return
+        }
+      }
 
       const keyStore = new keyStores.InMemoryKeyStore()
       const near = new Near(configNear(keyStore))
@@ -277,7 +286,7 @@ export default {
       } else {
         if(item?.type) {
           const exist = await this.isMember(item.member, item.type);
-          
+
           if(exist) {
             item.memberSuccess = null
             item.memberErrror = "El usuario ya pertenece al grupo donde lo quiere agregar"
@@ -314,6 +323,21 @@ export default {
       if(memberResult.length <= 0) return false;
 
       return true;
+    },
+
+    validUniqueMember(item, data) {
+      if(!item || !data) return false
+      if(!item?.member || !item?.type) return false
+
+      const array = [].concat((!data[0].member ? [] : data))
+
+      const search = array.filter((elem) =>
+        (!elem?.member ? "undefined" : elem?.member.toUpperCase()) == item?.member.toUpperCase()
+        &&
+        ( !elem?.type ? "undefined" : elem?.type.toUpperCase()) == item?.type.toUpperCase()
+      )
+
+      return (search.length > 1)
     },
 
     async onSubmit() {
