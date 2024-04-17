@@ -78,6 +78,7 @@
           <p style="word-break: break-all;">{{ proposal?.proposer }}</p>
 
 
+          <!-- if ChangeConfig  -->
           <span v-if="proposal?.type == 'ChangeConfig'">
             <p class="label mb-2">Motivo</p>
             <p class="ellipsis-box" style="--lines: 6; color: black !important;"> {{ proposal?.description }}</p>
@@ -113,6 +114,7 @@
 
           </span>
 
+          <!-- if AddMemberToRole  or RemoveMemberFromRole  -->
           <span v-else-if="proposal?.type == 'AddMemberToRole' || proposal?.type == 'RemoveMemberFromRole'">
             <p class="label mb-2">Descripción</p>
             <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.description }} </p>
@@ -124,6 +126,29 @@
             <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal?.role }} </p>
           </span>
 
+
+          <!-- if AddMembersToRole  -->
+          <span v-else-if="proposal?.type == 'AddMembersToRole'">
+            <p class="label mb-2">Descripción</p>
+            <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.description }} </p>
+
+            <center><p class="label mb-4">Lista de miembros a agregar</p></center>
+
+            <div style="gap: 20px; display: grid; grid-template-columns: repeat(2, 1fr);">
+                <p class="label mb-2">Usuarios</p>
+                <p class="label mb-2">Roles</p>
+            </div>
+            <span v-for="(item, i) in proposal?.objectProposal?.members_id" :key="i">
+              <div style="gap: 20px; display: grid; grid-template-columns: repeat(2, 1fr);">
+                <p class="ellipsis-box" style="--lines: 6;"> {{item.split("|")[1]}} </p>
+                <p class="ellipsis-box" style="--lines: 6;"> {{item.split("|")[0]}} </p>
+              </div>
+            </span>
+
+          </span>
+
+
+          <!-- if Transfer  -->
           <span v-else-if="proposal?.type == 'Transfer'">
             <p class="label mb-2">Descripción</p>
             <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.description }} </p>

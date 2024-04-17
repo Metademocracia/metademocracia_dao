@@ -50,23 +50,73 @@
               placeholder="Link_de_prueba.com"
             />
 
-            <span v-if="typeSelect === 'Agregar miembros'">
+            <span v-if="typeSelect === 'Agregar miembro'">
               <label for="member">Miembro</label>
               <v-text-field
+                v-model="memberItem.member"
                 id="member"
                 variant="solo"
                 placeholder="member.near"
                 :rules="[globalRules.required]"
+                :error-messages="memberItem.memberErrror"
+                :success-messages="memberItem.memberSuccess"
+                @keyup="validMember(memberItem)"
+                @change="validMember(memberItem)"
               />
 
               <label for="roles">Grupo</label>
               <v-select
+                v-model="memberItem.type"
                 id="roles"
                 :items="roles"
+                @update:modelValue="validMember(memberItem)"
               />
             </span>
 
-            <span v-if="typeSelect === 'Eliminar miembros'">
+            <span v-if="typeSelect === 'Agregar miembros'">
+              <label>Agregue miembros al DAO.</label>
+              <div style="gap: 20px; display: grid; grid-template-columns: repeat(2, 1fr);">
+
+                <template v-for="(item, i) in daoMembers" :key="i">
+                  <v-text-field
+                    v-model="item.member"
+                    placeholder="ap6ay7auhan6a78ahah8gfcvbay77a9a0han5"
+                    variant="solo"
+                    :error-messages="item.memberErrror"
+                    :success-messages="item.memberSuccess"
+                    @keyup="validMember(item)"
+                    @change="validMember(item)"
+                  />
+
+                  <v-select
+                    v-model="item.type"
+                    :items="roles"
+                    variant="solo"
+                    placeholder="Seleccione un grupo"
+                    :rules="[(v) => !!v || 'Seleccione un grupo']"
+                    required
+                    @update:modelValue="validMember(item)"
+                  >
+                    <template #append>
+                      <v-btn
+                        min-width="70"
+                        height="42"
+                        :color="i == daoMembers.length - 1 && i <= 7 ? '#61C2D5' : '#505050'"
+                        style="border-radius: 8px !important;"
+                        @click="() => {
+                          if (i == daoMembers.length - 1 && i <= 7) return daoMembers.push({  member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined })
+                          daoMembers.splice(i, 1)
+                        }"
+                      >
+                        <v-icon :icon="i == daoMembers.length - 1  && i <= 7 ? 'mdi-plus' : 'mdi-minus'" size="25" class="text-white" />
+                      </v-btn>
+                    </template>
+                  </v-select>
+                </template>
+              </div>
+            </span>
+
+            <span v-if="typeSelect === 'Eliminar miembro'">
               <label for="roles">Grupo</label>
               <v-select
                 v-model="roleSelect"
@@ -137,7 +187,12 @@ import '@/assets/styles/pages/create-proposal-new.scss'
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import WalletP2p from '../services/wallet-p2p';
+import graphQl from '@/services/graphQl';
 import variables from '@/mixins/variables';
+import * as nearAPI from "near-api-js";
+const { utils, Account, NearUtils, KeyPair, keyStores, Near, connect, transactions } = nearAPI;
+import {configNear} from '../services/nearConfig';
+
 
 export default {
   setup() {
@@ -147,8 +202,9 @@ export default {
       globalRules,
       proposalTypes: ref([
         "Votación",
+        "Agregar miembro",
         "Agregar miembros",
-        "Eliminar miembros",
+        "Eliminar miembro",
         "Transferencia"
       ]),
       typeSelect: ref(null),
@@ -163,7 +219,9 @@ export default {
       itemsTokens: [
         {id: null, desc: "Near"},
         {id: process.env.CONTRACT_USDT, desc: "USDT"},
-      ]
+      ],
+      daoMembers: ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ]),
+      memberItem: ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ])
     }
   },
 
@@ -202,6 +260,62 @@ export default {
   },
 
   methods: {
+    async validMember(item) {
+
+      const keyStore = new keyStores.InMemoryKeyStore()
+      const near = new Near(configNear(keyStore))
+      const account = new Account(near.connection, item.member)
+
+      const resultState = await account.state().catch(() => {
+        item.memberSuccess = null
+        item.memberErrror = "Wallet no válida"
+      });
+
+      if(!resultState) {
+        item.memberSuccess = null
+        item.memberErrror = "Wallet no válida"
+      } else {
+        if(item?.type) {
+          const exist = await this.isMember(item.member, item.type);
+          
+          if(exist) {
+            item.memberSuccess = null
+            item.memberErrror = "El usuario ya pertenece al grupo donde lo quiere agregar"
+            return
+          }
+        }
+        item.memberErrror = null
+        item.memberSuccess = "Wallet válido"
+      }
+    },
+
+    async isMember(member, rol) {
+      const query = `query MyQuery {
+        members(
+          where: {dao: "${this.walletDao}", group_: {group: "${rol}"}, member: "${member}"}
+        ) {
+          member
+          group {
+            group
+          }
+        }
+      }`;
+
+      const result = await graphQl.getQueryDaoV2(query).catch((error) => {
+        console.log("error isMember: ", error)
+        return true
+      });
+
+      if(!result) return true;
+
+      const memberResult = result.data?.data?.members;
+
+      if(!memberResult) return true;
+      if(memberResult.length <= 0) return false;
+
+      return true;
+    },
+
     async onSubmit() {
 
       if (!this.formValid) return
@@ -228,10 +342,13 @@ export default {
           case "Votación": this.addVote(bounty_bond);
             break;
 
+          case "Agregar miembro": this.addMember(bounty_bond);
+            break;
+
           case "Agregar miembros": this.addMembers(bounty_bond);
             break;
 
-          case "Eliminar miembros": this.deleteMembers(bounty_bond);
+          case "Eliminar miembro": this.deleteMembers(bounty_bond);
             break;
 
           case "Transferencia": await this.addTransfer(bounty_bond);
@@ -268,7 +385,7 @@ export default {
       WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
     },
 
-    addMembers(bounty_bond) {
+    addMember(bounty_bond) {
       const json = {
         contractId: this.walletDao,
         methodName: "add_proposal",
@@ -289,6 +406,29 @@ export default {
         attachedDeposit: bounty_bond
       };
 
+      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+    },
+
+    addMembers(bounty_bond) {
+      const json = {
+        contractId: this.walletDao,
+        methodName: "add_proposal",
+        args: {
+          proposal: {
+            title: btoa(document.getElementById("title").value),
+            description: btoa(document.getElementById("description").value),
+            kind: {
+              AddMembersToRole: {
+                members_id: this.daoMembers.map((item) => { return `${item.type}|${item.member}` }),
+              }
+            },
+            link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
+          }
+        },
+        gas: "200000000000000",
+        attachedDeposit: bounty_bond
+      };
+      // console.log("json: ", json)
       WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
     },
 
@@ -348,7 +488,7 @@ export default {
             description: btoa(document.getElementById("description").value),
             kind: {
               Transfer: {
-                token_id: tokenId == "" ? null : tokenId,
+                token_id: tokenId,
                 receiver_id: receiverId,
                 amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
                 msg: msg ? msg.lenght > 0 ? msg.length : null : null,
