@@ -202,65 +202,65 @@
               <span>{{ proposal?.remainingTime }}</span>
             </div>
           </aside>
-
-          <aside v-if="proposal?.status == 'Failed'" class="flex-center" style="gap: 20px;">
-            <div class="flex-center" style="gap: 10px;">
-              <v-btn
-                class="bg-tertiary"
-                elevation="1"
-                @click="finalize(proposal?.id, proposal?.contractId, proposal?.type)"
-              >
-              <h7 class="text-white" style="font-weight: 500">Culminar</h7>
-              </v-btn>
-            </div>
-          </aside>
-          <aside v-else class="flex-center" style="gap: 20px;">
-            <div class="flex-center" style="gap: 10px;">
-              <!--<v-btn
-                icon
-                :disabled="proposal?.vote || !['InProgress', 'Failed'].includes(proposal?.status)"
-                :color="(proposal?.vote == 'VoteApprove' ? '#77f1a4' : '#EEE6F1')"
-                elevation="0"
-                size="29"
-                @click="upvote(proposal?.id, proposal?.contractId, proposal?.type)"
-              >-->
-                <!--<v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />-->
-                <img
-                  :src="proposal?.vote == 'VoteApprove' ? VotoPositivoIcon : VotoPositivoGrisIcon"
-                  alt="voto positivo"
-                  class=""
-                  :style="'--w: clamp(2.23em, 12vw, 0.45em); width: var(--w); height: var(--w); float: right;'+(!proposal?.vote && proposal?.status == 'InProgress' ? 'cursor:pointer;' : '')"
-                  @click="() => {if(!proposal?.vote && proposal?.status == 'InProgress') {upvote(proposal?.id, proposal?.contractId, proposal?.type)}}"
-                >
-              <!--</v-btn>-->
-
-              <span>{{ proposal?.likes }}</span>
-            </div>
-
-            <div class="flex-center" style="gap: 10px;">
-              <!--<v-btn
-                icon
-                :disabled="proposal?.vote || !['InProgress', 'Failed'].includes(proposal?.status)"
-                :color="proposal?.vote == 'VoteReject' ? '#77f1a4' : '#EEE6F1'"
-                elevation="0"
-                size="29"
-                @click="downvote(proposal?.id, proposal?.contractId, proposal?.type)"
-              >-->
-                <!--<v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />-->
-                <img
-                  :src="proposal?.vote == 'VoteReject' ? VotoNegativoIcon : VotoNegativoGrisIcon"
-                  alt="voto positivo"
-                  class="mt-3"
-                  :style="'--w: clamp(2.23em, 12vw, 0.45em); width: var(--w); height: var(--w); float: right;'+(!proposal?.vote && proposal?.status == 'InProgress' ? 'cursor:pointer;' : '')"
-                  @click="() => {if(!proposal?.vote && proposal?.status == 'InProgress') {downvote(proposal?.id, proposal?.contractId, proposal?.type)}}"
-                >
-              <!--</v-btn>-->
-
-              <span>{{ proposal?.dislikes }}</span>
-            </div>
-          </aside>
         </div>
       </v-card-text>
+
+      <aside v-if="proposal?.status == 'Failed'" class="flex-center ml-auto" style="gap: 20px;">
+        <div class="flex-center" style="gap: 10px;">
+          <v-btn
+            class="bg-tertiary"
+            elevation="1"
+            @click="finalize(proposal?.id, proposal?.contractId, proposal?.type)"
+          >
+          <h7 class="text-white" style="font-weight: 500">Culminar</h7>
+          </v-btn>
+        </div>
+      </aside>
+      <aside v-else class="flex-center ml-auto" style="gap: 20px;">
+        <div class="flex-center" style="gap: 10px;">
+          <!--<v-btn
+            icon
+            :disabled="proposal?.vote || !['InProgress', 'Failed'].includes(proposal?.status)"
+            :color="(proposal?.vote == 'VoteApprove' ? '#77f1a4' : '#EEE6F1')"
+            elevation="0"
+            size="29"
+            @click="upvote(proposal?.id, proposal?.contractId, proposal?.type)"
+          >-->
+            <!--<v-icon icon="mdi-thumb-up" color="#DC7AAB" size="15" />-->
+            <img
+              :src="proposal?.vote == 'VoteApprove' ? VotoPositivoIcon : VotoPositivoGrisIcon"
+              alt="voto positivo"
+              class=""
+              :style="'--w: clamp(2.23em, 12vw, 0.45em); width: var(--w); height: var(--w); float: right;'+(!proposal?.vote && proposal?.status == 'InProgress' ? 'cursor:pointer;' : '')"
+              @click="() => {if(!proposal?.vote && proposal?.status == 'InProgress') {upvote(proposal?.id, proposal?.contractId, proposal?.type)}}"
+            >
+          <!--</v-btn>-->
+
+          <span>{{ proposal?.likes }}</span>
+        </div>
+
+        <div class="flex-center" style="gap: 10px;">
+          <!--<v-btn
+            icon
+            :disabled="proposal?.vote || !['InProgress', 'Failed'].includes(proposal?.status)"
+            :color="proposal?.vote == 'VoteReject' ? '#77f1a4' : '#EEE6F1'"
+            elevation="0"
+            size="29"
+            @click="downvote(proposal?.id, proposal?.contractId, proposal?.type)"
+          >-->
+            <!--<v-icon icon="mdi-thumb-down" color="#DC7AAB" size="15" />-->
+            <img
+              :src="proposal?.vote == 'VoteReject' ? VotoNegativoIcon : VotoNegativoGrisIcon"
+              alt="voto positivo"
+              class="mt-3"
+              :style="'--w: clamp(2.23em, 12vw, 0.45em); width: var(--w); height: var(--w); float: right;'+(!proposal?.vote && proposal?.status == 'InProgress' ? 'cursor:pointer;' : '')"
+              @click="() => {if(!proposal?.vote && proposal?.status == 'InProgress') {downvote(proposal?.id, proposal?.contractId, proposal?.type)}}"
+            >
+          <!--</v-btn>-->
+
+          <span>{{ proposal?.dislikes }}</span>
+        </div>
+      </aside>
     </v-card>
   </v-sheet>
 </template>
