@@ -181,7 +181,7 @@ export default {
 
 
   methods: {
-    async loadData() {
+    /* async loadData() {
       const proposalType = !this.type ? '' : ', proposal_type: "' + this.type + '"';
       const statusProposal = !this.status ? '' : ', status: "' + this.status + '"';
       const proposerLike = !this.likeProposer ? '' : ', proposer_contains: "' + this.likeProposer + '"';
@@ -221,7 +221,7 @@ export default {
       }
 
       await graphQl.getQueryDaoV2(query, variables).then(async response => {})
-    },
+    }, */
 
     async getData() {
       const proposalType = !this.type ? '' : ', proposal_type: "' + this.type + '"';
@@ -231,6 +231,8 @@ export default {
       const query = `query MyQuery($contractId: String, $userId: String, $limit: Int, $index: Int) {
         dao(id: $contractId) {
           proposal_total
+          proposal_period
+          proposal_bond
         }
 
         proposals(where: {contract_id: $contractId ${proposalType} ${statusProposal} ${proposerLike}},
@@ -248,6 +250,7 @@ export default {
           title
           upvote
           downvote
+          submission_time
           vote(where: {user_id: $userId}) {
             vote
           }
@@ -313,7 +316,12 @@ export default {
           } catch (error) {
             title = item.title;
           }
-          
+
+          const fechaVencimiento = moment((Number(item.submission_time) + Number(dao.proposal_period))/1000000);
+          const diasRestantes = fechaVencimiento <= moment() ? 0 : fechaVencimiento.diff(moment(), 'days')
+          const remainingTime = `${diasRestantes} dias - el ${fechaVencimiento.format('DD MMMM')} de ${fechaVencimiento.format('yyyy')}`
+          const status = diasRestantes == 0 && item.status == "InProgress" ? "Expired" : item.status
+
           return{
             id: item.proposal_id,
             contractId: item.contract_id,
@@ -325,11 +333,11 @@ export default {
             proposer: item.proposer,
             description: atob(item.description),
             approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
-            status: item.status,
+            status,
             link: item.link,
             amount: null,
             claims: null,
-            remainingTime: "una semana",
+            remainingTime,
             likes: item.upvote,
             dislikes: item.downvote,
             vote: item.vote.length > 0 ? item.vote[0].vote : undefined,
