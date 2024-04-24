@@ -22,15 +22,7 @@
           <img
             :src="imgDao"
             alt="Members"
-            style="
-              max-width: 60px;
-              $size: 58px;
-              width: $size;
-              height: $size;
-              border-radius: 50%;
-              border: 3.5px solid rgb(var(--v-theme-primary));
-              background: linear-gradient(-145deg, rgb(var(--v-theme-primary)), #62C3D7);
-              object-fit: cover;"
+            style="max-width: 60px; $size: 58px; width: $size; height: $size; border-radius: 50%; border: 3.5px solid rgb(var(--v-theme-primary)); background: linear-gradient(-145deg, rgb(var(--v-theme-primary)), #62C3D7); object-fit: cover;"
             class="dao-image mx-auto">
           <span style="font-weight: 700!important; line-height: 1.6ch;">
             Dao: <br> <br>
@@ -191,7 +183,8 @@ export default {
       // route_dao: ref(null),
       walletDao: ref(null),
       formValid: ref(false),
-      imgDao: ref(MetademocraciaImage)
+      imgDao: ref(MetademocraciaImage),
+      account_id: ref(null)
     }
   },
   mounted(){
@@ -284,6 +277,8 @@ export default {
       this.create_proposal = true;
     } */
 
+
+
     switch (this.$route.name) {
       case 'Funds':
         this.tab = 1
@@ -302,6 +297,11 @@ export default {
 
 
   methods: {
+    async getAccountId() {
+      const accounId = await WalletP2p.getAccountId();
+      this.account_id = accounId
+    },
+
     /* isRouteValid() {
       return this.routes.find((route) => route === this.route)
     }, */
@@ -339,7 +339,7 @@ export default {
       }
     },
     async openDialog() {
-      if(!WalletP2p.getAccount().address) {
+      if(!this.account_id) {
         this.$toast('Debe conectar su wallet primero para poder donar')
         return
       }
@@ -358,7 +358,7 @@ export default {
       switch (this.selectedToken) {
         case 'NEAR': {
           const contractId = this.walletDao == process.env.CONTRACT_DAO ? process.env.CONTRACT_DAO : process.env.CONTRACT_FACTORY;
-          const delegateAccount = this.walletDao == process.env.CONTRACT_DAO ? WalletP2p.getAccount().address : this.walletDao;
+          const delegateAccount = this.walletDao == process.env.CONTRACT_DAO ? this.account_id : this.walletDao;
 
           const amount = WalletP2p.parseNearAmount(this.amount_near).toString();
           const deposit = WalletP2p.parseNearAmount(this.amount_near).toString();
@@ -392,42 +392,48 @@ export default {
             args: { account_id: this.walletDao }
           });
 
-          let json = {
-            contractId: process.env.CONTRACT_USDT,
-            methodName: "ft_transfer",
-            args: {
-              receiver_id: this.walletDao,
-              amount: amount
-            },
-            gas: "300000000000000",
-            attachedDeposit: "1"
-          };
-          if(!usdtIsActive){
-            json = [
-              {
-                contractId: process.env.CONTRACT_USDT,
-                methodName: "storage_deposit",
-                args: {
-                  account_id: this.walletDao,
-                },
-                gas: "30000000000000",
-                attachedDeposit: "1250000000000000000000"
-              },
-              {
-                contractId: process.env.CONTRACT_USDT,
-                methodName: "ft_transfer",
-                args: {
-                  receiver_id: this.walletDao,
-                  amount: amount
-                },
-                gas: "15000000000000",
-                attachedDeposit: "1"
-              }
-            ];
-          }
 
+          if(!usdtIsActive){
+            const transactions = [
+              {
+                receiverId: process.env.CONTRACT_USDT,
+                functionCalls: [
+                  {
+                    methodName: "storage_deposit",
+                    args: {
+                      account_id: this.walletDao,
+                    },
+                    gas: "30000000000000",
+                    attachedDeposit: "1250000000000000000000"
+                  },
+                  {
+                    methodName: "ft_transfer",
+                    args: {
+                      receiver_id: this.walletDao,
+                      amount: amount
+                    },
+                    gas: "15000000000000",
+                    attachedDeposit: "1"
+                  }
+                ]
+              },
+            ];
+
+            await WalletP2p.callBatchTransactions(transactions);
+          } else {
+            const json = {
+              contractId: process.env.CONTRACT_USDT,
+              methodName: "ft_transfer",
+              args: {
+                receiver_id: this.walletDao,
+                amount: amount
+              },
+              gas: "300000000000000",
+              attachedDeposit: "1"
+            };
+            await WalletP2p.call(json);
+          }
           // 1000000000000000000000
-          WalletP2p.call(json);
         }
           break;
       }

@@ -129,7 +129,7 @@ export default {
       page2: ref(1),
       filterTypeProposalSelected: ref('*'),
 			filterStatusSelected: ref('*'),
-      session: WalletP2p.getAccount(),
+      session: ref(null), // WalletP2p.getA ccount(),
       isMember: ref(utilsDAO.isMember()),
       typeProposal: [
         {id: "*", desc: "Todas"},
@@ -193,6 +193,7 @@ export default {
 
 
   mounted() {
+    this.getAddress()
     this.loadProposal();
   },
 
@@ -203,6 +204,11 @@ export default {
   },
 
   methods: {
+    async getAddress() {
+      const accoun_id = await WalletP2p.getAccountId();
+      this.session = accoun_id;
+    },
+
     copy(id) {
       const link = window.location.origin + process.env.VITE_BASE_URL + "proposals-details?id=" + id
       navigator.clipboard.writeText(link);
@@ -272,7 +278,7 @@ export default {
 
         const variables = {
           // type: type,
-          userId: WalletP2p.getAccount().address,
+          userId: this.session,
         };
 
         await graphQl.getQuery(query, variables).then(response => {
@@ -321,7 +327,7 @@ export default {
 
       const variables = {
         // type: type,
-        userId: WalletP2p.getAccount().address,
+        userId: this.session,
         limit: this.elementosPorPagina,
         index:this.nextIndex
       };

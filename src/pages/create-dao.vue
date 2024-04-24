@@ -499,7 +499,7 @@ contractCost = ref(""),
 contractCostNear = ref(""),
 loadingBtn = ref(false),
 groupCouncil = ref(groupDefault),
-addressUser = WalletP2p.getAccount().address,
+addressUser = ref(null), // WalletP2p.getAccou nt().address,
 selectTypeDao = ref(typesDaoDefault.value)
 
 watch(nameDao, async (newName, oldName) => {
@@ -516,12 +516,17 @@ watch(nameDao, async (newName, oldName) => {
 
 
 //this.value.replace(/[^a-zA-Z0-9]/,'')"
+onBeforeMount(getAddress)
 onBeforeMount(getFee)
 
 /*function chargeCouncil() {
   console.log("aqui paso")
   groupCouncil.value = customGroups.value[0].model;
 }*/
+async function getAddress() {
+  const account_id = await WalletP2p.getAccountId();
+  addressUser.value = account_id;
+}
 
 function validUniqueGroup(item) {
   if(!item || !groupCouncil.value) return true
@@ -708,7 +713,7 @@ function getRoles(){
       roles.push({
         name: group,
         kind: {
-            Group: group == groupCouncil.value ? [WalletP2p.getAccount().address].concat(members) : members
+            Group: group == groupCouncil.value ? [addressUser].concat(members) : members
         },
         permissions: rol,
         vote_policy: {}
@@ -772,7 +777,7 @@ async function createDao(formValid) {
       name: nameDao.value,
       args: btoa(JSON.stringify({
         config: {name: nameDao.value, purpose: `${btoa(formItems._rawValue.purpose)}|${JSON.stringify({isPrivated})}` , metadata: metadata},
-        //policy: [WalletP2p.getAccount().address, "prueba1.testnet", "prueba2.testnet", "hrpalencia.testnet"],
+        //policy: [WalletP2p.getAc count().address, "prueba1.testnet", "prueba2.testnet", "hrpalencia.testnet"],
         policy: {
             roles: getRoles(),
             default_vote_policy: {

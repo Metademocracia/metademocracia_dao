@@ -1,34 +1,138 @@
 import axios from 'axios';
 import graphQl from '@/services/graphQl';
-// import { configNear }  from './nearConfig';
-//import * as nearAPI from "near-api-js";
-//const { KeyPair, keyStores, connect } = nearAPI;
 import encryp from './encryp';
 import * as nearAPI from "near-api-js";
-const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
+const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect, WalletConnection } = nearAPI;
 import {configNear} from '../services/nearConfig';
-import nearSeedPhrase from 'near-seed-phrase';
 
-const _routeWallet = process.env.ROUTER_WALLET;
+import {/*Action,*/ createTransaction, functionCall} from 'near-api-js/lib/transaction'
+import { base_decode } from 'near-api-js/lib/utils/serialize'
+import { PublicKey } from 'near-api-js/lib/utils'
+
 const _routeRpc = process.env.ROUTER_RPC;
-const _routeActivateUsdt = process.env.NETWORK == "testnet" ? "https://nearp2p.com/api/sendmailp2p/testnet_enable_token"
-: "https://nearp2p.com/api/sendmailp2p/enable_token";
+
+const myKeyStore = new keyStores.BrowserLocalStorageKeyStore();
 
 
-function login (contract) {
-  const token = /*window.btoa(*/encryp.encryp(JSON.stringify({
-    action: "connect-seedphrase",
-    domain: window.location.host,
-    contract: contract,
-    success: window.location.origin + window.location.pathname,
-  }))
+async function nearConnect() {
+  const nearConnection = await connect(configNear(myKeyStore));
+  const walletConnection = new WalletConnection(nearConnection, "metaDao");
 
-  const route = _routeWallet+"/login?token="+token;
-  // console.log(route)
-  window.open(route, "_self");
+  return {nearConnection, walletConnection};
 }
 
-function call (json, ruta, param_ruta) {
+async function login(contract) {
+  // connect to NEAR
+  const {walletConnection} = await nearConnect(); // new WalletConnection(nearConnection, "metaDao");
+
+  if (!walletConnection.isSignedIn()) {
+    walletConnection.requestSignIn({
+      // contractId: "factoryv4.metademocracia.testnet",
+      // methodNames: [], // optional
+      // successUrl: "REPLACE_ME://.com/success", // optional redirect URL on success
+      // failureUrl: "REPLACE_ME://.com/failure", // optional redirect URL on failure
+    });
+  } /* else {
+    // Si el usuario ya está conectado, puedes obtener la información de la cuenta
+    const accountId = walletConnection.getAccountId();
+    console.log(accountId);
+  } */
+
+}
+
+async function logout() {
+  const {walletConnection} = await nearConnect();
+  walletConnection.signOut();
+
+  localStorage.removeItem("session");
+}
+
+
+async function getAccountId() {
+  const {walletConnection} = await nearConnect();
+
+  return walletConnection.getAccountId();
+}
+
+async function call (json, ruta, param_ruta) {
+
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.delete("response");
+  urlParams.delete("token");
+  urlParams.delete("transactionHashes");
+
+  const route = ruta ? window.location.origin + (!process.env.BASE_URL ? "/" : process.env.BASE_URL) + ruta : window.location.origin + window.location.pathname;
+  const query = ruta ? param_ruta : urlParams.toString() != "" ? "?"+urlParams.toString() : "";
+  const callBack = route + query;
+
+  json.walletCallbackUrl = callBack;
+
+  const {walletConnection} = await nearConnect();
+  const response = await walletConnection.account().functionCall(json);
+
+
+  return response
+}
+
+/**
+ * Call multiple transactions in a batch
+ * @param transactions Array of \{receiverId, functionCalls: [ { methodName, args, gas, attachedDeposit } ] \} items
+ * @param ruta String
+ * @param param_ruta String
+ */
+async function callBatchTransactions(transactions, ruta, param_ruta) {
+  /*const transaction = [{
+    receiverId: item.contract_market,
+    functionCalls: [
+      {
+        methodName: "buy",
+        gas: "300000000000000",
+        args: {
+          nft_contract_id: item.contract_id ,
+          token_id: item.token_id,
+          ft_token_id: 'near',
+          price: item.price
+        },
+        deposit: item.price,
+      },
+    ],
+  }]*/
+
+  const options = { meta: "list" };
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.delete("response");
+  urlParams.delete("token");
+  urlParams.delete("transactionHashes");
+
+  const route = ruta ? window.location.origin + (!process.env.BASE_URL ? "/" : process.env.BASE_URL) + ruta : window.location.origin + window.location.pathname;
+  const query = ruta ? param_ruta : urlParams.toString() != "" ? "?"+urlParams.toString() : "";
+  const callBack = route + query;
+
+
+  const { walletConnection } = await nearConnect();
+
+  const nearTransactions = await Promise.all(
+    transactions.map(async (tx) => {
+      return await createTransactionFn(
+        tx.receiverId,
+        tx.functionCalls.map((fc) => {
+          return functionCall(fc.methodName, (!fc?.args ? {} : fc.args), (!fc?.gas ? '3000000000000' : fc.gas), (!fc?.attachedDeposit ? "0" : fc.attachedDeposit) ) //new BN((!fc?.gas ? '3000000000000' : fc.gas)), new BN((!fc?.deposit ? "0" : fc.deposit)) )
+        })
+      )
+    })
+  )
+
+  walletConnection.requestSignTransactions({
+    transactions: nearTransactions,
+    callbackUrl: callBack, // options?.callbackUrl,
+    meta: options?.meta,
+  }).then(res => {
+    console.log(res)
+  }).catch(err => console.log(err))
+}
+
+
+/* function callOld (json, ruta, param_ruta) {
   /*
     JSON EXAMPLE:
       {
@@ -41,7 +145,7 @@ function call (json, ruta, param_ruta) {
         gas: "300000000000000",
         attachedDeposit: "10000000000000000000",
       }
-  */
+  *
 
   const dataWallet = JSON.parse(localStorage.getItem("session"))
   const wallet = dataWallet ? dataWallet.wallet : undefined;
@@ -49,7 +153,7 @@ function call (json, ruta, param_ruta) {
   urlParams.delete("response");
   urlParams.delete("token");
 
-  const token = /*window.btoa(*/encryp.encryp(JSON.stringify({
+  const token = /*window.btoa(*encryp.encryp(JSON.stringify({
     action: "call",
     domain: window.location.host,
     contract: json.contractId,
@@ -59,61 +163,23 @@ function call (json, ruta, param_ruta) {
     search: ruta ? param_ruta : urlParams.toString() != "" ? "?"+urlParams.toString() : undefined,
     error: window.location.origin + window.location.pathname,
     searchError: urlParams.toString() != "" ? "?"+urlParams.toString() : undefined,
-  })/*)*/);
+  })/*)*);
 
   // console.log(JSON.parse(window.atob(token)));
   window.open(_routeWallet+"/sign?token="+token, "_self");
-}
+} */
 
-function getAccount() {
-  const dataWallet = JSON.parse(localStorage.getItem("session"))
-  const wallet = dataWallet ? dataWallet.wallet : undefined;
-  const privateKey = dataWallet ? dataWallet.privateKey : undefined;
-
-  const account = {
-    address: wallet,
-    publicKey: '',
-    privateKey: privateKey,
-  };
-  // console.log("esta es la session: ", localStorage.getItem("session"))
-
-  return account
-}
 
 async function view(json) {
-  let privateKey = getAccount().privateKey;
-  let address =  getAccount().address;
-
-  if(!privateKey && !address) {
-    const {secretKey} = await nearSeedPhrase.generateSeedPhrase();
-
-    const keyPair = KeyPair.fromString(secretKey);
-    const implicitAccountId = Buffer.from(keyPair.getPublicKey().data).toString("hex");
-
-    privateKey = secretKey;
-    address = implicitAccountId;
-  }
-
-  // creates a public / private key pair using the provided private key
-  // adds the keyPair you created to keyStore
-  const myKeyStore = new keyStores.InMemoryKeyStore();
-  const keyPairOld = KeyPair.fromString(privateKey);
-  await myKeyStore.setKey(process.env.NETWORK, address, keyPairOld);
-
-
-
-
-  const nearConnection = await connect(configNear(myKeyStore));
-  const account = await nearConnection.account(address);
-
-  const response = await account.viewFunction(json);
+  const {walletConnection} = await nearConnect();
+  const response = await walletConnection.account().viewFunction(json);
 
   return response
 }
 
 
-function getTransaction(hash, account_id) {
-  const account = account_id ? account_id : getAccount().address;
+async function getTransaction(hash, account_id) {
+  const account = account_id ? account_id : await getAccountId();
   const json = {
     "jsonrpc": "2.0",
     "id": "dontcare",
@@ -129,29 +195,82 @@ function getTransaction(hash, account_id) {
     });
 }
 
-function activateUsdt(account_id) {
-  const json = {
-    "account_id": account_id
-  }
-
-  return axios.post(_routeActivateUsdt,
-    json, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-}
 
 function parseNearAmount(amount) {
   return utils.format.parseNearAmount(amount)
 }
 
+
 export default {
   login,
+  logout,
+  getAccountId,
   call,
+  callBatchTransactions,
   view,
-  getAccount,
   getTransaction,
   parseNearAmount,
-  activateUsdt
+}
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+/// crear bache de transaccion /////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+async function createTransactionFn(
+  receiverId,
+  actions
+){
+  // const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
+  // const wallet = new WalletConnection(near);
+  const { walletConnection, nearConnection } = await nearConnect();
+
+  if (!walletConnection || !nearConnection) {
+    throw new Error(`No active wallet or NEAR connection.`)
+  }
+
+  const localKey =
+    await nearConnection?.connection.signer.getPublicKey(
+      walletConnection?.account().accountId,
+      nearConnection.connection.networkId
+    )
+
+  const accessKey = await walletConnection
+    ?.account()
+    .accessKeyForTransaction(receiverId, actions, localKey)
+
+  if (!accessKey) {
+    throw new Error(
+      `Cannot find matching key for transaction sent to ${receiverId}`
+    )
+  }
+
+  const block = await nearConnection?.connection.provider.block({
+    finality: 'final',
+  })
+
+  if (!block) {
+    throw new Error(`Cannot find block for transaction sent to ${receiverId}`)
+  }
+
+  const blockHash = base_decode(block?.header?.hash)
+  //const blockHash = nearAPI.utils.serialize.base_decode(accessKey.block_hash);
+
+  const publicKey = PublicKey.from(accessKey.public_key)
+  //const nonce = accessKey.access_key.nonce + nonceOffset
+  const nonce = ++accessKey.access_key.nonce;
+
+  return createTransaction(
+    walletConnection?.account().accountId,
+    publicKey,
+    receiverId,
+    nonce,
+    actions,
+    blockHash
+  )
 }

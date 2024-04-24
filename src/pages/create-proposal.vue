@@ -162,7 +162,7 @@ export default{
       roles: ref([]),
       formValid: ref(false),
       loadingBtn: ref(false),
-      address: WalletP2p.getAccount().address,
+      address: ref(null), // WalletP2p.getAcc ount().address,
       walletDao: ref(""),
       roleSelect: ref(null),
       rolesMembers: ref([]),
@@ -172,10 +172,7 @@ export default{
         {id: process.env.CONTRACT_USDT, desc: "USDT"},
       ],
       network: process.env.NETWORK,
-      proponente: WalletP2p.getAccount()?.address,
-
       titulo_propuesta: ref(null),
-      //proponente: ref(null),
       tipo_propuesta: ref(null),
       itemsTokenId: [
         {id: null, desc: "Near"},
@@ -200,11 +197,17 @@ export default{
   },
 
   mounted() {
+    this.getAddress();
     /*const valores = window.location.search;
     const urlParams = new URLSearchParams(valores);*/
     this.walletDao = this.$route.query?.dao
   },
   methods: {
+    async getAddress() {
+      const account_id = await WalletP2p.getAccountId();
+      this.address = account_id;
+    },
+
     async onSubmit() {
 
       if (!this.formValid) return
@@ -297,7 +300,7 @@ export default{
           data: {
             title: document.getElementById("title").value,
             description: document.getElementById("description").value,
-            proponent: WalletP2p.getAccount().address,
+            proponent: address,  //WalletP2p.getAcc ount().address,
             kind: {
               Transfer: {
                 token_id: tokenId, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
@@ -344,7 +347,7 @@ export default{
           data: {
             title: document.getElementById("title").value,
             description: document.getElementById("description").value,
-            proponent: WalletP2p.getAccount().address,
+            proponent: address, // WalletP2p.getAc count().address,
             kind: {
               FunctionCall: {
                 receiver_id: document.getElementById("receiver_id").value,
@@ -376,7 +379,7 @@ export default{
           data: {
             title: document.getElementById("title").value,
             description: document.getElementById("description").value,
-            proponent: WalletP2p.getAccount().address,
+            proponent: address, // WalletP2p.getAc count().address,
             kind: "Voting",
             link: document.getElementById("link").value,
           }

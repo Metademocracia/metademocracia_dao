@@ -139,7 +139,7 @@ tabs = ref([
     editing: false
   }
 ]),
-proponen = WalletP2p.getAccount().address,
+proponen = ref(null), //WalletP2p.get Account().address,
 proposalsView = ref([]),
 permissionsView = ref([]),
 proposals = ref([]),
@@ -164,6 +164,11 @@ watch(tab, clearEditing)
 onBeforeMount(getData)
 
 async function getData() {
+  const accounIdresult = await WalletP2p.getAccountId();
+  proponen.value = accounIdresult;
+
+  if(!accounIdresult) return
+
   const responsePolicy = await WalletP2p.view({
     contractId: route.query?.dao,
     methodName: "get_policy"

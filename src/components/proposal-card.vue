@@ -393,7 +393,7 @@ async function finalize(id, contractId, type) {
 
   }
 
-  WalletP2p.call(json);
+  await WalletP2p.call(json);
 
 }
 
@@ -429,7 +429,7 @@ async function upvote(id, contractId, type) {
     };
   }
 
-  WalletP2p.call(json);
+  await WalletP2p.call(json);
 
 }
 

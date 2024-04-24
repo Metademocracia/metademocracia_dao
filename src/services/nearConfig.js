@@ -14,17 +14,19 @@ export function configNear(keyStores) {
         keyStore: keyStores,
         nodeUrl: "https://rpc.mainnet.near.org",
         walletUrl: "https://app.mynearwallet.com/",
+        // walletUrl: "http://localhost:8000/wallet-p2p",
         helperUrl: "https://helper.mainnet.near.org",
-        explorerUrl: "https://explorer.mainnet.near.org",
+        explorerUrl: "https://nearblocks.io",
       };
     case "testnet":
       return {
         networkId: "testnet",
         keyStore: keyStores,
         nodeUrl: "https://rpc.testnet.near.org",
-        walletUrl: "https://testnet.mynearwallet.com/",
+        // walletUrl: "https://testnet.mynearwallet.com/",
+        walletUrl: "http://localhost:8000/wallet-p2p",
         helperUrl: "https://helper.testnet.near.org",
-        explorerUrl: "https://explorer.testnet.near.org",
+        explorerUrl: "https://testnet.nearblocks.io",
       };
     default:
       throw new Error(`Unconfigured environment '${NETWORK}'`);

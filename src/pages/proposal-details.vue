@@ -140,7 +140,7 @@ export default {
       panels: ref(null),
       panelsExpanded: ref([]),
       alert: ref(false),
-      session: WalletP2p.getAccount(),
+      session: ref(null), // WalletP2p.getAc count(),
 			openVoice: ref(false),
 			openCouncil: ref(false),
 			voices_left: ref(0),
@@ -198,6 +198,10 @@ export default {
 		}
 	},
 
+  created() {
+    this.getAddress();
+  },
+
   watch: {
     result(response) {
       this.loadData(response)
@@ -213,6 +217,10 @@ export default {
 
 
 	methods: {
+    async getAddress() {
+      const account_id = await WalletP2p.getAccountId();
+      this.session = account_id;
+    },
     copy(id) {
       const link = window.location.origin + window.location.pathname + window.location.search
       navigator.clipboard.writeText(link);
@@ -254,7 +262,7 @@ export default {
         const configMetadata = objectProposal && data.proposal_type == "ChangeConfig" ? JSON.parse(atob(objectProposal.config.metadata)) : undefined;
 
         const voteResult = data.vote.length > 0 ? data.vote : undefined;
-        const userId = WalletP2p.getAccount().address;
+        const userId = this.session; // WalletP2p.getA ccount().address;
         const voteUser = !voteResult ? undefined : voteResult.find((item) => item.user_id == userId)?.vote;
 
 

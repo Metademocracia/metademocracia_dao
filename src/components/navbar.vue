@@ -151,141 +151,17 @@
         hide-details
         style="color: white;"
       ></v-select>-->
-      <v-btn class="btn" @click="openDialog()">{{ titleBtnLogin }}</v-btn>
-      <!--<v-btn class="btn" @click="dialogConnect = true">Conectar Wallet</v-btn>-->
+      <!--<v-btn class="btn" @click="openDialog()">{{ titleBtnLogin }}</v-btn>-->
+      <!--<v-btn class="btn" @click="dialogConnect = true">Conectar Wallet2</v-btn>-->
+      <connectWallet></connectWallet>
     </div>
 
     <v-btn class="btn show-mobile" style="width: 50px!important; height: 50px!important;" @click="menuToggle = true">
       <v-icon style="font-size: 25px;">mdi-menu</v-icon>
     </v-btn>
 
-    <v-dialog v-model="dialogConnect" persistent content-class="dialog-connect">
-      <v-card class="card-dialog">
-        <div class="div-card">
-          <v-icon @click="dialogConnect = false, obtenWallet = false" style="cursor: pointer;position: absolute; top: 10px; right: 10px;">mdi-close</v-icon>
 
-          <h5>Cerrar sessión</h5>
-
-          <!--<div class="divrow center wrap mt-8 mb-8" style="gap: 15px;">
-            <v-sheet class="sheet-dialog" @click="login('near')">
-              <img src="@/assets/sources/icons/near-wallet-icon.svg" alt="Near" style="max-width: 25px;">
-              <span>
-                NEAR Wallet
-              </span>
-            </v-sheet>
-
-            <v-sheet class="sheet-dialog" @click="login('near')">
-              <img src="@/assets/sources/icons/my-near-wallet-icon.svg" alt="My Near" style="max-width: 25px;">
-              <span>
-                MyNear Wallet
-              </span>
-            </v-sheet>
-
-            <v-sheet class="sheet-dialog">
-              <img src="@/assets/sources/icons/here-wallet.svg" alt="Here" style="max-width: 25px;">
-              <span>
-                Here Wallet
-              </span>
-            </v-sheet>
-
-            <v-sheet class="sheet-dialog" @click="login('near')">
-              <img src="@/assets/sources/icons/meteor-wallet-icon.svg" alt="Meteor" style="max-width: 25px;">
-              <span>
-                Meteor Wallet
-              </span>
-            </v-sheet>
-          </div>
-
-          <hr style="width: 80%; background-color: rgba(255,255,255, 0.6); height: 2px;">-->
-
-          <v-btn class="btn mt-8 mb-8" @click="logout">Logout</v-btn>
-
-          <!--<template v-if="obtenWallet == true">
-            <div class="divrow center wrap mt-8 mb-8" style="gap: 15px;">
-              <v-sheet class="sheet-dialog">
-                <v-icon class="icon">mdi-link</v-icon>
-                <img src="@/assets/sources/icons/near-icon.svg" alt="Near" style="max-width: 25px;">
-                <span>
-                  NEAR Wallet
-                </span>
-                <span style="color: rgba(255,255,255, 0.4); font-size: 12;">
-                  Web Wallet
-                </span>
-              </v-sheet>
-
-              <v-sheet class="sheet-dialog">
-                <v-icon class="icon">mdi-link</v-icon>
-                <img src="@/assets/sources/icons/my-near-wallet-icon.svg" alt="My Near" style="max-width: 25px;">
-                <span>
-                  MyNear Wallet
-                </span>
-                <span style="color: rgba(255,255,255, 0.4); font-size: 12;">
-                  Web Wallet
-                </span>
-              </v-sheet>
-
-              <v-sheet class="sheet-dialog">
-                <v-icon class="icon">mdi-link</v-icon>
-                <img src="@/assets/sources/icons/here-wallet.svg" alt="Here" style="max-width: 25px;">
-                <span>
-                  Here Wallet
-                </span>
-                <span style="color: rgba(255,255,255, 0.4); font-size: 12;">
-                  Web Wallet
-                </span>
-              </v-sheet>
-
-              <v-sheet class="sheet-dialog">
-                <v-icon class="icon">mdi-link</v-icon>
-                <img src="@/assets/sources/icons/meteor-wallet-icon.svg" alt="Meteor" style="max-width: 25px;">
-                <span>
-                  Meteor Wallet
-                </span>
-                <span style="color: rgba(255,255,255, 0.4); font-size: 12;">
-                  Web Wallet
-                </span>
-              </v-sheet>
-            </div>
-          </template>-->
-        </div>
-      </v-card>
-    </v-dialog>
   </nav>
-
-  <v-row justify="center">
-    <v-dialog
-      v-model="dialog"
-      persistent
-      width="auto"
-      content-class="dialog-dao"
-    >
-      <v-card>
-        <v-card-title class="text-h5">
-          Estás saliendo de METADEMOCRACIA
-        </v-card-title>
-        <v-card-text>Luego de crear tu wallet o conectar una ya existente puedes volver a esta página para vincularla a tu perfil.</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="green-darken-1"
-            variant="text"
-            class="btn"
-            @click="dialog = false"
-          >
-            Negar
-          </v-btn>
-          <v-btn
-            color="green-darken-1"
-            variant="text"
-            class="btn"
-            @click="login('near')"
-          >
-            Aceptar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
 
   <v-row justify="center">
     <v-dialog
@@ -316,250 +192,185 @@
 
 </template>
 
-<script>
+<script setup>
 
 import { useWindowScroll } from '@vueuse/core';
-import { ref, compile, h} from 'vue';
 import WalletP2p from '../services/wallet-p2p';
 import connectWallet from '@/components/connect-wallet.vue';
 import formatHtml from "../components/format-html.vue";
 import moment from 'moment';
 import utilsDAO from '@/services/utils-dao';
 import { useToast } from 'vue-toastification';
+import { ref, computed, onBeforeMount, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import walletP2p from '../services/wallet-p2p';
 //import { Link } from '@inertiajs/inertia-vue3';
 
-export default {
-  setup(){
-    const toast = useToast();
-    return{
-      toast,
-      dialog: ref(false),
-      menuToggle: ref(false),
-      selectedLang: 'ES',
-      dialogConnect: ref(false),
-      obtenWallet: false,
-      alert2: ref(false),
-      isMember: ref(utilsDAO.isMember()),
-      dataNavbar: [
-      //  { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
-      //  { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
-      //  { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' },
-       { icon: 'mdi-account-group-outline', name: 'Foro', ref: 'https://forum.metademocracia.social/'},
-       { icon: 'mdi-information-outline', name: 'Metainfo', ref: 'https://metademocracia.com/' }
-      ],
+const toast = useToast(),
+  router = useRouter(),
+  route = useRoute(),
+  // isMember = ref(utilsDAO.isMember()),
+  menuToggle = ref(false),
+  selectedLang = 'ES',
+  dialogConnect = ref(false),
+  alert2 = ref(false),
+  dataNavbar = [
+  //  { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
+  //  { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
+  //  { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' },
+    { icon: 'mdi-account-group-outline', name: 'Foro', ref: 'https://forum.metademocracia.social/'},
+    { icon: 'mdi-information-outline', name: 'Metainfo', ref: 'https://metademocracia.com/' }
+  ],
 
-      dataLinks:[
-        {
-          name: 'WhatsGPT',
-          ref: 'https://t.me/WhatsGPTFree_bot'
-        },
-        {
-          name: 'NearP2P',
-          ref: 'https://nearp2p.com/',
-        },
-        {
-          name: 'Billetera',
-          ref: 'https://mi.arepa.digital/'
-        }
-      ],
-      titleBtnLogin: ref("Conectar Billetera"),
+  dataLinks = [
+    {
+      name: 'WhatsGPT',
+      ref: 'https://t.me/WhatsGPTFree_bot'
+    },
+    {
+      name: 'NearP2P',
+      ref: 'https://nearp2p.com/',
+    },
+    {
+      name: 'Billetera',
+      ref: 'https://mi.arepa.digital/'
     }
-  },
-  beforeMount() {
-    this.verifySession();
-    this.verifyResponse();
-  },
-  mounted() {
-
-  },
-
-  methods: {
-    async goCreateProposal() {
-      const isMember = await this.isMember;
-      this.alert2 = !isMember || false;
-
-      if(isMember) {
-        this.$router.push('create-proposals');
-      }
-    },
-    verifyResponse(){
-      try {
-        /*const valores = window.location.search;
-        const urlParams = new URLSearchParams(valores);
-        var response = urlParams.get('response');*/
-
-        const response = this.$route.query?.response;
-
-        /* const algo = {
-          date_time: 223423424234,
-          hash: "2aemhC2nXK52QKRdnN411XXEZPS4aN197dbPomRjwhXZ"
-        }
-
-        console.log(btoa(JSON.stringify(algo))) */
-
-        if(!response) return
-
-        const response_json = JSON.parse(window.atob(response));
-
-        // if(!response_json?.hash || !response_json?.date_time) return
-        if(!response_json?.hash) return
-
-        /* const now = moment(new Date()); //todays date
-        const end = moment(response_json.date_time*1000); // another date
-        const duration = moment.duration(now.diff(end));
-        const minutes = duration.asMinutes(); */
-
-        // if(minutes > 0.7) return
-
-        const dataAlert = '<p style="font-size:30px; color: white"><b>Transacción ejecutada</b></p> \
-          <p class="mt-5"> \
-            <span style="color: white"> \
-              <b>Hash:</b> \
-            </span> \
-            <a href="'+ process.env.ROUTER_EXPLORER_NEAR_HASH + response_json?.hash +'" target="_blank"> '+ response_json?.hash +' </a> \
-          </p>';
-        this.toast.success({component: formatHtml,
-          props:  {
-              html: dataAlert
-          }
-        });
-
-        const urlParams = new URLSearchParams(window.location.search);
-        urlParams.delete("response");
-        let newUrl = window.location.pathname.split('/').at(-1);
-        newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
-
-        history.pushState(null, "", newUrl);
-
-        /* WalletP2p.getTransaction(response_json?.hash).then(response => {
-          const response_json = response.data.result;
-          const hash = response_json?.transaction.hash;
-          const status_json = response_json?.receipts_outcome[0]?.outcome?.status;
-          const receipts_outcome = !response_json?.receipts_outcome ? [] : response_json?.receipts_outcome;
-
-          let error = undefined;
-          for(const item of receipts_outcome) {
-            if(item?.outcome?.status?.Failure){
-              error = item?.outcome?.status
-              break
-            }
-          }
-
-          let status = status_json?.SuccessValue != undefined || status_json?.SuccessReceiptId != undefined ? "Success" : "Failure";
-
-          if(status == "Success") {
-            const dataAlert = '<p style="font-size:30px; color: white"><b>Felicidades</b></p> \
-              <p class="mt-5"> \
-                <span style="color: white"> \
-                  <b>Hash:</b> \
-                </span> \
-                <a href="'+ process.env.ROUTER_EXPLORER_NEAR_HASH + hash +'" target="_blank"> '+ hash +' </a> \
-              </p>';
-            this.toast.success({component: formatHtml,
-              props:  {
-                  html: dataAlert
-              }
-            });
-          } else {
-            const dataAlert = '<p class="mt-5"> <span style="color: black" ><b>Error:</b></span> '+ status_json?.Failure?.ActionError?.kind?.FunctionCallError?.ExecutionError +' </p>';
-            this.toast.error({component: formatHtml,
-              props:  {
-                  html: dataAlert
-              }
-            });
-          }
-
-          const urlParams = new URLSearchParams(window.location.search);
-          urlParams.delete("response");
-          //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
-          let newUrl = window.location.pathname.split('/').at(-1);
-          newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
-
-          history.pushState(null, "", newUrl);
-
-        }); */
+  ],
+  titleBtnLogin = ref("Conectar Billetera")
 
 
-        // location.href = 'http://127.0.0.1:3002/metademocracia/proposals';
+onBeforeMount(verifyResponse)
 
-      } catch (error) {
-       console.log("error al cargar mensaje", error.toString());
-      }
+async function goCreateProposal() {
+  const isMember = await utilsDAO.isMember(); // isMember.value();
+  alert2.value = !isMember || false;
 
-
-    },
-    verifySession(){
-      let dataSession = localStorage.getItem("session");
-
-
-      if(dataSession) {
-        const account = WalletP2p.getAccount();
-
-        if(!account.address || !account.privateKey) {
-          this.logout()
-          return
-        }
-
-        const dataSessionJson = JSON.parse(dataSession);
-        const wallet = dataSessionJson.email || dataSessionJson.wallet
-        this.initSession(wallet)
-        return
-      }
-
-      /*const valores = window.location.search;
-      const urlParams = new URLSearchParams(valores);
-      var token = urlParams.get('token');*/
-
-      const token = this.$route.query?.token
-
-      if(!token) return
-
-      dataSession = window.atob(token)
-
-      localStorage.setItem("session", dataSession)
-      const dataSessionJson = JSON.parse(dataSession);
-      const wallet = dataSessionJson.email || dataSessionJson.wallet || dataSessionJson.privateKey
-      this.initSession(wallet)
-
-      const urlParams = new URLSearchParams(window.location.search);
-      urlParams.delete("token");
-      //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
-      let newUrl = window.location.pathname.split('/').at(-1);
-      newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
-
-      history.pushState(null, "", newUrl);
-    },
-
-    initSession(wallet) {
-      const wallet_final = wallet.length > 20 ? wallet.substring(0,6)+"..."+wallet.substring((wallet.length - process.env.NETWORK.length - 7), wallet.length) : wallet;
-      this.titleBtnLogin = wallet_final;
-    },
-
-    openDialog() {
-      if(localStorage.getItem("session")) {
-        this.dialogConnect = true
-
-        return
-      }
-
-      this.dialog = true
-    },
-
-    login() {
-      WalletP2p.login(process.env.CONTRACT_DAO);
-    },
-
-    logout() {
-      localStorage.removeItem("session")
-      this.titleBtnLogin = "Conectar Billetera";
-      this.dialogConnect = false;
-
-      this.$router.push({path: '/'})
-
-      // window.open(window.location.origin + window.location.pathname, "_self");
-    }
+  if(isMember) {
+    router.push('create-proposals');
   }
 }
+
+async function verifyResponse() {
+  try {
+    const transactionHashes = route.query?.transactionHashes;
+    if(!transactionHashes) return
+
+    /* const now = moment(new Date()); //todays date
+    const end = moment(response_json.date_time*1000); // another date
+    const duration = moment.duration(now.diff(end));
+    const minutes = duration.asMinutes(); */
+
+    // if(minutes > 0.7) return
+
+    console.log("transactionHashes: ", transactionHashes)
+
+    let dataAlert = `<p style="font-size:30px; color: white"><b>Transacción ejecutada</b></p>
+    <p class="mt-5">
+      <span style="color: white">
+        <b>Hash:</b>
+      </span>
+      <a href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/es/txns/${transactionHashes}" target="_blank"> ${transactionHashes} </a>
+    </p>`;
+
+    if(transactionHashes.split(',').length > 1) {
+      const account_id = await walletP2p.getAccountId()
+      dataAlert = `<p style="font-size:30px; color: white"><b>Transacción ejecutada</b></p>
+      <center><p class="mt-5">
+        <a style="font-size:25px;" href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/es/address/${account_id}" target="_blank"> Ver explorador </a>
+      </p></center>`;
+    }
+
+    toast.success({component: formatHtml,
+      props:  {
+          html: dataAlert
+      }
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.delete("response");
+    urlParams.delete("transactionHashes");
+
+    let newUrl = window.location.pathname.split('/').at(-1);
+    newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
+
+    history.pushState(null, "", newUrl);
+
+    // location.href = 'http://127.0.0.1:3002/metademocracia/proposals';
+
+  } catch (error) {
+    console.log("error al cargar mensaje", error.toString());
+  }
+
+
+}
+
+/* function verifySession(){
+  let dataSession = localStorage.getItem("session");
+
+
+  if(dataSession) {
+    const account = WalletP2p.getAccoun t();
+
+    if(!account.address || !account.privateKey) {
+      logout()
+      return
+    }
+
+    const dataSessionJson = JSON.parse(dataSession);
+    const wallet = dataSessionJson.email || dataSessionJson.wallet
+    initSession(wallet)
+    return
+  }
+
+
+
+  const token = route.query?.token
+
+  if(!token) return
+
+  dataSession = window.atob(token)
+
+  localStorage.setItem("session", dataSession)
+  const dataSessionJson = JSON.parse(dataSession);
+  const wallet = dataSessionJson.email || dataSessionJson.wallet || dataSessionJson.privateKey
+  this.initSession(wallet)
+
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.delete("token");
+  //console.log(urlParams.toString(), window.location.pathname.split('/').at(-1)+"?"+urlParams.toString())
+  let newUrl = window.location.pathname.split('/').at(-1);
+  newUrl = urlParams.size > 0 ? newUrl + "?"+urlParams.toString() : newUrl;
+
+  history.pushState(null, "", newUrl);
+}
+
+function initSession(wallet) {
+  const wallet_final = wallet.length > 20 ? wallet.substring(0,6)+"..."+wallet.substring((wallet.length - process.env.NETWORK.length - 7), wallet.length) : wallet;
+  titleBtnLogin.value = wallet_final;
+}
+
+function openDialog() {
+  if(localStorage.getItem("session")) {
+    dialogConnect.value = true
+
+    return
+  }
+
+  this.dialog = true
+}
+
+function login() {
+  WalletP2p.login(process.env.CONTRACT_DAO);
+}
+
+async function logout() {
+  titleBtnLogin.value = "Conectar Billetera";
+  dialogConnect.value = false;
+
+  await WalletP2p.logout();
+
+  // window.open(window.location.origin + window.location.pathname, "_self");
+} */
 
 </script>
 

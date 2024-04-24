@@ -1,7 +1,7 @@
 <template>
   <div id="daos">
-    <span v-if="!accounId"><connectWallet></connectWallet></span>
-    <span v-if="accounId">
+
+    <span>
       <aside class="toolbar-search">
       <div class="toolbar-search__wrapper">
         <v-text-field
@@ -81,7 +81,7 @@ daos = ref([]),
 paginatedDaos = computed(() => (daos.value.length || 9) / 9),
 likeWalletDao = ref(undefined),
 listDaos = ref([]),
-accounId = WalletP2p.getAccount()?.address
+accounId = ref(null) // WalletP2p.getAcc ount()?.address
 const loading = ref(true);
 
 
@@ -94,8 +94,8 @@ const connectionConfig = {
   networkId: "testnet",
   keyStore: myKeyStore,
   nodeUrl: "https://rpc.testnet.near.org",
-  walletUrl: "http://localhost:8000/wallet-p2p",
-  // walletUrl: "https://testnet.mynearwallet.com",
+  // walletUrl: "http://localhost:8000/wallet-p2p",
+  walletUrl: "https://testnet.mynearwallet.com",
   helperUrl: "https://helper.testnet.near.org",
   explorerUrl: "https://testnet.nearblocks.io",
 };
@@ -103,12 +103,13 @@ const connectionConfig = {
 
 async function loginNear() {
   // connect to NEAR
-  const nearConnection = await connect(connectionConfig);
+  // const nearConnection = await connect(connectionConfig);
+  const nearConnection = await connect(configNear(myKeyStore));
+
 
   const walletConnection = new WalletConnection(nearConnection, "metaDao");
 
   if (!walletConnection.isSignedIn()) {
-    console.log(walletConnection.isSignedIn())
     walletConnection.requestSignIn({
       // contractId: "factoryv4.metademocracia.testnet",
       // methodNames: [], // optional
@@ -133,7 +134,19 @@ async function logout() {
 }
 
 async function call(){
-  const nearConnection = await connect(connectionConfig);
+  await WalletP2p.callBatchTransactions([
+    {
+      receiverId: "pruebas12.factoryv4.metademocracia.testnet",
+      functionCalls: [ { methodName: "get_available_amount" } ]
+    },
+    {
+      receiverId: "prueba16.factoryv4.metademocracia.testnet",
+      functionCalls: [ { methodName: "get_available_amount" } ]
+    }
+  ])
+  // near view pruebas12.factoryv4.metademocracia.testnet get_available_amount
+
+  /* const nearConnection = await connect(connectionConfig);
 
   const walletConnection = new WalletConnection(nearConnection, "metaDao");
   console.log("walletConnection: ", walletConnection)
@@ -154,7 +167,7 @@ async function call(){
     },
     "200000000000000", // attached GAS (optional)
     "200000000000000000000000" // attached deposit in yoctoNEAR (optional)
-  );
+  ); */
 }
 
 

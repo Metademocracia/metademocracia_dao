@@ -211,7 +211,7 @@ export default {
       roles: ref([]),
       formValid: ref(false),
       loadingBtn: ref(false),
-      address: WalletP2p.getAccount().address,
+      address: ref(null), // WalletP2p.getAcc ount().address,
       walletDao: ref(""),
       roleSelect: ref(null),
       rolesMembers: ref([]),
@@ -240,6 +240,7 @@ export default {
   },
 
   mounted(){
+    this.getAddress();
     const valores = window.location.search;
     const urlParams = new URLSearchParams(valores);
     this.walletDao = urlParams.get('dao');
@@ -260,6 +261,11 @@ export default {
   },
 
   methods: {
+    async getAddress() {
+      const account_id = await WalletP2p.getAccountId();
+      this.address = account_id;
+    },
+
     async validMember(item, validDuplicateMembers = false) {
 
       if(validDuplicateMembers) {
@@ -363,16 +369,16 @@ export default {
         const bounty_bond = (BigInt(responsePolicy?.bounty_bond.toString()) + BigInt(response)).toString()
 
         switch (this.typeSelect) {
-          case "Votación": this.addVote(bounty_bond);
+          case "Votación": await this.addVote(bounty_bond);
             break;
 
-          case "Agregar miembro": this.addMember(bounty_bond);
+          case "Agregar miembro": await this.addMember(bounty_bond);
             break;
 
-          case "Agregar miembros": this.addMembers(bounty_bond);
+          case "Agregar miembros": await this.addMembers(bounty_bond);
             break;
 
-          case "Eliminar miembro": this.deleteMembers(bounty_bond);
+          case "Eliminar miembro": await this.deleteMembers(bounty_bond);
             break;
 
           case "Transferencia": await this.addTransfer(bounty_bond);
@@ -383,14 +389,15 @@ export default {
         // this.addVote();
         // toast('¡Tu propuesta ha sido creada\n con éxito!')
       } catch (error) {
-        loadingBtn.value = false;
+        this.loadingBtn = false;
+        console.log("error: ", error)
         toast.error(error.toString())
       }
 
       this.loadingBtn = false
     },
 
-    addVote(bounty_bond) {
+    async addVote(bounty_bond) {
       const json = {
         contractId: this.walletDao,
         methodName: "add_proposal",
@@ -406,10 +413,10 @@ export default {
         attachedDeposit: bounty_bond
       };
 
-      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+      await WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
     },
 
-    addMember(bounty_bond) {
+    async addMember(bounty_bond) {
       const json = {
         contractId: this.walletDao,
         methodName: "add_proposal",
@@ -430,10 +437,10 @@ export default {
         attachedDeposit: bounty_bond
       };
 
-      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+      await WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
     },
 
-    addMembers(bounty_bond) {
+    async addMembers(bounty_bond) {
       const json = {
         contractId: this.walletDao,
         methodName: "add_proposal",
@@ -453,10 +460,10 @@ export default {
         attachedDeposit: bounty_bond
       };
       // console.log("json: ", json)
-      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+      await WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
     },
 
-    deleteMembers(bounty_bond) {
+    async deleteMembers(bounty_bond) {
       const json = {
         contractId: this.walletDao,
         methodName: "add_proposal",
@@ -477,7 +484,7 @@ export default {
         attachedDeposit: bounty_bond
       };
 
-      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+      await WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
     },
 
     async addTransfer(bounty_bond) {
@@ -499,53 +506,76 @@ export default {
         args: { account_id: receiverId }
       });
 
-      // const usdtIsActive = true;
-
-
-
-      const setProposal = {
-        contractId: this.walletDao,
-        methodName: "add_proposal",
-        args: {
-          proposal: {
-            title: btoa(document.getElementById("title").value),
-            description: btoa(document.getElementById("description").value),
-            kind: {
-              Transfer: {
-                token_id: tokenId,
-                receiver_id: receiverId,
-                amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
-                msg: msg ? msg.lenght > 0 ? msg.length : null : null,
-              }
-            },
-            link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
-          }
-        },
-        gas: "200000000000000",
-        attachedDeposit: bounty_bond
-      };
-
-      let json = setProposal
-
       if(!usdtIsActive){
-        await WalletP2p.activateUsdt(receiverId).catch((error) => {
-          console.log("error al activar usdt: ", error)
-        })
-        /* json = [
+        const transactions = [
           {
-            contractId: process.env.CONTRACT_USDT,
-            methodName: "storage_deposit",
-            args: {
-              account_id: receiverId,
-            },
-            gas: "30000000000000",
-            attachedDeposit: "1250000000000000000000"
+            receiverId: process.env.CONTRACT_USDT,
+            functionCalls: [
+              {
+                methodName: "storage_deposit",
+                args: {
+                  account_id: receiverId,
+                },
+                gas: "30000000000000",
+                attachedDeposit: "1250000000000000000000"
+              }
+            ]
           },
-          setProposal
-        ]; */
+          {
+            receiverId: this.walletDao,
+            functionCalls: [
+              {
+                methodName: "add_proposal",
+                args: {
+                  proposal: {
+                    title: btoa(document.getElementById("title").value),
+                    description: btoa(document.getElementById("description").value),
+                    kind: {
+                      Transfer: {
+                        token_id: tokenId,
+                        receiver_id: receiverId,
+                        amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
+                        msg: msg ? msg.lenght > 0 ? msg.length : null : null,
+                      }
+                    },
+                    link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
+                  }
+                },
+                gas: "200000000000000",
+                attachedDeposit: bounty_bond
+              }
+            ]
+          }
+        ];
+
+        await WalletP2p.callBatchTransactions(transactions, "proposals", ("?dao="+this.walletDao));
+      } else {
+        const action = {
+          contractId: this.walletDao,
+          methodName: "add_proposal",
+          args: {
+            proposal: {
+              title: btoa(document.getElementById("title").value),
+              description: btoa(document.getElementById("description").value),
+              kind: {
+                Transfer: {
+                  token_id: tokenId,
+                  receiver_id: receiverId,
+                  amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
+                  msg: msg ? msg.lenght > 0 ? msg.length : null : null,
+                }
+              },
+              link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
+            }
+          },
+          gas: "200000000000000",
+          attachedDeposit: bounty_bond
+        };
+
+        await WalletP2p.call(action, "proposals", ("?dao="+this.walletDao));
       }
 
-      WalletP2p.call(json, "proposals", ("?dao="+this.walletDao));
+
     },
 
 

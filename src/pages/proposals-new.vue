@@ -215,7 +215,7 @@ export default {
 
       const variables = {
         contractId: this.wallet_dao,
-        userId: WalletP2p.getAccount().address,
+        userId: WalletP2p.getAc count().address,
         limit: this.elementosPorPagina,
         index:this.nextIndex
       }
@@ -260,7 +260,7 @@ export default {
 
       const variables = {
         contractId: this.wallet_dao,
-        userId: WalletP2p.getAccount().address,
+        userId: await WalletP2p.getAccountId(), //  WalletP2p.ge tAccount().address,
         limit: this.elementosPorPagina,
         index:this.nextIndex
       }

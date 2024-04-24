@@ -1,6 +1,7 @@
 <template>
+  <span v-show="false">{{ validSession() }}</span>
   <aside>
-    <center><v-btn class="btn mt-10" @click="openDialog()">{{ validSession() }}</v-btn></center>
+    <center><v-btn class="btn" @click="openDialog()">{{ session }}</v-btn></center>
   </aside>
 
   <v-row justify="center">
@@ -44,7 +45,87 @@
 
           <h5>Cerrar sessión</h5>
 
+          <!--<div class="divrow center wrap mt-8 mb-8" style="gap: 15px;">
+            <v-sheet class="sheet-dialog" @click="login('near')">
+              <img src="@/assets/sources/icons/near-wallet-icon.svg" alt="Near" style="max-width: 25px;">
+              <span>
+                NEAR Wallet
+              </span>
+            </v-sheet>
+
+            <v-sheet class="sheet-dialog" @click="login('near')">
+              <img src="@/assets/sources/icons/my-near-wallet-icon.svg" alt="My Near" style="max-width: 25px;">
+              <span>
+                MyNear Wallet
+              </span>
+            </v-sheet>
+
+            <v-sheet class="sheet-dialog">
+              <img src="@/assets/sources/icons/here-wallet.svg" alt="Here" style="max-width: 25px;">
+              <span>
+                Here Wallet
+              </span>
+            </v-sheet>
+
+            <v-sheet class="sheet-dialog" @click="login('near')">
+              <img src="@/assets/sources/icons/meteor-wallet-icon.svg" alt="Meteor" style="max-width: 25px;">
+              <span>
+                Meteor Wallet
+              </span>
+            </v-sheet>
+          </div>
+
+          <hr style="width: 80%; background-color: rgba(255,255,255, 0.6); height: 2px;">-->
+
           <v-btn class="btn mt-8 mb-8" @click="logout()">Logout</v-btn>
+
+          <!--<template v-if="obtenWallet == true">
+            <div class="divrow center wrap mt-8 mb-8" style="gap: 15px;">
+              <v-sheet class="sheet-dialog">
+                <v-icon class="icon">mdi-link</v-icon>
+                <img src="@/assets/sources/icons/near-icon.svg" alt="Near" style="max-width: 25px;">
+                <span>
+                  NEAR Wallet
+                </span>
+                <span style="color: rgba(255,255,255, 0.4); font-size: 12;">
+                  Web Wallet
+                </span>
+              </v-sheet>
+
+              <v-sheet class="sheet-dialog">
+                <v-icon class="icon">mdi-link</v-icon>
+                <img src="@/assets/sources/icons/my-near-wallet-icon.svg" alt="My Near" style="max-width: 25px;">
+                <span>
+                  MyNear Wallet
+                </span>
+                <span style="color: rgba(255,255,255, 0.4); font-size: 12;">
+                  Web Wallet
+                </span>
+              </v-sheet>
+
+              <v-sheet class="sheet-dialog">
+                <v-icon class="icon">mdi-link</v-icon>
+                <img src="@/assets/sources/icons/here-wallet.svg" alt="Here" style="max-width: 25px;">
+                <span>
+                  Here Wallet
+                </span>
+                <span style="color: rgba(255,255,255, 0.4); font-size: 12;">
+                  Web Wallet
+                </span>
+              </v-sheet>
+
+              <v-sheet class="sheet-dialog">
+                <v-icon class="icon">mdi-link</v-icon>
+                <img src="@/assets/sources/icons/meteor-wallet-icon.svg" alt="Meteor" style="max-width: 25px;">
+                <span>
+                  Meteor Wallet
+                </span>
+                <span style="color: rgba(255,255,255, 0.4); font-size: 12;">
+                  Web Wallet
+                </span>
+              </v-sheet>
+            </div>
+          </template>-->
         </div>
       </v-card>
     </v-dialog>
@@ -53,7 +134,7 @@
 </template>
 
 <script setup>
-import { mergeProps, computed, ref } from 'vue';
+import { mergeProps, computed, ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 
@@ -62,21 +143,31 @@ props = defineProps({
   title: String,
 }),
 dialog = ref(false),
-dialogConnect = ref(false)
+dialogConnect = ref(false),
+session = ref("Conectar Billetera")
 
 
-function validSession() {
-  if(localStorage.getItem("session")) {
-    const wallet = WalletP2p.getAccount()?.address;
-    const wallet_final = wallet.length > 20 ? wallet.substring(0,6)+"..."+wallet.substring((wallet.length - process.env.NETWORK.length - 7), wallet.length) : wallet;
-    return wallet_final;
+onBeforeMount(validSession)
+
+
+ async function validSession() {
+  const accounId = await WalletP2p.getAccountId();
+  console.log(accounId)
+  // if(localStorage.getItem("session")) {
+  if(accounId) {
+    const wallet_final = accounId.length > 20 ? accounId.substring(0,6)+"..."+accounId.substring((accounId.length - process.env.NETWORK.length - 7), accounId.length) : accounId;
+    session.value = wallet_final;
+    // return wallet_final;
   } else {
-    return "Conectar Billetera";
+    session.value ="Conectar Billetera";
+    // return "Conectar Billetera";
   }
 }
 
-function openDialog() {
-  if(localStorage.getItem("session")) {
+async function openDialog() {
+  const accounId = await WalletP2p.getAccountId();
+  // if(localStorage.getItem("session")) {
+  if(accounId) {
     dialogConnect.value = true
 
     return
@@ -89,11 +180,15 @@ function login() {
   WalletP2p.login(process.env.CONTRACT_DAO);
 }
 
-function  logout() {
-  localStorage.removeItem("session")
+async function  logout() {
+  // localStorage.removeItem("session")
   dialogConnect.value = false;
 
+  await WalletP2p.logout();
+
+  session.value = "Conectar Billetera";
   router.push({path: '/'})
+  location.reload();
 
   // window.open(window.location.origin + window.location.pathname, "_self");
 }

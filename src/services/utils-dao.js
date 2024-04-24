@@ -4,7 +4,7 @@ import walletP2p from '@/services/wallet-p2p';
 
 async function isMember() {
   let result = false;
-  const account = walletP2p.getAccount();
+  const account = await walletP2p.getAccountId();
 
   if(account.address) {
     const query = `query Proposals($owner: String) {
@@ -18,7 +18,7 @@ async function isMember() {
     }`;
 
     const variables = { owner: account.address };
-    
+
     const resp = await graphQl.getQuery(query, variables);
 
     if(resp) {

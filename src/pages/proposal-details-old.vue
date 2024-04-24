@@ -321,7 +321,7 @@ export default {
       loading,
       error,
       alert: ref(false),
-      session: WalletP2p.getAccount(),
+      session: ref(null), // WalletP2p.getAc count(),
       isMember: ref(utilsDAO.isMember()),
 			openVoice: ref(false),
 			openCouncil: ref(false),
@@ -349,27 +349,7 @@ export default {
 
 			dataLikes: ref([
 				/*{icon: 'like'},
-				{ icon: 'dislike'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{ icon: 'dislike'},
-				{ icon: 'dislike'},
-				{ icon: 'dislike'},
-				{ icon: 'dislike'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},
-				{icon: 'like'},*/
+				{ icon: 'dislike'},*/
 			]),
 
 			iconMap: {
@@ -403,6 +383,10 @@ export default {
 		}
 	},
 
+  created() {
+    this.getAddress();
+  },
+
   watch: {
     result(response) {
       this.loadData(response)
@@ -418,6 +402,10 @@ export default {
 
 
 	methods: {
+    async getAddress() {
+      const account_id = await WalletP2p.getAccountId();
+      this.session = account_id;
+    },
     copy(id) {
       const link = window.location.origin + window.location.pathname + window.location.search
       navigator.clipboard.writeText(link);

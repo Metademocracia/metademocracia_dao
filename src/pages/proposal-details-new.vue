@@ -133,7 +133,7 @@ async function getProposal() {
 
   const variables = {
     contractId: route.query.dao + "|" + route.query.id,
-    userId: WalletP2p.getAccount().address,
+    userId: await WalletP2p.getAccountId(),
   }
 
   await graphQl.getQueryDaoV2(query, variables).then(async response => {

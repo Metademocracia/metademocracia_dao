@@ -460,7 +460,7 @@ const
   toast = useToast(),
   { globalRules, typesDao, typesDaoDefault } = variables,
 
-address = WalletP2p.getAccount().address,
+address = ref(null), // WalletP2p.getAcc ount().address,
 tab = ref(0),
 tabs = ref([
   {
@@ -516,6 +516,12 @@ watch(nameDao, async (newName, oldName) => {
 onBeforeMount(getData)
 
 async function getData() {
+  const accounId = await WalletP2p.getAccountId();
+  address.value = accounId;
+
+  if(!accounId) return
+
+
   const valores = window.location.search;
   const urlParams = new URLSearchParams(valores);
   walletDao.value = urlParams.get('dao');

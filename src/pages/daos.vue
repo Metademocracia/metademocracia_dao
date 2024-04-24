@@ -86,7 +86,7 @@ daos = ref([]),
 paginatedDaos = computed(() => (daos.value.length || 9) / 9),
 likeWalletDao = ref(undefined),
 listDaos = ref([]),
-accounId = WalletP2p.getAccount()?.address
+accounId = ref(null) // WalletP2p.getAcco unt()?.address
 const loading = ref(true);
 
 watch(tab, async (newVal, oldVal) => {
@@ -104,6 +104,11 @@ function view(item) {
 }
 
 async function getData() {
+  const account_id = await WalletP2p.getAccountId();
+  accounId.value = account_id;
+
+  if(!accounId) return
+
   listDaos.value = [];
   if(likeWalletDao.value) {
     likeWalletDao.value = likeWalletDao.value.trim() == "" ? undefined : likeWalletDao.value;

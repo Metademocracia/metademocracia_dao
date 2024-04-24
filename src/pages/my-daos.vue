@@ -75,7 +75,7 @@ daos = ref([]),
 paginatedDaos = computed(() => (daos.value.length || 3) / 3),
 listDaos = ref([]),
 likeWalletDao = ref(undefined),
-accounId = WalletP2p.getAccount()?.address
+accounId = ref(null) // WalletP2p.getA ccount()?.address
 const loading = ref(true);
 
 
@@ -86,6 +86,11 @@ function view(item) {
 }
 
 async function getData() {
+  const accounIdresult = await WalletP2p.getAccountId();
+  accounId.value = accounIdresult;
+
+  if(!accounIdresult) return
+
   listDaos.value = [];
 
   const queryMeta = `query dao($owner_id: String) {
@@ -108,7 +113,7 @@ async function getData() {
     }
   }`;
 
-  const variables = { owner_id: WalletP2p.getAccount().address };
+  const variables = { owner_id: accounId.value };
 
   /// dao metademocracia
   await graphQl.getQuery(queryMeta, variables).then(async response => {
