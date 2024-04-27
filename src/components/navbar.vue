@@ -62,7 +62,8 @@
             </v-menu>
           </div>
 
-          <v-btn class="btn mt-10" @click="openDialog()">{{ titleBtnLogin }}</v-btn>
+          <!--<v-btn class="btn mt-10" @click="openDialog()">{{ titleBtnLogin }}</v-btn>-->
+          <connectWallet></connectWallet>
 
         </div>
       </v-menu>
