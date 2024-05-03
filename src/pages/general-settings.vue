@@ -43,10 +43,10 @@
         :rules="[globalRules.required]"
       />
 
-      <label for="purposeDao">Propósito</label>
+      <label for="_purposeDao">Propósito</label>
       <v-textarea
-        ref="purposeDao"
-        id="purposeDao"
+        v-model="purposeDao"
+        id="_purposeDao"
         variant="solo"
         placeholder="Propósito"
         :rules="[globalRules.required]"
@@ -496,6 +496,7 @@ metadataDao = ref(null),
 dataConfig = ref(null),
 dataDao = ref(null),
 nameDao = ref(null),
+purposeDao = ref(null),
 daoProposalKyc = ref([ { model: undefined } ]),
 selectTypeDao = ref(typesDaoDefault.value)
 
@@ -535,19 +536,30 @@ async function getData() {
   const metadata = JSON.parse(atob(responseConfig.metadata))
   metadataDao.value = metadata;
   dataConfig.value = responseConfig;
+  const purposeData = dataConfig.value?.purpose.split("|");
+  let purpose;
+  try {
+
+    purpose = window.atob(purposeData.length <= 0 ? purposeData : purposeData[0]);
+  } catch (error) {
+    purpose = purposeData.length <= 0 ? purposeData : purposeData[0];
+  }
+  
   dataDao.value = {
     name: dataConfig.value?.name,
-    purpose: atob(dataConfig.value?.purpose),
+    purpose,
     typeDao: !metadataDao.value?.isPrivated ? "Publico" : "Privado",
   }
-  links.value = metadataDao.value.social.map((item) => {return {text: item, href: item}});
+  links.value = !metadataDao.value?.social ? [] : metadataDao.value.social.map((item) => {return {text: item, href: item}});;
   daoLogo.value = !metadataDao.value?.img ? MetademocraciaImage : metadataDao.value?.img;
   // selectTypeDao.value = !metadataDao.value?.isPrivated ? false : metadataDao.value?.isPrivated;
 
-  //console.log("links: ", metadataDao.value.social.map((item) => {return {text: item, href: item}}))
+  //////////////////////////////////////////////////////////////////////////////////////////////
 
+  nameDao.value = dataConfig.value?.name;
+  purposeDao.value = purpose;
+  selectTypeDao.value = !metadataDao.value?.isPrivated ? "0" : "1";
 
-  //console.log(metadataDao.value)
 }
 
 async function uploadImgIpfs() {
@@ -598,10 +610,11 @@ async function onCompleted({ formValid }) {
   switch (tab.value) {
     // Name and proposal about DAO
     case 0:  {
-      dataConfig.value.name = nameDao.value;
-      dataConfig.value.purpose = `${btoa(document.getElementById("purposeDao").value)}|${JSON.stringify({isPrivated})}`;
-
       const isPrivated = selectTypeDao.value == "0" ? false : true;
+
+      dataConfig.value.name = nameDao.value;
+      dataConfig.value.purpose = `${btoa(purposeDao.value)}|${JSON.stringify({isPrivated})}`;
+
       metadataDao.value.isPrivated = isPrivated;
 
       const metadata = btoa(JSON.stringify(metadataDao.value));
@@ -701,8 +714,6 @@ function addProposal(bounty_bond, title, description, link) {
     gas: "200000000000000",
     attachedDeposit: bounty_bond
   };
-
-  console.log("json", json);
 
   WalletP2p.call(json, "proposals", ("?dao="+walletDao.value));
 

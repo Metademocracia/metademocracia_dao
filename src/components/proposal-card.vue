@@ -90,6 +90,9 @@
 
               <p class="label mb-2">Nuevo propósito</p>
               <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal?.config?.purpose }}</p>
+
+              <p class="label mb-2">Tipo dao</p>
+              <p class="ellipsis-box" style="--lines: 6;"> {{ proposal?.objectProposal?.config?.isPrivate }}</p>
             </span>
 
             <span v-if="proposal?.title == 'Cambio Estado legal y Documento'">

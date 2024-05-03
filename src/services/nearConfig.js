@@ -13,8 +13,8 @@ export function configNear(keyStores) {
         networkId: "mainnet",
         keyStore: keyStores,
         nodeUrl: "https://rpc.mainnet.near.org",
-        walletUrl: "https://app.mynearwallet.com/",
-        // walletUrl: "http://localhost:8000/wallet-p2p",
+        // walletUrl: "https://app.mynearwallet.com/",
+        walletUrl: "https://mi.arepa.digital",
         helperUrl: "https://helper.mainnet.near.org",
         explorerUrl: "https://nearblocks.io",
       };
