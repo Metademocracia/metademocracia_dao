@@ -349,7 +349,7 @@ export default {
             proposer: item.proposer,
             description: atob(item.description),
             approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
-            status,
+            status: item.status,
             link: item.link,
             amount: null,
             claims: null,

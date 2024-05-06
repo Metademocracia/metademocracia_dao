@@ -155,6 +155,20 @@ async function getProposal() {
     const date_format = ' ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
     const date_final = item.approval_date ? date_format : item.approval_date;
 
+    if(type.trim() == 'ChangeConfig') {
+      if(objectProposal?.config?.purpose) {
+        const purposeData = objectProposal.config.purpose.split("|");
+        let purpose;
+        try {
+          purpose = window.atob(purposeData.length <= 0 ? purposeData : purposeData[0]);
+        } catch (error) {
+          purpose = purposeData.length <= 0 ? purposeData : purposeData[0];
+        }
+        objectProposal.config.purpose = purpose
+        objectProposal.config.isPrivate = !configMetadata?.isPrivated ? "Publico" : configMetadata?.isPrivated ? "Privado" : "Publico";
+      }
+    }
+
     proposal.value = {
       id: item.proposal_id,
       contractId: item.contract_id,
