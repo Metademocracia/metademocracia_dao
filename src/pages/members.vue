@@ -131,8 +131,8 @@ async function getData() {
     total_owners
     owners(
       where: {total_mft_gt: "0", ${memberLike}}
-      orderBy: owner_id
-      orderDirection: asc
+      orderBy: votes
+      orderDirection: desc
       skip: $index
       first: $limit
     ) {

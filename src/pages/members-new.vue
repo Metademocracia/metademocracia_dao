@@ -176,11 +176,11 @@ async function getData() {
   const query = `query MyQuery($contractId: String, $group: String, $limit: Int, $index: Int) {
     dao(id: $contractId) {
       total_members
-      groups(where: {group: $group}) {
+      groups(where: {group: $group} ) {
         group
         members( ${memberLike}
-        orderBy: member,
-        orderDirection: asc,
+        orderBy: votes,
+        orderDirection: desc,
         skip: $index,
         first: $limit) {
           member
