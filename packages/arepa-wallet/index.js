@@ -5216,7 +5216,7 @@ const resolveWalletUrl = (network, walletUrl) => {
     case "mainnet":
       return "https://mi.arepa.digital";
     case "testnet":
-      return "http://localhost:8000/wallet-p2p";
+      return "https://develop.globaldv.tech/wallet-arepa";
     default:
       throw new Error("Invalid wallet url");
   }
