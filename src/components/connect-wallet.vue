@@ -179,7 +179,7 @@ async function openDialog() {
   }
 
   const selector = await setupWalletSelector({
-    network: "testnet",
+    network: process.env.NETWORK,
     modules: [setupArepaWallet(), setupMyNearWallet()],
   });
 
