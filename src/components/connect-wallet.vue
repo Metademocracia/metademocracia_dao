@@ -137,6 +137,11 @@
 import { mergeProps, computed, ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
+import { setupWalletSelector } from "@near-wallet-selector/core";
+import { setupModal } from "@near-wallet-selector/modal-ui";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupArepaWallet } from "@near-wallet-selector/arepa-wallet";
+import "@near-wallet-selector/modal-ui/styles.css"
 
 const router = useRouter(),
 props = defineProps({
@@ -173,7 +178,16 @@ async function openDialog() {
     return
   }
 
-  dialog.value = true
+  const selector = await setupWalletSelector({
+    network: "testnet",
+    modules: [setupArepaWallet(), setupMyNearWallet()],
+  });
+
+  const modal = setupModal(selector, {});
+
+  modal.show();
+
+  // dialog.value = true
 }
 
 function login() {
