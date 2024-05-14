@@ -62,7 +62,7 @@ async function call (json, ruta, param_ruta) {
   urlParams.delete("transactionHashes");
 
   const route = ruta ? window.location.origin + (!process.env.BASE_URL ? "/" : process.env.BASE_URL) + ruta : window.location.origin + window.location.pathname;
-  const query = ruta ? param_ruta : urlParams.toString() != "" ? "?"+urlParams.toString() : "";
+  const query = param_ruta ? param_ruta : urlParams.toString() != "" ? "?"+urlParams.toString() : "";
   const callBack = route + query;
 
   json.walletCallbackUrl = callBack;
