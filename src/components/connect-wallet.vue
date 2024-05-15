@@ -156,9 +156,15 @@ onBeforeMount(validSession)
 
 
  async function validSession() {
+  const walletSelectPending = localStorage.getItem('near-wallet-selector:selectedWalletId:pending');
+
+  if(walletSelectPending && walletSelectPending !== "null" && walletSelectPending !== "undefined" && walletSelectPending !== null && walletSelectPending !== undefined) {
+    localStorage.setItem('wallet-selector:select-wallet', walletSelectPending);
+  }
+
   const accounId = await WalletP2p.getAccountId();
-  console.log(accounId)
   // if(localStorage.getItem("session")) {
+
   if(accounId) {
     const wallet_final = accounId.length > 20 ? accounId.substring(0,6)+"..."+accounId.substring((accounId.length - process.env.NETWORK.length - 7), accounId.length) : accounId;
     session.value = wallet_final;
@@ -198,7 +204,19 @@ async function  logout() {
   // localStorage.removeItem("session")
   dialogConnect.value = false;
 
-  await WalletP2p.logout();
+  // await WalletP2p.logout();
+  let walletSelect = localStorage.getItem('wallet-selector:select-wallet');
+  if(!walletSelect || walletSelect === "null" || walletSelect === "undefined" || walletSelect === null || walletSelect === undefined) {
+    walletSelect = '"arepa-wallet"';
+  }
+
+  const selector = await setupWalletSelector({
+    network: process.env.NETWORK,
+    modules: [setupArepaWallet(), setupMyNearWallet()],
+  });
+
+  const wallet = await selector.wallet(walletSelect.replaceAll('"', ""));
+  await wallet.signOut();
 
   session.value = "Conectar Billetera";
   router.push({path: '/'})

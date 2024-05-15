@@ -395,7 +395,35 @@ export default {
 
           if(!usdtIsActive){
             const transactions = [
-              {
+            {
+                receiverId: process.env.CONTRACT_USDT,
+                actions: [
+                  {
+                    type: "FunctionCall",
+                    params: {
+                      methodName: "storage_deposit",
+                      args: {
+                        account_id: this.walletDao,
+                      },
+                      gas: "30000000000000",
+                      deposit: "1250000000000000000000"
+                    }
+                  },
+                  {
+                    type: "FunctionCall",
+                    params: {
+                      methodName: "ft_transfer",
+                      args: {
+                        receiver_id: this.walletDao,
+                        amount: amount
+                      },
+                      gas: "15000000000000",
+                      deposit: "1"
+                    }
+                  }
+                ]
+              }
+              /*{
                 receiverId: process.env.CONTRACT_USDT,
                 functionCalls: [
                   {
@@ -416,7 +444,7 @@ export default {
                     attachedDeposit: "1"
                   }
                 ]
-              },
+              },*/
             ];
 
             await WalletP2p.callBatchTransactions(transactions);

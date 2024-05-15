@@ -8,6 +8,9 @@ import {configNear} from '../services/nearConfig';
 import {/*Action,*/ createTransaction, functionCall} from 'near-api-js/lib/transaction'
 import { base_decode } from 'near-api-js/lib/utils/serialize'
 import { PublicKey } from 'near-api-js/lib/utils'
+import { setupWalletSelector } from "@near-wallet-selector/core";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupArepaWallet } from "@near-wallet-selector/arepa-wallet";
 
 const _routeRpc = process.env.ROUTER_RPC;
 
@@ -15,7 +18,19 @@ const myKeyStore = new keyStores.BrowserLocalStorageKeyStore();
 
 
 async function nearConnect() {
-  const nearConnection = await connect(configNear(myKeyStore));
+  let walletSelect = localStorage.getItem('near-wallet-selector:select-wallet');
+  if(!walletSelect || walletSelect === "null" || walletSelect === "undefined" || walletSelect === null || walletSelect === undefined) {
+    walletSelect = '"arepa-wallet"';
+  }
+
+  const selector = await setupWalletSelector({
+    network: process.env.NETWORK,
+    modules: [setupArepaWallet(), setupMyNearWallet()],
+  });
+
+  const wallet = await selector.wallet(walletSelect.replaceAll('"', ""));
+
+  const nearConnection = await connect(configNear(myKeyStore, wallet.metadata.walletUrl));
   const walletConnection = new WalletConnection(nearConnection, "metaDao");
 
   return {nearConnection, walletConnection};
@@ -49,12 +64,67 @@ async function logout() {
 
 
 async function getAccountId() {
-  const {walletConnection} = await nearConnect();
+  /* const {walletConnection} = await nearConnect();
+  return walletConnection.getAccountId();*/
 
-  return walletConnection.getAccountId();
+  let walletSelect = localStorage.getItem('wallet-selector:select-wallet');
+  if(!walletSelect || walletSelect === "null" || walletSelect === "undefined" || walletSelect === null || walletSelect === undefined) {
+    walletSelect = '"arepa-wallet"';
+  }
+
+  const selector = await setupWalletSelector({
+    network: process.env.NETWORK,
+    modules: [setupArepaWallet(), setupMyNearWallet()],
+  });
+
+  const wallet = await selector.wallet(walletSelect.replaceAll('"', ""));
+  const accounts = await wallet.getAccounts();
+
+  if(accounts.length === 0) return undefined;
+
+  return accounts[0].accountId;
 }
 
 async function call (json, ruta, param_ruta) {
+
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.delete("response");
+  urlParams.delete("token");
+  urlParams.delete("transactionHashes");
+
+  const route = ruta ? window.location.origin + (!process.env.BASE_URL ? "/" : process.env.BASE_URL) + ruta : window.location.origin + window.location.pathname;
+  const query = param_ruta ? param_ruta : urlParams.toString() != "" ? "?"+urlParams.toString() : "";
+  const callBack = route + query;
+
+  let walletSelect = localStorage.getItem('wallet-selector:select-wallet');
+  console.log("wallet: ", walletSelect.replaceAll('"', ""))
+
+  const selector = await setupWalletSelector({
+    network: process.env.NETWORK,
+    modules: [setupArepaWallet(), setupMyNearWallet()],
+  });
+
+
+  const wallet = await selector.wallet(walletSelect.replaceAll('"', ""));
+  await wallet.signAndSendTransaction({
+    receiverId: json.contractId,
+    actions: [
+      {
+        type: "FunctionCall",
+        params: {
+          methodName: json.methodName,
+          args: json.args,
+          gas: json.gas,
+          deposit: json.attachedDeposit,
+        },
+      },
+    ],
+  });
+
+  return true
+}
+
+async function call2 (json, ruta, param_ruta) {
 
   const urlParams = new URLSearchParams(window.location.search);
   urlParams.delete("response");
@@ -74,6 +144,7 @@ async function call (json, ruta, param_ruta) {
   return response
 }
 
+
 /**
  * Call multiple transactions in a batch
  * @param transactions Array of \{receiverId, functionCalls: [ { methodName, args, gas, attachedDeposit } ] \} items
@@ -81,6 +152,34 @@ async function call (json, ruta, param_ruta) {
  * @param param_ruta String
  */
 async function callBatchTransactions(transactions, ruta, param_ruta) {
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.delete("response");
+  urlParams.delete("token");
+  urlParams.delete("transactionHashes");
+
+  const route = ruta ? window.location.origin + (!process.env.BASE_URL ? "/" : process.env.BASE_URL) + ruta : window.location.origin + window.location.pathname;
+  const query = ruta ? param_ruta : urlParams.toString() != "" ? "?"+urlParams.toString() : "";
+  const callBack = route + query;
+
+  let walletSelect = localStorage.getItem('wallet-selector:select-wallet');
+
+  const selector = await setupWalletSelector({
+    network: process.env.NETWORK,
+    modules: [setupArepaWallet(), setupMyNearWallet()],
+  });
+
+  const wallet = await selector.wallet(walletSelect.replaceAll('"', ""));
+  await wallet.signAndSendTransactions( { transactions, callbackUrl: callBack} );
+}
+
+
+/**
+ * Call multiple transactions in a batch
+ * @param transactions Array of \{receiverId, functionCalls: [ { methodName, args, gas, attachedDeposit } ] \} items
+ * @param ruta String
+ * @param param_ruta String
+ */
+async function callBatchTransactions3(transactions, ruta, param_ruta) {
   /*const transaction = [{
     receiverId: item.contract_market,
     functionCalls: [

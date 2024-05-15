@@ -3,7 +3,7 @@
 // const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX
 
 
-export function configNear(keyStores) {
+export function configNear(keyStores, walletUrl=undefined) {
   const network = process.env.NETWORK
   const enviroment = false
   const NETWORK = (enviroment) ? network : network;
@@ -14,7 +14,7 @@ export function configNear(keyStores) {
         keyStore: keyStores,
         nodeUrl: "https://rpc.mainnet.near.org",
         // walletUrl: "https://app.mynearwallet.com/",
-        walletUrl: "https://mi.arepa.digital",
+        walletUrl: walletUrl || "https://mi.arepa.digital",
         helperUrl: "https://helper.mainnet.near.org",
         explorerUrl: "https://nearblocks.io",
       };
@@ -24,7 +24,7 @@ export function configNear(keyStores) {
         keyStore: keyStores,
         nodeUrl: "https://rpc.testnet.near.org",
         // walletUrl: "https://testnet.mynearwallet.com/",
-        walletUrl: "http://localhost:8000/wallet-p2p",
+        walletUrl: walletUrl || "http://localhost:8000/wallet-p2p",
         helperUrl: "https://helper.testnet.near.org",
         explorerUrl: "https://testnet.nearblocks.io",
       };
