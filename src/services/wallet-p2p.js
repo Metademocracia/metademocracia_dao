@@ -113,8 +113,8 @@ async function call (json, ruta, param_ruta) {
         params: {
           methodName: json.methodName,
           args: json.args,
-          gas: json.gas,
-          deposit: json.attachedDeposit,
+          gas: !json?.gas ? '3000000000000' : json.gas,
+          deposit: json?.attachedDeposit,
         },
       },
     ],
