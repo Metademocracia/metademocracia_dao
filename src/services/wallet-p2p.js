@@ -101,9 +101,7 @@ async function call (json, ruta, param_ruta) {
 
   const selector = await setupWalletSelector({
     network: process.env.NETWORK,
-    modules: [setupArepaWallet({
-      walletUrl: process.env.NETWORK === "mainnet" ? "https://mi.arepa.digital" : "https://develop.globaldv.tech/wallet-arepa",
-    }), setupMyNearWallet()],
+    modules: [setupArepaWallet(), setupMyNearWallet()],
   });
 
 
