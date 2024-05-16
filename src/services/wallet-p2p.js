@@ -101,11 +101,15 @@ async function call (json, ruta, param_ruta) {
 
   const selector = await setupWalletSelector({
     network: process.env.NETWORK,
-    modules: [setupArepaWallet(), setupMyNearWallet()],
+    modules: [setupArepaWallet({
+      walletUrl: process.env.NETWORK === "mainnet" ? "https://mi.arepa.digital" : "https://develop.globaldv.tech/wallet-arepa",
+    }), setupMyNearWallet()],
   });
 
 
   const wallet = await selector.wallet(walletSelect.replaceAll('"', ""));
+  // console.log("wallet: ", wallet)
+
   await wallet.signAndSendTransaction({
     receiverId: json.contractId,
     actions: [
@@ -119,7 +123,7 @@ async function call (json, ruta, param_ruta) {
         },
       },
     ],
-  });
+  }, callBack);
 
   return true
 }
