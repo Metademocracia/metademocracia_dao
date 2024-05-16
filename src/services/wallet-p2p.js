@@ -97,16 +97,13 @@ async function call (json, ruta, param_ruta) {
   const callBack = route + query;
 
   let walletSelect = localStorage.getItem('wallet-selector:select-wallet');
-  console.log("wallet: ", walletSelect.replaceAll('"', ""))
 
   const selector = await setupWalletSelector({
     network: process.env.NETWORK,
     modules: [setupArepaWallet(), setupMyNearWallet()],
   });
 
-
   const wallet = await selector.wallet(walletSelect.replaceAll('"', ""));
-  // console.log("wallet: ", wallet)
 
   await wallet.signAndSendTransaction({
     receiverId: json.contractId,

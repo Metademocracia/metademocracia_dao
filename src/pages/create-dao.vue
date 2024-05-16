@@ -713,7 +713,7 @@ function getRoles(){
       roles.push({
         name: group,
         kind: {
-            Group: group == groupCouncil.value ? [addressUser].concat(members) : members
+            Group: group == groupCouncil.value ? [addressUser.value].concat(members) : members
         },
         permissions: rol,
         vote_policy: {}
@@ -800,7 +800,7 @@ async function createDao(formValid) {
   /* console.log("json: ", objectJson)
   console.log("json: ", JSON.parse(atob(objectJson.args.args)))
   console.log("json: ", JSON.parse(atob(metadata))) */
-
+  console.log("json: ", objectJson)
   loadingBtn.value = false;
   WalletP2p.call(objectJson, "daos")
 
