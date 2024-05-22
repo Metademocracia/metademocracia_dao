@@ -497,7 +497,7 @@ export default {
       const tokenId = document.getElementById("tokenId").value;
       const amount = document.getElementById("amount").value;
       const msg = document.getElementById("msg").value;
-      const receiverId = document.getElementById("receiverId").value
+      const receiver = document.getElementById("receiverId").value
 
       let token = this.itemsTokens.find((item) => item.id == tokenId)
 
@@ -509,7 +509,7 @@ export default {
       : await WalletP2p.view({
         contractId: process.env.CONTRACT_USDT,
         methodName: "storage_balance_of",
-        args: { account_id: receiverId }
+        args: { account_id: receiver }
       });
 
       if(!usdtIsActive){
@@ -522,7 +522,7 @@ export default {
                 params: {
                   methodName: "storage_deposit",
                   args: {
-                    account_id: this.walletDao,
+                    account_id: receiver,
                   },
                   gas: "30000000000000",
                   deposit: "1250000000000000000000"
@@ -544,7 +544,7 @@ export default {
                       kind: {
                         Transfer: {
                           token_id: tokenId,
-                          receiver_id: receiverId,
+                          receiver_id: receiver,
                           amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
                           msg: msg ? msg.lenght > 0 ? msg.length : null : null,
                         }
