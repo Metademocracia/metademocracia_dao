@@ -63,7 +63,10 @@
           </div>
 
           <!--<v-btn class="btn mt-10" @click="openDialog()">{{ titleBtnLogin }}</v-btn>-->
-          <connectWallet></connectWallet>
+          <span class="mt-10" @click="() => { if(!isLogin) { menuToggle = false } }">
+            <connectWallet></connectWallet>
+          </span>
+
 
         </div>
       </v-menu>
@@ -154,6 +157,7 @@
       ></v-select>-->
       <!--<v-btn class="btn" @click="openDialog()">{{ titleBtnLogin }}</v-btn>-->
       <!--<v-btn class="btn" @click="dialogConnect = true">Conectar Wallet2</v-btn>-->
+
       <connectWallet></connectWallet>
     </div>
 
@@ -202,7 +206,7 @@ import formatHtml from "../components/format-html.vue";
 import moment from 'moment';
 import utilsDAO from '@/services/utils-dao';
 import { useToast } from 'vue-toastification';
-import { ref, computed, onBeforeMount, watch } from 'vue';
+import { ref, computed, onBeforeMount, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import walletP2p from '../services/wallet-p2p';
 //import { Link } from '@inertiajs/inertia-vue3';
@@ -237,10 +241,20 @@ const toast = useToast(),
       ref: 'https://mi.arepa.digital/'
     }
   ],
-  titleBtnLogin = ref("Conectar Billetera")
+  titleBtnLogin = ref("Conectar Billetera"),
+  isLogin = ref(false);
 
 
 onBeforeMount(verifyResponse)
+
+onMounted(verifyLogin)
+
+async function verifyLogin() {
+  const accounId = await WalletP2p.getAccountId();
+  if(accounId) {
+    isLogin.value = true;
+  }
+}
 
 async function goCreateProposal() {
   const isMember = await utilsDAO.isMember(); // isMember.value();

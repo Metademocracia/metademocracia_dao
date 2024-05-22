@@ -281,10 +281,12 @@ import FailedIcon from '@/assets/sources/images/Iconos-propuestas-metadao-FALLID
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 import utilsDAO from '@/services/utils-dao';
+import { useToast } from 'vue-toastification';
 import { mergeProps, computed, ref } from 'vue';
 
 
 const
+  toast = useToast(),
   router = useRouter(),
   props = defineProps({
     proposal: {
@@ -293,6 +295,18 @@ const
     }
   }),
   mergeProps2 = mergeProps
+
+
+
+
+async function verifyLogin() {
+  const accounId = await WalletP2p.getAccountId();
+  if(accounId) {
+    return true;
+  }
+
+  return false;
+}
 
 function loadSrcLogo() {
   let result;
@@ -364,6 +378,13 @@ function onPressProposal() {
 }
 
 async function finalize(id, contractId, type) {
+  const verifyLoginUser = await verifyLogin();
+
+  if(!verifyLoginUser) {
+    toast.info("Debes iniciar sesión para culminar propuesta");
+    return
+  }
+
   if(!id && !contractId) return
 
   const gas = type == "Transfer" ? "50000000000000" : undefined;
@@ -401,6 +422,13 @@ async function finalize(id, contractId, type) {
 }
 
 async function upvote(id, contractId, type) {
+  const verifyLoginUser = await verifyLogin();
+
+  if(!verifyLoginUser) {
+    toast.info("Debes iniciar sesión para votar");
+    return
+  }
+
   if(!id && !contractId) return
 
   const gas = type == "Transfer" ? "50000000000000" : undefined;
@@ -439,6 +467,13 @@ async function upvote(id, contractId, type) {
 
 
 async function downvote(id, contractId, type) {
+  const verifyLoginUser = await verifyLogin();
+
+  if(!verifyLoginUser) {
+    toast.info("Debes iniciar sesión para votar");
+    return
+  }
+  
   if(!id && !contractId) return
 
   const gas = type == "Transfer" ? "50000000000000" : undefined;
