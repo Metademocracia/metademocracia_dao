@@ -290,13 +290,11 @@ export default {
       const resultState = await account.state().catch(() => {
         item.memberSuccess = null
         item.memberErrror = "Wallet no válida"
-        console.log("paso 1: ", item)
       });
 
       if(!resultState) {
         item.memberSuccess = null
         item.memberErrror = "Wallet no válida"
-        console.log("paso 2: ", item)
       } else {
         if(item?.type) {
           const exist = await this.isMember(item.member, item.type);
@@ -304,13 +302,11 @@ export default {
           if(exist) {
             item.memberSuccess = null
             item.memberErrror = "El usuario ya pertenece al grupo donde lo quiere agregar"
-            console.log("paso 3: ", item)
             return
           }
         }
         item.memberErrror = null
         item.memberSuccess = "Wallet válido"
-        console.log("paso 4: ", item)
       }
     },
 
