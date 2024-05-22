@@ -395,7 +395,7 @@ export default {
 
           if(!usdtIsActive){
             const transactions = [
-            {
+              {
                 receiverId: process.env.CONTRACT_USDT,
                 actions: [
                   {

@@ -145,10 +145,15 @@
 
               <label for="receiverId">ID de Receptor</label>
               <v-text-field
+                v-model="receiverItem.member"
                 id="receiverId"
                 variant="solo"
                 placeholder="member.near"
                 :rules="[globalRules.required]"
+                :error-messages="receiverItem.memberErrror"
+                :success-messages="receiverItem.memberSuccess"
+                @keyup="validMember(receiverItem)"
+                @change="validMember(receiverItem)"
               />
 
               <label for="amount">Monto</label>
@@ -221,7 +226,8 @@ export default {
         {id: process.env.CONTRACT_USDT, desc: "USDT"},
       ],
       daoMembers: ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ]),
-      memberItem: ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ])
+      memberItem: ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ]),
+      receiverItem: ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ])
     }
   },
 
@@ -284,11 +290,13 @@ export default {
       const resultState = await account.state().catch(() => {
         item.memberSuccess = null
         item.memberErrror = "Wallet no válida"
+        console.log("paso 1: ", item)
       });
 
       if(!resultState) {
         item.memberSuccess = null
         item.memberErrror = "Wallet no válida"
+        console.log("paso 2: ", item)
       } else {
         if(item?.type) {
           const exist = await this.isMember(item.member, item.type);
@@ -296,11 +304,13 @@ export default {
           if(exist) {
             item.memberSuccess = null
             item.memberErrror = "El usuario ya pertenece al grupo donde lo quiere agregar"
+            console.log("paso 3: ", item)
             return
           }
         }
         item.memberErrror = null
         item.memberSuccess = "Wallet válido"
+        console.log("paso 4: ", item)
       }
     },
 
@@ -510,6 +520,51 @@ export default {
         const transactions = [
           {
             receiverId: process.env.CONTRACT_USDT,
+            actions: [
+              {
+                type: "FunctionCall",
+                params: {
+                  methodName: "storage_deposit",
+                  args: {
+                    account_id: this.walletDao,
+                  },
+                  gas: "30000000000000",
+                  deposit: "1250000000000000000000"
+                }
+              }
+            ]
+          },
+          {
+            receiverId: this.walletDao,
+            actions: [
+              {
+                type: "FunctionCall",
+                params: {
+                  methodName: "add_proposal",
+                  args: {
+                    proposal: {
+                      title: btoa(document.getElementById("title").value),
+                      description: btoa(document.getElementById("description").value),
+                      kind: {
+                        Transfer: {
+                          token_id: tokenId,
+                          receiver_id: receiverId,
+                          amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
+                          msg: msg ? msg.lenght > 0 ? msg.length : null : null,
+                        }
+                      },
+                      link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
+                    }
+                  },
+                  gas: "200000000000000",
+                  deposit: bounty_bond
+                }
+              },
+            ]
+          },
+
+          /* {
+            receiverId: process.env.CONTRACT_USDT,
             functionCalls: [
               {
                 methodName: "storage_deposit",
@@ -545,7 +600,7 @@ export default {
                 attachedDeposit: bounty_bond
               }
             ]
-          }
+          } */
         ];
 
         await WalletP2p.callBatchTransactions(transactions, "proposals", ("?dao="+this.walletDao));
