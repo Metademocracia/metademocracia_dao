@@ -144,6 +144,7 @@ import nearIcon from '@/assets/sources/logos/near.svg';
 import usdtIcon from '@/assets/sources/icons/tether-icon.svg';
 import WalletP2p from '../services/wallet-p2p';
 import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
 import { useRoute } from 'vue-router';
 // import moment from 'moment';
 // import graphQl from '@/services/graphQl';
@@ -351,7 +352,23 @@ export default {
       }
     },
 
+    async verifyLogin() {
+      const accounId = await WalletP2p.getAccountId();
+      if(accounId) {
+        return true;
+      }
+
+      return false;
+    },
+
     async delegate(){
+      const verifyLoginUser = await this.verifyLogin();
+
+      if(!verifyLoginUser) {
+        useToast().info("Debes iniciar sesión para poder donar");
+        return
+      }
+
       if(!this.formValid) return
       // console.log("token: ", this.selectedToken)
       //this.walletDao = process.env.CONTRACT_DAO
