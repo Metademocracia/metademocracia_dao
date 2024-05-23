@@ -611,7 +611,7 @@ export default {
               kind: {
                 Transfer: {
                   token_id: tokenId,
-                  receiver_id: receiverId,
+                  receiver_id: receiver,
                   amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
                   msg: msg ? msg.lenght > 0 ? msg.length : null : null,
                 }

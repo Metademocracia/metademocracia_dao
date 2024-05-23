@@ -104,7 +104,7 @@ async function call (json, ruta, param_ruta) {
   });
 
   const wallet = await selector.wallet(walletSelect.replaceAll('"', ""));
-
+  
   await wallet.signAndSendTransaction({
     receiverId: json.contractId,
     actions: [
