@@ -279,19 +279,19 @@ async function verifyResponse() {
 
     console.log("transactionHashes: ", transactionHashes)
 
-    let dataAlert = `<p style="font-size:30px; color: white"><b>Transacción ejecutada</b></p>
-    <p class="mt-5">
-      <span style="color: white">
+    let dataAlert = `<p style="font-size:1.875em; color: white"><b>Transacción ejecutada</b></p>
+    <p class="mt-5" style="font-size: 1em">
+      <span style="color: white; font-size: 1em">
         <b>Hash:</b>
       </span>
-      <a href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/es/txns/${transactionHashes}" target="_blank"> ${transactionHashes} </a>
+      <a href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/es/txns/${transactionHashes}" target="_blank" class="ellipsis-box" style="font-size: 1em; --lines: 2"> ${transactionHashes} </a>
     </p>`;
 
     if(transactionHashes.split(',').length > 1) {
       const account_id = await walletP2p.getAccountId()
-      dataAlert = `<p style="font-size:30px; color: white"><b>Transacción ejecutada</b></p>
-      <center><p class="mt-5">
-        <a style="font-size:25px;" href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/es/address/${account_id}" target="_blank"> Ver explorador </a>
+      dataAlert = `<p style="font-size:1.875em; color: white"><b>Transacción ejecutada</b></p>
+      <center><p class="mt-5" style="font-size: 1em">
+        <a style="font-size:1.5625em;" href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/es/address/${account_id}" target="_blank"> Ver explorador </a>
       </p></center>`;
     }
 

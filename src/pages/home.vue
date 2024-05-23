@@ -40,7 +40,7 @@
         </v-btn>
       </toolbar>
 
-      <div style="color: white !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="full-width" fluid></v-progress-linear></div>
+      <div style="color: white !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="w-100" fluid></v-progress-linear></div>
 
       <v-divider v-if="!loading" thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
       <section id="daos__content">
