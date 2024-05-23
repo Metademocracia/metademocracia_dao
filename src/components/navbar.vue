@@ -284,7 +284,7 @@ async function verifyResponse() {
       <span style="color: white; font-size: 1em">
         <b>Hash:</b>
       </span>
-      <a href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/es/txns/${transactionHashes}" target="_blank" style="font-size: 1em"> ${transactionHashes} </a>
+      <a href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/es/txns/${transactionHashes}" target="_blank" class="ellipsis-box" style="font-size: 1em; --lines: 2"> ${transactionHashes} </a>
     </p>`;
 
     if(transactionHashes.split(',').length > 1) {
