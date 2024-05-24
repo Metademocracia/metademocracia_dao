@@ -110,7 +110,11 @@ function getData() {
 }
 
 async function getProposal() {
-  const query = `query MyQuery($contractId: String, $userId: String) {
+  const query = `query MyQuery($contractId: String, $walletcontract: String, $userId: String) {
+    dao(id: $walletcontract) {
+      proposal_period
+    }
+
     proposal(id: $contractId) {
       description
       contract_id
@@ -125,6 +129,7 @@ async function getProposal() {
       title
       upvote
       downvote
+      submission_time
       vote(where: {user_id: $userId}) {
         vote
       }
@@ -133,11 +138,13 @@ async function getProposal() {
 
   const variables = {
     contractId: route.query.dao + "|" + route.query.id,
+    walletcontract: route.query.dao,
     userId: await WalletP2p.getAccountId(),
   }
 
   await graphQl.getQueryDaoV2(query, variables).then(async response => {
     const item = response.data.data.proposal
+    const dao = response.data.data.dao
     // console.log("aqui si va: ", item)
 
     let kind;
@@ -154,6 +161,26 @@ async function getProposal() {
     const date = moment(item.approval_date/1000000)
     const date_format = ' ' + date.format('DD MMMM').toString() + ' de ' + date.format('yyyy').toString();
     const date_final = item.approval_date ? date_format : item.approval_date;
+
+    let title = "";
+    try {
+      title = atob(item.title);
+    } catch (error) {
+      title = item.title;
+    }
+
+    let description = "";
+    try {
+      description = atob(item.description);
+    } catch (error) {
+      description = item.description;
+    }
+    
+    const fechaVencimiento = moment((Number(item.submission_time) + Number(dao.proposal_period))/1000000);
+    const diasRestantes = fechaVencimiento <= moment() ? 0 : fechaVencimiento.diff(moment(), 'days')
+    const remainingTime = `${diasRestantes} dias - el ${fechaVencimiento.format('DD MMMM')} de ${fechaVencimiento.format('yyyy')}`
+    const status = diasRestantes == 0 && item.status == "InProgress" ? "Expired" : item.status
+    const culminar = item.status != status ? true : false;
 
     if(type.trim() == 'ChangeConfig') {
       if(objectProposal?.config?.purpose) {
@@ -175,16 +202,17 @@ async function getProposal() {
       type,
       objectProposal,
       configMetadata,
-      title: atob(item.title),
+      title,
       date: date_final,
       proposer: item.proposer,
-      description: atob(item.description),
+      description,
       approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
-      status: item.status,
+      status,
+      culminar,
       link: item.link,
       amount: null,
       claims: null,
-      remainingTime: "una semana",
+      remainingTime,
       likes: item.upvote,
       dislikes: item.downvote,
       vote: item.vote.length > 0 ? item.vote[0].vote : undefined,

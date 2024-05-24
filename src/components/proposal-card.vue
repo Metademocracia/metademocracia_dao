@@ -208,14 +208,14 @@
         </div>
       </v-card-text>
 
-      <aside v-if="proposal?.status == 'Failed'" class="flex-center ml-auto" style="gap: 20px;">
+      <aside v-if="proposal?.status == 'Failed' || proposal?.culminar" class="flex-center ml-auto" style="gap: 20px;">
         <div class="flex-center" style="gap: 10px;">
           <v-btn
             class="bg-tertiary"
             elevation="1"
             @click="finalize(proposal?.id, proposal?.contractId, proposal?.type)"
           >
-          <h7 class="text-white" style="font-weight: 500">Culminar</h7>
+          <h7 class="text-white" style="font-weight: 500">{{ proposal?.culminar ? 'Culminar vencida' : 'Culminar' }}</h7>
           </v-btn>
         </div>
       </aside>
@@ -473,7 +473,7 @@ async function downvote(id, contractId, type) {
     toast.info("Debes iniciar sesión para votar");
     return
   }
-  
+
   if(!id && !contractId) return
 
   const gas = type == "Transfer" ? "50000000000000" : undefined;

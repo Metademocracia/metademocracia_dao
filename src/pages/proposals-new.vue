@@ -317,10 +317,19 @@ export default {
             title = item.title;
           }
 
+          let description = "";
+          try {
+            description = atob(item.description);
+          } catch (error) {
+            description = item.description;
+          }
+          
+
           const fechaVencimiento = moment((Number(item.submission_time) + Number(dao.proposal_period))/1000000);
           const diasRestantes = fechaVencimiento <= moment() ? 0 : fechaVencimiento.diff(moment(), 'days')
           const remainingTime = `${diasRestantes} dias - el ${fechaVencimiento.format('DD MMMM')} de ${fechaVencimiento.format('yyyy')}`
           const status = diasRestantes == 0 && item.status == "InProgress" ? "Expired" : item.status
+          const culminar = item.status != status ? true : false;
 
           if(type.trim() == 'ChangeConfig') {
             if(objectProposal?.config?.purpose) {
@@ -347,9 +356,10 @@ export default {
             title,
             date: date_final,
             proposer: item.proposer,
-            description: atob(item.description),
+            description,
             approved: item.status == "InProgress" ? null : item.status == "Approved" ? true : false,
-            status: item.status,
+            status,
+            culminar,
             link: item.link,
             amount: null,
             claims: null,

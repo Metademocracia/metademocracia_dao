@@ -540,7 +540,7 @@ export default {
                   args: {
                     proposal: {
                       title: btoa(document.getElementById("title").value),
-                      description: btoa(document.getElementById("description").value),
+                      description: (document.getElementById("description").value),
                       kind: {
                         Transfer: {
                           token_id: tokenId,
@@ -607,7 +607,7 @@ export default {
           args: {
             proposal: {
               title: btoa(document.getElementById("title").value),
-              description: btoa(document.getElementById("description").value),
+              description: (document.getElementById("description").value),
               kind: {
                 Transfer: {
                   token_id: tokenId,
