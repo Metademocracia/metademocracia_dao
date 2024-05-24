@@ -379,9 +379,7 @@ export default {
       let balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
       // let balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
 
-
         // this.loadTransactionsTable(response.data.data.fundshists);
-
 
         const params = {
           account_id: this.dao_account_name,
