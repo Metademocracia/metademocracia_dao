@@ -104,7 +104,7 @@ async function call (json, ruta, param_ruta) {
   });
 
   const wallet = await selector.wallet(walletSelect.replaceAll('"', ""));
-  
+
   await wallet.signAndSendTransaction({
     receiverId: json.contractId,
     actions: [
@@ -293,6 +293,22 @@ async function getTransaction(hash, account_id) {
     });
 }
 
+function executeQueryRpc(_method, _params) {
+  const json = {
+    "jsonrpc": "2.0",
+    "id": "dontcare",
+    "method": _method,
+    "params": _params
+  };
+
+  return axios.post(process.env.ROUTER_RPC,
+    json, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+}
+
 
 function parseNearAmount(amount) {
   return utils.format.parseNearAmount(amount)
@@ -307,6 +323,7 @@ export default {
   callBatchTransactions,
   view,
   getTransaction,
+  executeQueryRpc,
   parseNearAmount,
 }
 

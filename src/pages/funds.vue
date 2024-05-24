@@ -347,10 +347,27 @@ export default {
       const endIndex = startIndex + this.cardsPerPage;
       return this.dataTransactions.slice(startIndex, endIndex);
     },*/
-    total_value_computed() {
+    async total_value_computed() {
       if(this.resultChartNear.result) {
         let balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
-        let balanceNear = this.resultChartNear.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
+
+
+        const params = {
+          account_id: this.dao_account_name,
+          finality: "optimistic",
+          request_type: "view_account"
+        };
+
+        const item = await WalletP2p.executeQueryRpc("query", params);
+        const amount = Number(item?.data?.result?.amount || 0);
+        const storageUsage = Number(item?.data?.result?.storage_usage || 0);
+
+        const balanceWallet = amount / 1e24;
+        const reservedStorage = storageUsage / 1e5;
+        const reservedTransaction = amount !== 0 ? Math.min(balanceWallet - reservedStorage, 0.05) : 0;
+        const balanceAvalible = balanceWallet - reservedStorage - reservedTransaction;
+
+        let balanceNear = balanceAvalible; // this.resultChartNear.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
         // console.log(balanceNear, isNaN(balanceNear), balanceUsdt, isNaN(balanceUsdt))
         balanceNear = !isNaN(balanceNear) ? balanceNear : 0;
         balanceUsdt = !isNaN(balanceUsdt) ? balanceUsdt : 0;
