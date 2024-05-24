@@ -15,7 +15,7 @@
 
         <div class="flex-column">
           <span>Valor total</span>
-          <span>{{ total_value_computed }} USD</span>
+          <span>{{ total_value }} USD</span>
         </div>
       </aside>
     </toolbar>
@@ -324,9 +324,9 @@ export default {
     resultNear(response) {
       this.loadChartNear(response);
     },
-    resultUsdt(response) {
-      this.loadChartUsdt(response);
-    },
+    /* resultUsdt(response) {
+      this.loadChart Usdt(response);
+    }, */
     tokenCardsSelected: function(val) {
       this.nextIndex = 0;
       this.totalFundsList = 0;
@@ -347,9 +347,40 @@ export default {
       const endIndex = startIndex + this.cardsPerPage;
       return this.dataTransactions.slice(startIndex, endIndex);
     },*/
-    async total_value_computed() {
-      if(this.resultChartNear.result) {
-        let balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
+  },
+
+  beforeMount() {
+    this.loadData();
+  },
+
+  mounted() {
+    if(this.resultChartNear.result){
+      if(this.resultChartNear.result.delegationhists) {
+        this.loadChartNear(this.resultChartNear.result);
+      }
+    }
+    if(this.resultChartUsdt.result){
+      if(this.resultChartUsdt.result.delegationhists) {
+        this.loadChartUsdt(this.resultChartUsdt.result);
+      }
+    }
+    this.loadTransactions()
+  },
+
+  methods: {
+    async loadData() {
+      // if(this.resultChartNear.result) {
+      const responseUsdtAmount = await WalletP2p.view({
+        contractId: process.env.CONTRACT_USDT,
+        methodName: "ft_balance_of",
+        args: {account_id: this.dao_account_name }
+      });
+
+      let balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
+      // let balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
+
+
+        // this.loadTransactionsTable(response.data.data.fundshists);
 
 
         const params = {
@@ -381,6 +412,7 @@ export default {
         .then((response) => {
           // console.log("balance: ", response)
           this.headerCards[0].amount_usd = Number((balanceNear * response.data[0].value).toFixed(2))
+          this.total_value += this.headerCards[0].amount_usd;
         }).catch((error) => {
           console.log("error balane: ", error)
         })
@@ -388,30 +420,14 @@ export default {
         axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"})
         .then((response) => {
           this.headerCards[1].amount_usd = Number((balanceUsdt * response.data[0].value).toFixed(2))
+          this.total_value += this.headerCards[1].amount_usd;
         }).catch((error) => {
           console.log("error balane: ", error)
         })
 
-      }
-      return (this.headerCards[0].amount_usd + this.headerCards[1].amount_usd).toFixed(2)
+        // this.total_value = (this.headerCards[0].amount_usd + this.headerCards[1].amount_usd).toFixed(2)
     },
-  },
 
-  mounted() {
-    if(this.resultChartNear.result){
-      if(this.resultChartNear.result.delegationhists) {
-        this.loadChartNear(this.resultChartNear.result);
-      }
-    }
-    if(this.resultChartUsdt.result){
-      if(this.resultChartUsdt.result.delegationhists) {
-        this.loadChartUsdt(this.resultChartUsdt.result);
-      }
-    }
-    this.loadTransactions()
-  },
-
-  methods: {
     mapChart(response, asset) {
       const data_series = [];
       const data_chartOptions = [];
