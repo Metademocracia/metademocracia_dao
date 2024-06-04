@@ -223,7 +223,7 @@ const toast = useToast(),
   //  { icon: "mdi-home-variant-outline", name: 'Home', link: '/' },
   //  { icon: 'mdi-file-edit-outline', name: 'Propuestas', link: 'proposals' },
   //  { icon: 'mdi-circle-multiple-outline', name: 'Fondos', link: 'funds' },
-    { icon: 'mdi-account-group-outline', name: 'Foro', ref: 'https://forum.metademocracia.social/'},
+    { icon: 'mdi-account-group-outline', name: 'Foro', ref: 'https://foro.metademocracia.social/'},
     { icon: 'mdi-information-outline', name: 'Metainfo', ref: 'https://metademocracia.com/' }
   ],
 

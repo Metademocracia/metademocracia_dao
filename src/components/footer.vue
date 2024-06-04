@@ -55,7 +55,7 @@ export default {
         },
         {
           name: "Foro",
-          ref: "https://forum.metademocracia.social/"
+          ref: "https://foro.metademocracia.social/"
         },
         {
           name: "Metainfo",
