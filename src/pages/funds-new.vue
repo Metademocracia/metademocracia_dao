@@ -200,7 +200,29 @@ export default {
           icon: 'usdt',
           amount: 0,
           currency: 'USDT',
-          amount_usd: 0
+          amount_usd: 0,
+          contractId: process.env.CONTRACT_USDT
+        },
+        {
+          icon: 'usdt',
+          amount: 0,
+          currency: 'ARP',
+          amount_usd: 0,
+          contractId: process.env.CONTRACT_ARP
+        },
+        {
+          icon: 'usdt',
+          amount: 0,
+          currency: 'WBTC',
+          amount_usd: 0,
+          contractId: process.env.CONTRACT_WBTC
+        },
+        {
+          icon: 'usdt',
+          amount: 0,
+          currency: 'WETH',
+          amount_usd: 0,
+          contractId: process.env.CONTRACT_WETH
         },
         /*{
           icon: 'stnear',
@@ -314,20 +336,14 @@ export default {
         methodName: "get_available_amount"
       });
 
-      const responseUsdtAmount = await WalletP2p.view({
-        contractId: process.env.CONTRACT_USDT,
-        methodName: "ft_balance_of",
-        args: {account_id: this.$route.query.dao }
-      });
 
-      const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
       const balanceNear = responseNearAmount ? (Number(responseNearAmount) / 1000000000000000000000000) : 0;
 
       //const balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
       // const balanceNear = this.resultChartNear.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
 
       this.tokenCards[0].amount = balanceNear.toFixed(5);
-      this.tokenCards[1].amount = balanceUsdt.toFixed(2);
+
 
       axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"})
       .then((response) => {
@@ -337,12 +353,54 @@ export default {
         console.log("error balane: ", error)
       })
 
+      this.tokenCards.forEach(async (item) => {
+        if(item?.contractId) {
+          const responseAmount = await WalletP2p.view({
+            contractId: item.contractId,
+            methodName: "ft_balance_of",
+            args: {account_id: this.$route.query.dao }
+          });
+
+          const responseMetadata = await WalletP2p.view({
+            contractId: item.contractId,
+            methodName: "ft_metadata",
+            //args: {account_id: this.$route.query.dao }
+          });
+
+          //console.log("responseMetadata: ", responseMetadata, Math.pow(10, Number(responseMetadata.decimals)))
+
+          const balance = responseAmount ? responseAmount != "0" ? Number(responseAmount) / Math.pow(10, Number(responseMetadata.decimals)) : 0 : 0;
+
+          item.amount = balance.toFixed(2);
+
+          axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: item.currency})
+          .then((response) => {
+            item.amount_usd = Number((balance * response.data[0].value).toFixed(2))
+          }).catch((error) => {
+            console.log("error balane: ", error)
+          })
+        }
+      })
+
+
+      /*
+      const responseUsdtAmount = await WalletP2p.view({
+        contractId: process.env.CONTRACT_USDT,
+        methodName: "ft_balance_of",
+        args: {account_id: this.$route.query.dao }
+      });
+
+      const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
+
+      this.tokenCards[1].amount = balanceUsdt.toFixed(2);
+
       axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"})
       .then((response) => {
         this.tokenCards[1].amount_usd = Number((balanceUsdt * response.data[0].value).toFixed(2))
       }).catch((error) => {
         console.log("error balane: ", error)
       })
+      */
 
       // console.log("aaasasasas: ",(this.tokenCards[0].amount_usd + this.tokenCards[1].amount_usd).toFixed(2))
       this.total_value_bloqued = 0 //(this.tokenCards[0].amount_usd + this.tokenCards[1].amount_usd).toFixed(2)
