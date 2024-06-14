@@ -185,8 +185,8 @@ import '@/assets/styles/pages/funds-new.scss'
 import near from '@/assets/sources/icons/near-icon.svg';
 import stnear from '@/assets/sources/icons/stnear-icon.svg';
 import usdt from '@/assets/sources/icons/tether-icon.svg';
-import arp from '@/assets/sources/icons/iconos-arp.svg';
-import wbtc from '@/assets/sources/icons/iconos-wbtc.svg';
+import arp from '@/assets/sources/icons/Arepa-Digital.svg';
+import wbtc from '@/assets/sources/icons/Bitcoin.svg';
 import VueApexCharts from "vue3-apexcharts"
 import gql from 'graphql-tag';
 import { useQuery } from '@vue/apollo-composable';
