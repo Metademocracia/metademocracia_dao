@@ -172,8 +172,9 @@
 import '@/assets/styles/pages/funds-new.scss';
 import near from '@/assets/sources/icons/near-icon.svg';
 import stnear from '@/assets/sources/icons/stnear-icon.svg';
-import usdc from '@/assets/sources/icons/usdc-icon.svg';
 import usdt from '@/assets/sources/icons/tether-icon.svg';
+import arp from '@/assets/sources/icons/iconos-arp.svg';
+import wbtc from '@/assets/sources/icons/iconos-wbtc.svg';
 import VueApexchart from "vue3-apexcharts";
 import { ref } from 'vue';
 import { useQuery } from '@vue/apollo-composable';
@@ -188,7 +189,7 @@ export default {
   setup() {
     return {
 			total_value: ref(0),
-      iconMap: { near, stnear, usdc, usdt },
+      iconMap: { near, stnear, usdt, arp, wbtc },
       tokenCards: ref([
         {
           icon: 'near',
@@ -204,25 +205,18 @@ export default {
           contractId: process.env.CONTRACT_USDT
         },
         {
-          icon: 'usdt',
+          icon: 'arp',
           amount: 0,
           currency: 'ARP',
           amount_usd: 0,
           contractId: process.env.CONTRACT_ARP
         },
         {
-          icon: 'usdt',
+          icon: 'wbtc',
           amount: 0,
           currency: 'WBTC',
           amount_usd: 0,
           contractId: process.env.CONTRACT_WBTC
-        },
-        {
-          icon: 'usdt',
-          amount: 0,
-          currency: 'WETH',
-          amount_usd: 0,
-          contractId: process.env.CONTRACT_WETH
         },
         /*{
           icon: 'stnear',
@@ -369,7 +363,9 @@ export default {
 
           //console.log("responseMetadata: ", responseMetadata, Math.pow(10, Number(responseMetadata.decimals)))
 
-          const balance = responseAmount ? responseAmount != "0" ? Number(responseAmount) / Math.pow(10, Number(responseMetadata.decimals)) : 0 : 0;
+          let balance = responseAmount ? responseAmount != "0" ? Number(responseAmount) / Math.pow(10, Number(responseMetadata.decimals)) : 0 : 0;
+
+          balance = !isNaN(balance) ? balance : 0;
 
           item.amount = balance.toFixed(2);
 

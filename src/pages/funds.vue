@@ -184,8 +184,9 @@
 import '@/assets/styles/pages/funds-new.scss'
 import near from '@/assets/sources/icons/near-icon.svg';
 import stnear from '@/assets/sources/icons/stnear-icon.svg';
-import usdc from '@/assets/sources/icons/usdc-icon.svg';
 import usdt from '@/assets/sources/icons/tether-icon.svg';
+import arp from '@/assets/sources/icons/iconos-arp.svg';
+import wbtc from '@/assets/sources/icons/iconos-wbtc.svg';
 import VueApexCharts from "vue3-apexcharts"
 import gql from 'graphql-tag';
 import { useQuery } from '@vue/apollo-composable';
@@ -268,8 +269,23 @@ export default {
 					icon: 'usdt',
 					amount: 0,
 					currency: 'USDT',
-					amount_usd: 0
-				},
+					amount_usd: 0,
+          contractId: process.env.CONTRACT_USDT
+        },
+        {
+          icon: 'arp',
+          amount: 0,
+          currency: 'ARP',
+          amount_usd: 0,
+          contractId: process.env.CONTRACT_ARP
+        },
+        {
+          icon: 'wbtc',
+          amount: 0,
+          currency: 'WBTC',
+          amount_usd: 0,
+          contractId: process.env.CONTRACT_WBTC
+        },
 				/*{
 					icon: 'stnear',
 					amount: '1234.87',
@@ -287,8 +303,9 @@ export default {
 			iconMap: {
         near,
         stnear,
-				usdc,
-				usdt
+				usdt,
+        arp,
+        wbtc
       },
       seriesNear: ref(null),
       chartOptionsNear: ref(null),
@@ -370,13 +387,6 @@ export default {
   methods: {
     async loadData() {
       // if(this.resultChartNear.result) {
-      const responseUsdtAmount = await WalletP2p.view({
-        contractId: process.env.CONTRACT_USDT,
-        methodName: "ft_balance_of",
-        args: {account_id: this.dao_account_name }
-      });
-
-      let balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;//montousdt / 1000000;
       // let balanceUsdt = this.resultChartNear.result?.delegations?.find(item => item.id == "USDT")?.total_amount / 1000000;
 
         // this.loadTransactionsTable(response.data.data.fundshists);
@@ -399,12 +409,8 @@ export default {
         let balanceNear = balanceAvalible; // this.resultChartNear.result?.delegations?.find(item => item.id == "NEAR")?.total_amount / 1000000000000000000000000;
         // console.log(balanceNear, isNaN(balanceNear), balanceUsdt, isNaN(balanceUsdt))
         balanceNear = !isNaN(balanceNear) ? balanceNear : 0;
-        balanceUsdt = !isNaN(balanceUsdt) ? balanceUsdt : 0;
-
-        // console.log("aqui va: ", balanceUsdt, this.resultChartNear.result)
 
         this.headerCards[0].amount = balanceNear.toFixed(5);
-        this.headerCards[1].amount = balanceUsdt.toFixed(2);
 
         axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "NEAR"})
         .then((response) => {
@@ -415,13 +421,35 @@ export default {
           console.log("error balane: ", error)
         })
 
-        axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"})
-        .then((response) => {
-          this.headerCards[1].amount_usd = Number((balanceUsdt * response.data[0].value).toFixed(2))
-          this.total_value += this.headerCards[1].amount_usd;
-        }).catch((error) => {
-          console.log("error balane: ", error)
-        })
+
+        this.headerCards.forEach(async (item) => {
+          if(item?.contractId) {
+            const responseUsdtAmount = await WalletP2p.view({
+              contractId: item.contractId,
+              methodName: "ft_balance_of",
+              args: {account_id: this.dao_account_name }
+            });
+
+            const responseMetadata = await WalletP2p.view({
+              contractId: item.contractId,
+              methodName: "ft_metadata",
+            });
+
+            let balance = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / Math.pow(10, Number(responseMetadata.decimals)) : 0 : 0;//montousdt / 1000000;
+
+            balance = !isNaN(balance) ? balance : 0;
+
+            item.amount = balance.toFixed(2);
+
+            axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: item.currency})
+            .then((response) => {
+              item.amount_usd = Number((balance * response.data[0].value).toFixed(2))
+              this.total_value += item.amount_usd;
+            }).catch((error) => {
+              console.log("error balane: ", error)
+            })
+          }
+        });
 
         // this.total_value = (this.headerCards[0].amount_usd + this.headerCards[1].amount_usd).toFixed(2)
     },
