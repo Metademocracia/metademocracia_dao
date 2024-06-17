@@ -300,7 +300,7 @@ export default{
           data: {
             title: document.getElementById("title").value,
             description: document.getElementById("description").value,
-            proponent: address,  //WalletP2p.getAcc ount().address,
+            proponent: this.address,  //WalletP2p.getAcc ount().address,
             kind: {
               Transfer: {
                 token_id: tokenId, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
@@ -347,7 +347,7 @@ export default{
           data: {
             title: document.getElementById("title").value,
             description: document.getElementById("description").value,
-            proponent: address, // WalletP2p.getAc count().address,
+            proponent: this.address, // WalletP2p.getAc count().address,
             kind: {
               FunctionCall: {
                 receiver_id: document.getElementById("receiver_id").value,
@@ -379,7 +379,7 @@ export default{
           data: {
             title: document.getElementById("title").value,
             description: document.getElementById("description").value,
-            proponent: address, // WalletP2p.getAc count().address,
+            proponent: this.address, // WalletP2p.getAc count().address,
             kind: "Voting",
             link: document.getElementById("link").value,
           }
