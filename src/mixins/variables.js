@@ -24,6 +24,12 @@ export default {
   typesDaoDefault: {desc: "Publico", value: "0"},
   groupAllDefault,
   groupAlls,
+  itemsTokens: [
+    {id: null, desc: "Near"},
+    {id: process.env.CONTRACT_USDT, desc: "USDT"},
+    {id: process.env.CONTRACT_ARP, desc: "ARP"},
+    {id: process.env.CONTRACT_WBTC, desc: "WBTC"},
+  ],
   mapGroupAlls,
   groupDefault: "Fundador",
   groupsDefaults: [

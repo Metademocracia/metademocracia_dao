@@ -201,10 +201,11 @@ import {configNear} from '../services/nearConfig';
 
 export default {
   setup() {
-    const  { globalRules, groupAllDefault } = variables
+    const  { globalRules, groupAllDefault, itemsTokens } = variables
     return {
       groupAllDefault,
       globalRules,
+      itemsTokens,
       proposalTypes: ref([
         "Votación",
         "Agregar miembro",
@@ -221,10 +222,10 @@ export default {
       roleSelect: ref(null),
       rolesMembers: ref([]),
       menbersForRoles: ref([]),
-      itemsTokens: [
+      /* itemsTokens: [
         {id: null, desc: "Near"},
         {id: process.env.CONTRACT_USDT, desc: "USDT"},
-      ],
+      ], */
       daoMembers: ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ]),
       memberItem: ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ]),
       receiverItem: ref([ { member: undefined, type: undefined, memberErrror: undefined, memberSuccess: undefined } ])

@@ -148,12 +148,13 @@ import {configNear} from '../services/nearConfig';
 
 export default{
   setup(){
-    const { globalRules } = variables;
+    const { globalRules, itemsTokens } = variables;
     //const regular_expression_email = process.env.NETWORK == "testnet" ? /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.testnet+$/i : /^[a-z.-0-1-2-3-4-5-6-7-8-9]+\.mainnet+$/i;
     return{
       Transfer: ref(false),
       session: ref(null),
       globalRules,
+      itemsTokens,
       proposalTypes: ref([
         "Solicitud de fondos",
         "Votación",
@@ -167,10 +168,10 @@ export default{
       roleSelect: ref(null),
       rolesMembers: ref([]),
       menbersForRoles: ref([]),
-      itemsTokens: [
+      /* itemsTokens: [
         {id: null, desc: "Near"},
         {id: process.env.CONTRACT_USDT, desc: "USDT"},
-      ],
+      ], */
       network: process.env.NETWORK,
       titulo_propuesta: ref(null),
       tipo_propuesta: ref(null),
