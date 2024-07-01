@@ -274,7 +274,7 @@ import FailedIcon from '@/assets/sources/images/Iconos-propuestas-metadao-FALLID
 import ARP from '@/assets/sources/icons/Arepa-Digital.svg';
 import WBTC from '@/assets/sources/icons/Bitcoin.svg';
 import USDT from '@/assets/sources/icons/tether-icon.svg';
-import NEAR from '@/assets/sources/logos/near-icon.svg';
+import Near from '@/assets/sources/logos/near-icon.svg';
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 import utilsDAO from '@/services/utils-dao';
@@ -293,7 +293,7 @@ const
       default: undefined
     }
   }),
-  iconMap = { NEAR, USDT, ARP, WBTC },
+  iconMap = { Near, USDT, ARP, WBTC },
   mergeProps2 = mergeProps
 
 
