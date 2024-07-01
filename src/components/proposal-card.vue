@@ -180,14 +180,7 @@
               <span class="flex-center" style="gap: 4px;">
                 {{ mapAmount().amount }}
                 <img
-                  v-show="mapAmount().asset === 'NEAR'"
-                  src="@/assets/sources/logos/near-icon.svg"
-                  alt="near logo"
-                  style="width: 15px; height: 15px; translate: 0 -1px;"
-                >
-                <img
-                  v-show="mapAmount().asset === 'USDT'"
-                  src="@/assets/sources/icons/tether-icon.svg"
+                  :src="iconMap[mapAmount().asset]"
                   alt="near logo"
                   style="width: 15px; height: 15px; translate: 0 -1px;"
                 >
@@ -278,14 +271,20 @@ import VotoPositivoGrisIcon from '@/assets/sources/images/voto-positivo-por-real
 import VotoNegativoIcon from '@/assets/sources/images/voto-negativo.png'
 import VotoNegativoGrisIcon from '@/assets/sources/images/voto-negativo-por-realizar.png'
 import FailedIcon from '@/assets/sources/images/Iconos-propuestas-metadao-FALLIDO.png'
+import ARP from '@/assets/sources/icons/Arepa-Digital.svg';
+import WBTC from '@/assets/sources/icons/Bitcoin.svg';
+import USDT from '@/assets/sources/icons/tether-icon.svg';
+import NEAR from '@/assets/sources/logos/near-icon.svg';
 import { useRouter } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 import utilsDAO from '@/services/utils-dao';
 import { useToast } from 'vue-toastification';
 import { mergeProps, computed, ref } from 'vue';
+import variables from '@/mixins/variables';
 
 
 const
+  { itemsTokens } = variables,
   toast = useToast(),
   router = useRouter(),
   props = defineProps({
@@ -294,6 +293,7 @@ const
       default: undefined
     }
   }),
+  iconMap = { NEAR, USDT, ARP, WBTC },
   mergeProps2 = mergeProps
 
 
@@ -355,8 +355,9 @@ function mapAmount() {
     if(props.proposal?.type != "Transfer") return undefined
 
     const tokenId = props.proposal?.objectProposal.token_id;
-    const asset = !tokenId || tokenId == "" ? "NEAR" : "USDT";
-    const decimals = asset == "NEAR" ? 24 : 6;
+    const tokenData = itemsTokens.find((element) => element.id === (!tokenId || tokenId == "" ? null : tokenId));
+    const asset = tokenData?.desc; //!tokenId || tokenId == "" ? "NEAR" : tokemMap.find((element) => element.id === tokenId)?.desc;
+    const decimals = tokenData?.decimals; //asset == "NEAR" ? 24 : 6;
     const amount = Number(props.proposal?.objectProposal.amount);
     // const fixe = asset == "NEAR" ? 5 : 2;
     const amountParse = amount / Math.pow(10, decimals);

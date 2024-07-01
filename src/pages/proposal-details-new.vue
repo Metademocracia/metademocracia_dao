@@ -91,6 +91,7 @@ import { ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 import variables from '@/mixins/variables';
+import component from '../vite-env';
 
 const
 	route = useRoute(),
@@ -175,7 +176,7 @@ async function getProposal() {
     } catch (error) {
       description = item.description;
     }
-    
+
     const fechaVencimiento = moment((Number(item.submission_time) + Number(dao.proposal_period))/1000000);
     const diasRestantes = fechaVencimiento <= moment() ? 0 : fechaVencimiento.diff(moment(), 'days')
     const remainingTime = `${diasRestantes} dias - el ${fechaVencimiento.format('DD MMMM')} de ${fechaVencimiento.format('yyyy')}`
@@ -195,7 +196,7 @@ async function getProposal() {
         objectProposal.config.isPrivate = !configMetadata?.isPrivated ? "Publico" : configMetadata?.isPrivated ? "Privado" : "Publico";
       }
     }
-
+ comsole.log("objectProposal: ", objectProposal)
     proposal.value = {
       id: item.proposal_id,
       contractId: item.contract_id,

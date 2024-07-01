@@ -277,7 +277,7 @@ export default{
       const tokenId = document.getElementById("tokenId").value;
       const amount = document.getElementById("amount").value;
       const msg = document.getElementById("msg").value;
-      const receiverId = document.getElementById("receiverId").value
+      const receiver = document.getElementById("receiverId").value
 
       let token = this.itemsTokens.find((item) => item.id == tokenId)
 
@@ -287,15 +287,15 @@ export default{
 
       const usdtIsActive = token.desc == "Near" ? true
       : await WalletP2p.view({
-        contractId: process.env.CONTRACT_USDT,
+        contractId: token.id,
         methodName: "storage_balance_of",
-        args: { account_id: receiverId }
+        args: { account_id: receiver }
       });
 
       // const usdtIsActive = true;
 
-      const setProposal = {
-        contractId: process.env.CONTRACT_DAO,
+      /* const setProposal = {
+        contractId: token.id,
         methodName: "set_proposal",
         args: {
           data: {
@@ -306,7 +306,7 @@ export default{
               Transfer: {
                 token_id: tokenId, // this.token_id?.id && this.token_id?.id == "near" ? null : this.token_id.id,
                 receiver_id: receiverId,
-                amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
+                amount: tokenId ? BigInt(Number(amount) * Math.pow(10, token.decimals)).toString() : BigInt(Number(amount) * Math.pow(10, 24)).toString(),
                 msg: msg ? msg.lenght > 0 ? msg.length : null : null,
               }
             },
@@ -315,15 +315,15 @@ export default{
         },
         gas: "300000000000000",
         attachedDeposit: bond.toString()
-      };
+      };*/
 
-      let json = setProposal
+      /* let json = setProposal
 
       if(!usdtIsActive){
         await WalletP2p.activateUsdt(receiverId).catch((error) => {
           console.log("error al activar usdt: ", error)
         })
-        /* json = [
+        / * json = [
           {
             contractId: process.env.CONTRACT_USDT,
             methodName: "storage_deposit",
@@ -334,10 +334,89 @@ export default{
             attachedDeposit: "1250000000000000000000"
           },
           setProposal
-        ]; */
-      }
+        ]; *
+      }*/
 
-      WalletP2p.call(json, "proposals-meta", ("?dao="+process.env.CONTRACT_DAO));
+      // WalletP2p.call(json, "proposals-meta", ("?dao="+process.env.CONTRACT_DAO));
+
+
+
+      if(!usdtIsActive){
+        const transactions = [
+          {
+            receiverId: token.id,
+            actions: [
+              {
+                type: "FunctionCall",
+                params: {
+                  methodName: "storage_deposit",
+                  args: {
+                    account_id: receiver,
+                  },
+                  gas: "30000000000000",
+                  deposit: "1250000000000000000000"
+                }
+              }
+            ]
+          },
+          {
+            receiverId: this.walletDao,
+            actions: [
+              {
+                type: "FunctionCall",
+                params: {
+                  methodName: "set_proposal",
+                  args: {
+                    proposal: {
+                      title: btoa(document.getElementById("title").value),
+                      description: (document.getElementById("description").value),
+                      proponent: this.address,  //WalletP2p.getAcc ount().address,
+                      kind: {
+                        Transfer: {
+                          token_id: tokenId,
+                          receiver_id: receiver,
+                          amount: tokenId ? BigInt(Number(amount) * Math.pow(10, token.decimals)).toString() : BigInt(Number(amount) * Math.pow(10, 24)).toString(),
+                          msg: msg ? msg.lenght > 0 ? msg.length : null : null,
+                        }
+                      },
+                      link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
+                    }
+                  },
+                  gas: "300000000000000",
+                  deposit: bond.toString()
+                }
+              },
+            ]
+          },
+        ];
+
+        await WalletP2p.callBatchTransactions(transactions, "proposals-meta", ("?dao="+process.env.CONTRACT_DAO));
+      } else {
+        const action = {
+          contractId: this.walletDao,
+          methodName: "set_proposal",
+          args: {
+            proposal: {
+              title: btoa(document.getElementById("title").value),
+              description: (document.getElementById("description").value),
+              proponent: this.address,  //WalletP2p.getAcc ount().address,
+              kind: {
+                Transfer: {
+                  token_id: tokenId,
+                  receiver_id: receiver,
+                  amount: tokenId ? BigInt(Number(amount) * Math.pow(10, token.decimals)).toString() : BigInt(Number(amount) * Math.pow(10, 24)).toString(),
+                  msg: msg ? msg.lenght > 0 ? msg.length : null : null,
+                }
+              },
+              link: !document.getElementById("link").value ? "" : document.getElementById("link").value,
+            }
+          },
+          gas: "300000000000000",
+          attachedDeposit: bond.toString()
+        };
+
+        await WalletP2p.call(action, "proposals-meta", ("?dao="+process.env.CONTRACT_DAO));
+      }
     },
 
     addFunctionCall(bond){

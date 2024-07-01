@@ -508,7 +508,7 @@ export default {
 
       const usdtIsActive = token.desc == "Near" ? true
       : await WalletP2p.view({
-        contractId: process.env.CONTRACT_USDT,
+        contractId: token.id,
         methodName: "storage_balance_of",
         args: { account_id: receiver }
       });
@@ -516,7 +516,7 @@ export default {
       if(!usdtIsActive){
         const transactions = [
           {
-            receiverId: process.env.CONTRACT_USDT,
+            receiverId: token.id,
             actions: [
               {
                 type: "FunctionCall",
@@ -546,7 +546,7 @@ export default {
                         Transfer: {
                           token_id: tokenId,
                           receiver_id: receiver,
-                          amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
+                          amount: tokenId ? BigInt(Number(amount) * Math.pow(10, token.decimals)).toString() : BigInt(Number(amount) * Math.pow(10, 24)).toString(),
                           msg: msg ? msg.lenght > 0 ? msg.length : null : null,
                         }
                       },
@@ -613,7 +613,7 @@ export default {
                 Transfer: {
                   token_id: tokenId,
                   receiver_id: receiver,
-                  amount: tokenId ? BigInt(Number(amount) * 1000000).toString() : BigInt(Number(amount) * 1000000000000000000000000).toString(),
+                  amount: tokenId ? BigInt(Number(amount) * Math.pow(10, token.decimals)).toString() : BigInt(Number(amount) * Math.pow(10, 24)).toString(),
                   msg: msg ? msg.lenght > 0 ? msg.length : null : null,
                 }
               },
