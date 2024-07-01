@@ -175,10 +175,10 @@ export default{
       network: process.env.NETWORK,
       titulo_propuesta: ref(null),
       tipo_propuesta: ref(null),
-      itemsTokenId: [
+      /* itemsTokenId: [
         {id: null, desc: "Near"},
         {id: process.env.CONTRACT_USDT, desc: "USDT"},
-      ],
+      ], */
       token_id: ref({id: null, desc: "Near"}),
     }
   },
