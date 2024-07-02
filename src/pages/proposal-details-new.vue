@@ -91,7 +91,6 @@ import { ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
 import WalletP2p from '../services/wallet-p2p';
 import variables from '@/mixins/variables';
-import component from '../vite-env';
 
 const
 	route = useRoute(),
