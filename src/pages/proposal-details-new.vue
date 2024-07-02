@@ -195,7 +195,7 @@ async function getProposal() {
         objectProposal.config.isPrivate = !configMetadata?.isPrivated ? "Publico" : configMetadata?.isPrivated ? "Privado" : "Publico";
       }
     }
- comsole.log("objectProposal: ", objectProposal)
+ //comsole.log("objectProposal: ", objectProposal)
     proposal.value = {
       id: item.proposal_id,
       contractId: item.contract_id,
