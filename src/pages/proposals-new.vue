@@ -319,7 +319,7 @@ export default {
 
           let description = "";
           try {
-            if(item.description.split(" ").length <= 0) {
+            if(item.description.split(" ").length <= 1) {
               description = atob(item.description);
             } else {
               description = item.description;
@@ -348,6 +348,8 @@ export default {
               objectProposal.config.isPrivate = !configMetadata?.isPrivated ? "Publico" : configMetadata?.isPrivated ? "Privado" : "Publico";
             }
           }
+
+          // console.log({id: item.id, description: item.description, split: item.description.split(" ").length})
 
           return{
             id: item.proposal_id,
