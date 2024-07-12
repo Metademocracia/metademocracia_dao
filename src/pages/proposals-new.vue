@@ -319,11 +319,15 @@ export default {
 
           let description = "";
           try {
-            description = atob(item.description);
+            if(item.description.split(" ").length <= 0) {
+              description = atob(item.description);
+            } else {
+              description = item.description;
+            }
           } catch (error) {
             description = item.description;
           }
-          
+
 
           const fechaVencimiento = moment((Number(item.submission_time) + Number(dao.proposal_period))/1000000);
           const diasRestantes = fechaVencimiento <= moment() ? 0 : fechaVencimiento.diff(moment(), 'days')
@@ -344,8 +348,6 @@ export default {
               objectProposal.config.isPrivate = !configMetadata?.isPrivated ? "Publico" : configMetadata?.isPrivated ? "Privado" : "Publico";
             }
           }
-
-
 
           return{
             id: item.proposal_id,
