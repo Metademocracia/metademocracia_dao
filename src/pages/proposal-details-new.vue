@@ -164,7 +164,11 @@ async function getProposal() {
 
     let title = "";
     try {
-      title = atob(item.title);
+      if(item.title.split(" ").length <= 1) {
+        title = atob(item.title);
+      } else {
+        title = item.title;
+      }
     } catch (error) {
       title = item.title;
     }
