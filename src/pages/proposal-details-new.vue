@@ -169,9 +169,20 @@ async function getProposal() {
       title = item.title;
     }
 
-    let description = "";
+    /* let description = "";
     try {
       description = atob(item.description);
+    } catch (error) {
+      description = item.description;
+    } */
+
+    let description = "";
+    try {
+      if(item.description.split(" ").length <= 1) {
+        description = atob(item.description);
+      } else {
+        description = item.description;
+      }
     } catch (error) {
       description = item.description;
     }
