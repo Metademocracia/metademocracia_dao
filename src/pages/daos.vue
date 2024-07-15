@@ -75,10 +75,10 @@ import graphQl from '@/services/graphQl';
 import WalletP2p from '../services/wallet-p2p';
 import axios from 'axios';
 import connectWallet from '@/components/connect-wallet.vue';
+import variablesGlobal from '@/mixins/variables';
 
 const
   router = useRouter(),
-
 tab = ref(0),
 tabs = [/*"Más Activos",*/ "Más Nuevos", "Más Viejos", "N° Miembros"],
 page = ref(1),
@@ -271,6 +271,8 @@ async function getData() {
     loading.value = false;
   }
 
+  const tokensList = variablesGlobal.itemsTokens.filter(item => item?.id);
+
   const data = daos.value
   for(let i = 0; i < data.length; i++) {
     // omitir metademocracia
@@ -290,21 +292,23 @@ async function getData() {
       console.log("error", error)
     });
 
+    //sumar balance tokens en usd
+    tokensList.forEach(async (element) => {
+      WalletP2p.view({
+        contractId: element.id,
+        methodName: "ft_balance_of",
+        args: {account_id: data[i].wallet_dao }
+      }).then(async (responseTokenAmount) => {
+        const balanceToken = responseTokenAmount ? responseTokenAmount != "0" ? Number(responseTokenAmount) / Math.pow(10, element.decimals) : 0 : 0;
+        const balanceTokenUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: element.desc});
 
-    //sumar balance usdt en usd
-    WalletP2p.view({
-      contractId: process.env.CONTRACT_USDT,
-      methodName: "ft_balance_of",
-      args: {account_id: data[i].wallet_dao }
-    }).then(async (responseUsdtAmount) => {
-      const balanceUsdt = responseUsdtAmount ? responseUsdtAmount != "0" ? Number(responseUsdtAmount) / 1000000 : 0 : 0;
-      const balanceUsdtUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: "USDT"});
-      const total_balance = !balanceUsdtUsd ? 0 : (balanceUsdt * Number(balanceUsdtUsd.data[0].value));
+        const total_balance = !balanceTokenUsd ? 0 : (balanceToken * Number(balanceTokenUsd.data[0].value));
 
-      daos.value[i].funds = ((!daos.value[i]?.funds ? 0 : Number(daos.value[i].funds)) + total_balance).toFixed(2);
-    }).catch(error => {
-      console.log("error", error)
-    });
+        daos.value[i].funds = ((!daos.value[i]?.funds ? 0 : Number(daos.value[i].funds)) + total_balance).toFixed(2);
+      }).catch(error => {
+        console.log("error", error)
+      });
+    })
 
 
     // cargae nombre, descripcion y imagen
