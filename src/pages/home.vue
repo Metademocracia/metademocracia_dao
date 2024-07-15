@@ -75,6 +75,8 @@ import { useRouter } from 'vue-router';
 import graphQl from '@/services/graphQl';
 import WalletP2p from '../services/wallet-p2p';
 import axios from 'axios';
+import variablesGlobal from '@/mixins/variables';
+
 
 const
   router = useRouter(),
