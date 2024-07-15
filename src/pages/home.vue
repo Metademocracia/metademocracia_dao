@@ -272,6 +272,8 @@ async function getData() {
     loading.value = false;
   }
 
+  const tokensList = variablesGlobal.itemsTokens.filter(item => item?.id);
+
   const data = daos.value
   for(let i = 0; i < data.length; i++) {
     // omitir metademocracia
@@ -293,7 +295,25 @@ async function getData() {
 
 
     //sumar balance usdt en usd
-    WalletP2p.view({
+    //sumar balance tokens en usd
+    tokensList.forEach(async (element) => {
+      WalletP2p.view({
+        contractId: element.id,
+        methodName: "ft_balance_of",
+        args: {account_id: data[i].wallet_dao }
+      }).then(async (responseTokenAmount) => {
+        const balanceToken = responseTokenAmount ? responseTokenAmount != "0" ? Number(responseTokenAmount) / Math.pow(10, element.decimals) : 0 : 0;
+        const balanceTokenUsd = await axios.post(process.env.URL_APIP_PRICE,{fiat: "USD", crypto: element.desc});
+
+        const total_balance = !balanceTokenUsd ? 0 : (balanceToken * Number(balanceTokenUsd.data[0].value));
+
+        daos.value[i].funds = ((!daos.value[i]?.funds ? 0 : Number(daos.value[i].funds)) + total_balance).toFixed(2);
+      }).catch(error => {
+        console.log("error", error)
+      });
+    })
+
+    /* WalletP2p.view({
       contractId: process.env.CONTRACT_USDT,
       methodName: "ft_balance_of",
       args: {account_id: data[i].wallet_dao }
@@ -305,7 +325,7 @@ async function getData() {
       daos.value[i].funds = ((!daos.value[i]?.funds ? 0 : Number(daos.value[i].funds)) + total_balance).toFixed(2);
     }).catch(error => {
       console.log("error", error)
-    });
+    }); */
 
 
     // cargae nombre, descripcion y imagen
