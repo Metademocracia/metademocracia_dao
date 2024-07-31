@@ -645,9 +645,9 @@ function funAddress() {
 }
 
 async function uploadImgIpfs() {
-  if(!imgDao._rawValue) return null
+  if(!imgDao._rawValue) return true
   // console.log("file print 1 ", imgDao._rawValue[0])
-  const resp = await axios.post('https://api.nft.storage/upload', imgDao._rawValue[0], {
+  /* const resp = await axios.post('https://api.nft.storage/upload', imgDao._rawValue[0], {
     headers: {
       'accept': 'application/json',
       'Content-Type': 'image/*',
@@ -655,14 +655,31 @@ async function uploadImgIpfs() {
     },
     maxContentLength: 100 * 1024 * 1024, // Tamaño máximo de la respuesta en bytes (100MB)
     maxBodyLength: 100 * 1024 * 1024, // Tamaño máximo del cuerpo de la solicitud en bytes (100MB)
-  })/* .then((response) => {
-    console.log(response);
-  }) */
+  })
 
   return {
     hash: resp.data.value.cid,
     url: "https://"+resp.data.value.cid+".ipfs.nftstorage.link/"
-  };
+  }; */
+
+  const formData = new FormData();
+  formData.append('imgDao', imgDao._rawValue[0]);
+
+  const resp = await axios.post(`${process.env.VITE_ROUTER_API_UPLOAD_IMG}/upload`, formData)
+  .catch((error) => {
+    console.log("error: ", error)
+  })
+
+  if(!resp?.data?.imgDao) return null
+  if(!resp?.data?.imgDao.length > 0) return null
+  if(!resp?.data?.imgDao[0]?.location) return null
+
+  // console.log("resp: ", resp.data.imgDao[0].location)
+  // console.log("resp2: ", resp)
+
+  return {
+    url: resp.data.imgDao[0].location
+  }
 
 }
 
@@ -734,8 +751,13 @@ async function createDao(formValid) {
 
   let img = undefined;
   if(imgDao._rawValue) {
-    const resulIpfs = await uploadImgIpfs();
-    img = resulIpfs.url;
+    const resulIpfs = await uploadImgIpfs()
+    if(!resulIpfs) {
+      toast('¡Error al subir la imagen!')
+      loadingBtn.value = false;
+      return
+    }
+    img = resulIpfs?.url;
   }
 
 
@@ -800,7 +822,7 @@ async function createDao(formValid) {
   /* console.log("json: ", objectJson)
   console.log("json: ", JSON.parse(atob(objectJson.args.args)))
   console.log("json: ", JSON.parse(atob(metadata))) */
-  console.log("json: ", objectJson)
+  // console.log("json: ", objectJson)
   loadingBtn.value = false;
   WalletP2p.call(objectJson, "daos")
 
