@@ -204,13 +204,13 @@ export default {
           amount_usd: 0,
           contractId: process.env.CONTRACT_USDT
         },
-        {
+        /*{
           icon: 'arp',
           amount: 0,
           currency: 'ARP',
           amount_usd: 0,
           contractId: process.env.CONTRACT_ARP
-        },
+        },*/
         {
           icon: 'wbtc',
           amount: 0,
