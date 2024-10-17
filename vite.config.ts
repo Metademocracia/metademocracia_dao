@@ -47,7 +47,7 @@ export default defineConfig((userConfig) => {
         CONTRACT_WBTC: env.VITE_CONTRACT_WBTC,
         CONTRACT_WETH: env.VITE_CONTRACT_WETH,
         VITE_ROUTER_API_UPLOAD_IMG: env.VITE_ROUTER_API_UPLOAD_IMG,
-        KEY_IPFS: env.VITE_KEY_IPFS,
+        // KEY_IPFS: env.VITE_KEY_IPFS,
       },
       __VUE_I18N_FULL_INSTALL__: true,
       __VUE_I18N_LEGACY_API__: false,
