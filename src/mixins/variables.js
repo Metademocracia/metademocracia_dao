@@ -27,7 +27,7 @@ export default {
   itemsTokens: [
     {id: null, desc: "Near", decimals: 24},
     {id: process.env.CONTRACT_USDT, desc: "USDT", decimals: 6},
-    {id: process.env.CONTRACT_ARP, desc: "ARP", decimals: 6},
+    //{id: process.env.CONTRACT_ARP, desc: "ARP", decimals: 6},
     {id: process.env.CONTRACT_WBTC, desc: "WBTC", decimals: 8},
   ],
   mapGroupAlls,
