@@ -273,10 +273,8 @@ async function getData() {
 
   });
   daos.value = listDaos.value
-
-  loading.value = false;
-  if(daos.value.length <= 0) {
-    noData.value = true;
+  if(daos.value.length > 0) {
+    loading.value = false;
   }
 
   const tokensList = variablesGlobal.itemsTokens.filter(item => item?.id);

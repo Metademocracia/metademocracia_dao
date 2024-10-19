@@ -73,5 +73,15 @@ export default defineConfig((userConfig) => {
     optimizeDeps: {
       include: ['buffer']
     },
+    devServer: {
+      proxy: {
+        '/graph-api': {
+          target: 'https://api.studio.thegraph.com',
+          changeOrigin: true,
+          pathRewrite: { '^/graph-api': '' },
+          secure: false
+        }
+      }
+    }
   }
 })
