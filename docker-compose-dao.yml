@@ -1,7 +1,7 @@
 services:
-  dao-arepa-front:
-    image: metademocracia1/dao-arepa-front:latest
-    container_name: dao-arepa-front
+  dao-metademocracia-front:
+    image: metademocracia1/dao-metademocracia-front:latest
+    container_name: dao-metademocracia-front
     restart: always
     ports:
       - "8000:80"  # Maps host port 8000 to container port 80
@@ -22,7 +22,7 @@ services:
     networks:
       - app-network
     depends_on:
-      - dao-arepa-front
+      - dao-metademocracia-front
 
   watchtower:
     image: containrrr/watchtower
