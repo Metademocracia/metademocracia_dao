@@ -9,8 +9,8 @@ export default async (app) => {
 
     config = {
       networkId: "testnet",
-      keyStore, 
-      nodeUrl: "https://rpc.testnet.near.org",
+      keyStore,
+      nodeUrl: "https://1rpc.io/near",
       walletUrl: localStorage.getItem("walletUrl"),
       helperUrl: "https://helper.testnet.near.org",
       explorerUrl: "https://explorer.testnet.near.org",
