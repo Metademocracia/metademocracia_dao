@@ -40,9 +40,9 @@
         </v-btn>
       </toolbar>
 
-      <div class="mt-10" style="color: white !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="w-100" fluid></v-progress-linear></div>
+      <div class="mt-10" style="color: black !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="w-100" fluid></v-progress-linear></div>
 
-      <div class="mt-10" style="color: white !important;" v-if="noData"><center>No hay daos disponibles...</center><br/></div>
+      <div class="mt-10" style="color: black !important;" v-if="noData"><center>No hay daos disponibles...</center><br/></div>
 
       <v-divider v-if="!loading && !noData" thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
       <section id="daos__content">
@@ -273,8 +273,9 @@ async function getData() {
 
   });
   daos.value = listDaos.value
-  if(daos.value.length > 0) {
-    loading.value = false;
+  loading.value = false;
+  if(daos.value.length <= 0) {
+    noData.value = true;
   }
 
   const tokensList = variablesGlobal.itemsTokens.filter(item => item?.id);

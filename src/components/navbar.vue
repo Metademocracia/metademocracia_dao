@@ -15,7 +15,7 @@
           >
             mdi-close
           </v-icon>
-          <img src="@/assets/sources/logos/white-logo.svg" @click="$router.push('/'), menuToggle = false" alt="Logo" class="logo mt-14" style="cursor: pointer; width: 200px;">
+          <img src="@/assets/sources/logos/black-logo.svg" @click="$router.push('/'), menuToggle = false" alt="Logo" class="logo mt-14" style="cursor: pointer; width: 200px;">
 
           <div class="divcol center mt-8 pt-6" style="gap: 40px;">
             <a
@@ -73,7 +73,7 @@
     </div>
 
     <div class="absolute-img">
-      <img src="@/assets/sources/logos/white-logo.svg" alt="Logo" @click="$router.push('/')" style="cursor: pointer;">
+      <img src="@/assets/sources/logos/black-logo.svg" alt="Logo" @click="$router.push('/')" style="cursor: pointer;">
     </div>
 
 
@@ -81,9 +81,9 @@
       <a
         class="text-a-menu"
         @click="$router.push('/'), menuToggle = false"
-        style="color: #fff; cursor: pointer; font-weight: 700!important;"
+        style="color: #000; cursor: pointer; font-weight: 700!important;"
         >
-        <v-icon color="white mr-1">mdi-home-outline</v-icon> Home
+        <v-icon color="black mr-1">mdi-home-outline</v-icon> Home
       </a>
 
       <!-- <v-menu location="bottom">
@@ -121,8 +121,8 @@
         </v-card>
       </v-menu>
 
-      <a v-for="(item, index) in dataNavbar" :key="index" style="color: #fff; cursor: pointer; font-weight: 700!important;" @click="$router.push(item.link)" :href="item.ref" target="_blank">
-        <v-icon color="white mr-1">{{ item.icon }}</v-icon> {{ item.name }}
+      <a v-for="(item, index) in dataNavbar" :key="index" style="color: #000; cursor: pointer; font-weight: 700!important;" @click="$router.push(item.link)" :href="item.ref" target="_blank">
+        <v-icon color="mr-1">{{ item.icon }}</v-icon> {{ item.name }}
       </a>
 
       <v-menu location="bottom">
@@ -153,7 +153,7 @@
         class="select"
         bg-color="transparent"
         hide-details
-        style="color: white;"
+        style="color: black;"
       ></v-select>-->
       <!--<v-btn class="btn" @click="openDialog()">{{ titleBtnLogin }}</v-btn>-->
       <!--<v-btn class="btn" @click="dialogConnect = true">Conectar Wallet2</v-btn>-->
@@ -279,9 +279,9 @@ async function verifyResponse() {
 
     console.log("transactionHashes: ", transactionHashes)
 
-    let dataAlert = `<p style="font-size:1.875em; color: white"><b>Transacción ejecutada</b></p>
+    let dataAlert = `<p style="font-size:1.875em; color: black"><b>Transacción ejecutada</b></p>
     <p class="mt-5" style="font-size: 1em">
-      <span style="color: white; font-size: 1em">
+      <span style="color: black; font-size: 1em">
         <b>Hash:</b>
       </span>
       <a href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/transaction-viewer/${transactionHashes}" target="_blank" class="ellipsis-box" style="font-size: 1em; --lines: 2"> ${transactionHashes} </a>
@@ -289,7 +289,7 @@ async function verifyResponse() {
 
     if(transactionHashes.split(',').length > 1) {
       const account_id = await walletP2p.getAccountId()
-      dataAlert = `<p style="font-size:1.875em; color: white"><b>Transacción ejecutada</b></p>
+      dataAlert = `<p style="font-size:1.875em;"><b>Transacción ejecutada</b></p>
       <center><p class="mt-5" style="font-size: 1em">
         <a style="font-size:1.5625em;" href="${process.env.ROUTER_EXPLORER_NEAR_HASH}/wallet-explorer/${account_id}" target="_blank"> Ver explorador </a>
       </p></center>`;
@@ -439,7 +439,7 @@ async function logout() {
   span{
     font-weight: 700;
     font-size: 15px;
-    color: #fff;
+    color: #000;
   }
 }
 
@@ -464,7 +464,7 @@ async function logout() {
   * {
     font-weight: 600 !important;
     cursor: pointer;
-    color: #fff;
+    color: #000;
   }
 }
 
@@ -473,11 +473,11 @@ async function logout() {
     background-image: linear-gradient(45deg, #7b48ad 30%, #5577c1 80%);
 
     .v-card-title{
-      color: #fff;
+      color: #000;
     }
 
     .v-card-text{
-      color: #fff;
+      color: #000;
     }
   }
 }
@@ -491,7 +491,7 @@ async function logout() {
   }
 
   a{
-    color: #fff;
+    color: #000;
     text-decoration: underline;
   }
   .mdi-close{
@@ -523,7 +523,7 @@ async function logout() {
         flex-direction: column;
         padding: 20px;
         padding-block: 30px;
-        color: #fff;
+        color: #000;
         border-radius: 10px;
         position: relative;
         max-height: 80%;
@@ -542,7 +542,7 @@ async function logout() {
           position: relative;
 
           span{
-            color: #fff;
+            color: #000;
             font-size: 14px;
           }
 
@@ -575,7 +575,7 @@ async function logout() {
     --fs: 20px!important;
     --fw: 700;
     font-weight: 700!important;
-    color: #fff;
+    color: #000;
   }
 }
 </style>

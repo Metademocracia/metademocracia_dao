@@ -43,12 +43,12 @@ defineProps({
   .v-tabs {
     button {
       min-width: max-content;
-      color: #fff !important;
+      color: #000 !important;
     }
   }
 
   h5 {
-    color: #fff !important;
+    color: #000 !important;
   }
 }
 </style>

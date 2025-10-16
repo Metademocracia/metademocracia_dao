@@ -178,7 +178,7 @@ async function call(){
 .full-width {
       width: 550px !important;
       align-content: center;
-      color: white !important;
+      color: black !important;
  }
 
 .toolbar-search {

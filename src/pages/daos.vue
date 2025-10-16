@@ -41,9 +41,9 @@
         </v-btn>
       </toolbar>
 
-      <div class="mt-10" style="color: white !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="w-100" fluid></v-progress-linear></div>
+      <div class="mt-10" style="color: black !important;" v-if="loading"><center>Cargando daos...</center><br/><v-progress-linear  indeterminate class="w-100" fluid></v-progress-linear></div>
 
-      <div class="mt-10" style="color: white !important;" v-if="noData"><center>No hay daos disponibles...</center><br/></div>
+      <div class="mt-10" style="color: black !important;" v-if="noData"><center>No hay daos disponibles...</center><br/></div>
 
       <v-divider v-if="!loading && !noData" thickness="1.5" color="#fff" class="my-8" style="opacity: .5 !important;" />
 
@@ -351,7 +351,7 @@ async function getData() {
 .full-width {
       width: 550px !important;
       align-content: center;
-      color: white !important;
+      color: black !important;
  }
 
 .toolbar-search {
